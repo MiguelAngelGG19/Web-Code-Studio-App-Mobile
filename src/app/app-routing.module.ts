@@ -18,7 +18,15 @@ const routes: Routes = [
   {
     path: 'tabs', 
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  },  {
+    path: 'confirmed-appointment',
+    loadChildren: () => import('./confirmed-appointment/confirmed-appointment.module').then( m => m.ConfirmedAppointmentPageModule)
+  },
+  {
+    path: 'my-progress',
+    loadChildren: () => import('./my-progress/my-progress.module').then( m => m.MyProgressPageModule)
   }
+
 ];
 
 @NgModule({
