@@ -8,27 +8,24 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
-        loadChildren: () => import('../tab1/tab1.module').then(m => m.Tab1PageModule)
+        path: 'my-progress',
+        loadChildren: () => import('../my-progress/my-progress-routing.module').then(m => m.MyProgressPageRoutingModule)
       },
       {
-        path: 'tab2',
-        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+        path: 'confirmed-appointment',
+        loadChildren: () => import('../confirmed-appointment/confirmed-appointment.module').then(m => m.ConfirmedAppointmentPageModule)
       },
-      {
-        path: 'tab3',
-        loadChildren: () => import('../tab3/tab3.module').then(m => m.Tab3PageModule)
-      },
+     
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/my-progress',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/my-progress',
     pathMatch: 'full'
   }
 ];

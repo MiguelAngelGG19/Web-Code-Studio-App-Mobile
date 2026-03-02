@@ -1,6 +1,11 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
+# Duplicate directories (restored by OneDrive)
+/domain/
+/infrastructure/
+/usecases/
+
 *~
 *.sw[mnpcod]
 .tmp

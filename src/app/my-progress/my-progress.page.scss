@@ -1,0 +1,32 @@
+ion-content {
+  --background: #f9f9f9; // Fondo gris ultra claro
+}
+
+.shadow-card {
+  --background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+.routine-card {
+  --background: #fff9f2; // Tono crema suave
+  border-radius: 20px;
+  border: 1px dashed var(--ion-color-warning);
+}
+
+.day-badge {
+  padding: 8px;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+}
