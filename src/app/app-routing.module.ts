@@ -4,19 +4,19 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'tab1', // Aquí arranca la app
+    redirectTo: 'welcome', 
     pathMatch: 'full'
   },
   {
-    path: 'tab1',
-    loadChildren: () => import('./tab1/tab1.module').then(m => m.Tab1PageModule)
+    path: 'welcome',
+    loadChildren: () => import('./welcome/welcome.module').then(m => m.WelcomePageModule)
   },
   {
-    path: 'tab2',
-    loadChildren: () => import('./tab2/tab2.module').then(m => m.Tab2PageModule)
+    path: 'login',
+    loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule)
   },
   {
-    path: 'tabs', // Este es el "contenedor" para la pantalla 3 y 4
+    path: 'tabs', 
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   }
 ];
