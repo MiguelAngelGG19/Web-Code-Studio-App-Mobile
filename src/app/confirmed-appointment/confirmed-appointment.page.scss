@@ -1,32 +1,152 @@
-ion-content {
-  --background: #f9f9f9; // Fondo gris ultra claro
+/* Header */
+.header-toolbar {
+  --background: #ffffff;
+  --border-color: #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  
+  ion-back-button {
+    --color: #00c795;
+  }
+  
+  ion-title {
+    color: #444444;
+    font-weight: 600;
+  }
 }
 
-.shadow-card {
+/* Content */
+.appointment-content {
+  --background: #ffffff;
+}
+
+.status-badge {
+  --background: #00c795;
+  --color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  
+  ion-icon {
+    margin-right: 6px;
+  }
+}
+
+.specialist-card {
   --background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 199, 149, 0.08);
+  --border-color: transparent;
+  
+  .doctor-name {
+    color: #444444;
+    font-size: 16px;
+  }
+  
+  .specialty {
+    color: #777777;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  
+  .location-name {
+    color: #999;
+    font-size: 12px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    ion-icon {
+      font-size: 14px;
+    }
+  }
 }
 
-.routine-card {
-  --background: #fff9f2; // Tono crema suave
-  border-radius: 20px;
-  border: 1px dashed var(--ion-color-warning);
+/* Info List */
+.info-list {
+  ion-list-header {
+    padding-bottom: 12px;
+  }
+  
+  ion-item {
+    --background: #ffffff;
+    --border-color: transparent;
+    --padding-start: 0;
+    --padding-end: 0;
+    margin-bottom: 16px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
-.day-badge {
-  padding: 8px;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  font-weight: bold;
+.list-header {
+  color: #999 !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
-h1 {
-  font-size: 1.8rem;
-  letter-spacing: -0.5px;
+.info-icon {
+  color: #00c795;
+  font-size: 20px;
+  margin-right: 12px;
+}
+
+ion-label {
+  h3 {
+    color: #444444;
+    font-size: 15px;
+    margin: 0 0 4px 0;
+  }
+  
+  p {
+    color: #777777;
+    font-size: 13px;
+    margin: 0;
+  }
+}
+
+.map-link {
+  color: #00c795 !important;
+  font-weight: 600;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* Prep Card */
+.prep-card {
+  --background: #f0fdf9;
+  border: 1px solid #d4f9f0;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 199, 149, 0.08);
+  
+  ion-card-content {
+    padding: 0;
+  }
+  
+  ion-item {
+    --background: transparent;
+    --border-color: transparent;
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+  
+  h3 {
+    color: #444444;
+    font-size: 15px;
+    margin: 0 0 4px 0;
+  }
+  
+  p {
+    color: #777777;
+    font-size: 13px;
+  }
+}
+
+.prep-icon {
+  color: #00c795;
+  font-size: 20px;
+  margin-right: 12px;
 }

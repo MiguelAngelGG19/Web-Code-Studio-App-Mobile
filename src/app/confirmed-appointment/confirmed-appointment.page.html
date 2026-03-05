@@ -1,15 +1,15 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar class="header-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/my-progress"></ion-back-button>
+      <ion-back-button defaultHref="/tabs/your-progress"></ion-back-button>
     </ion-buttons>
     <ion-title>Detalles de Cita</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding appointment-content">
   <div class="ion-text-center ion-margin-bottom">
-    <ion-badge color="success" mode="ios">
+    <ion-badge class="status-badge" mode="ios">
       <ion-icon name="checkmark-circle"></ion-icon> Cita Confirmada
     </ion-badge>
   </div>
@@ -25,11 +25,13 @@
     </ion-label>
   </ion-item>
 
-  <ion-list lines="none" class="info-list">
-    <ion-list-header><ion-label color="medium">INFORMACIÓN DE LA SESIÓN</ion-label></ion-list-header>
+  <ion-list lines="none" class="info-list" style="background-color: white;">
+    <ion-list-header style="background-color: white;">
+      <ion-label style="background-color: white; color: #000000;">INFORMACIÓN DE LA SESIÓN</ion-label>
+    </ion-list-header>
 
     <ion-item>
-      <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+      <ion-icon name="calendar-outline" slot="start" class="info-icon"></ion-icon>
       <ion-label>
         <h3><b>{{ cita?.fecha }}</b></h3>
         <p>{{ cita?.hora }}</p>
@@ -37,7 +39,7 @@
     </ion-item>
 
     <ion-item>
-      <ion-icon name="fitness-outline" slot="start" color="primary"></ion-icon>
+      <ion-icon name="fitness-outline" slot="start" class="info-icon"></ion-icon>
       <ion-label>
         <h3><b>Terapia</b></h3>
         <p>{{ cita?.tipoTerapia }}</p>
@@ -45,11 +47,11 @@
     </ion-item>
 
     <ion-item>
-      <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
+      <ion-icon name="location-outline" slot="start" class="info-icon"></ion-icon>
       <ion-label>
         <h3><b>Dirección</b></h3>
         <p>{{ cita?.direccion }}</p>
-        <ion-note color="primary" class="map-link">Ver en Google Maps</ion-note>
+        <ion-note class="map-link">Ver en Google Maps</ion-note>
       </ion-label>
     </ion-item>
   </ion-list>
@@ -57,7 +59,7 @@
   <ion-card class="prep-card ion-margin-top">
     <ion-card-content>
       <ion-item lines="none">
-        <ion-icon name="information-circle" slot="start" color="warning"></ion-icon>
+        <ion-icon name="information-circle" slot="start" class="prep-icon"></ion-icon>
         <ion-label>
           <h3><b>Preparación</b></h3>
           <p class="ion-text-wrap">Recuerda traer ropa cómoda y llegar 10 minutos antes de tu sesión para el check-in.</p>

@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { RouteAnimationService } from '../core/services/route-animation.service';
 
 @Component({
   selector: 'app-your-progress',
@@ -20,5 +22,12 @@ export class Tab4Page {
   // Días de la semana (X es miércoles)
   dias = ['L', 'M', 'X', 'J', 'V', 'S'];
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private routeAnimationService: RouteAnimationService
+  ) {}
+
+  goToProfile() {
+    this.routeAnimationService.navigateWithAnimation(['/profile'], 'slide');
+  }
 }

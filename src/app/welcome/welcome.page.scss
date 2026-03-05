@@ -1,0 +1,37 @@
+.welcome-content {
+  --background: #000000;
+  position: relative;
+  overflow: hidden;
+}
+
+// Video de fondo fullscreen
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+// Overlay con contenido
+.video-overlay {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+// Asegurar que todo el video se reproduzca
+ion-content {
+  --padding-bottom: 0 !important;
+  --padding-top: 0 !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+}

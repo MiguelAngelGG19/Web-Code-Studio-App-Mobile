@@ -4,24 +4,12 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: '',
+    path: '', // Al entrar a /tabs...
     component: TabsPage,
     children: [
       {
-        path: 'report',
-        loadChildren: () => import('../report/report.module').then(m => m.Tab6PageModule)
-      },
-      {
-        path: 'detail',
-        loadChildren: () => import('../detail/detail.module').then(m => m.DetailPageModule)
-      },
-            {
-        path: 'my-progress',
+        path: 'your-progress',
         loadChildren: () => import('../your-progress/your-progress.module').then(m => m.Tab4PageModule)
-      },  
-      {
-        path: 'my-progress',
-        loadChildren: () => import('../my-progress/my-progress.module').then(m => m.MyProgressPageModule)
       },
       {
         path: 'confirmed-appointment',
@@ -32,11 +20,18 @@ const routes: Routes = [
         loadChildren: () => import('../detalle-rutina/detalle-rutina.module').then(m => m.DetalleRutinaPageModule)
       },
       {
+        path: 'detail',
+        loadChildren: () => import('../detail/detail.module').then( m => m.DetailPageModule)
+      },
+      {
+        path: 'report',
+        loadChildren: () => import('../report/report.module').then( m => m.Tab6PageModule)
+      },
+      {
         path: '',
-        redirectTo: 'my-progress',
+        redirectTo: 'your-progress', // Si entras a /tabs, te manda directo a your-progress 
         pathMatch: 'full'
       }
-    
     ]
     
   }
