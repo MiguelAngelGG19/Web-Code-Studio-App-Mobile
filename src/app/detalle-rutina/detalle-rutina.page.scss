@@ -112,3 +112,30 @@
   box-shadow: 0 6px 16px rgba(0, 199, 149, 0.4);
 }
 
+// Animación del botón al comenzar
+.floating-button-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-button-container.animating {
+  transform: scale(0.8) translateY(20px);
+  opacity: 0;
+}
+
+// Animación suave de entrada cuando la página carga
+@keyframes slideUpCreate {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.floating-button-container {
+  animation: slideUpCreate 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  animation-delay: 0.3s;
+}
+

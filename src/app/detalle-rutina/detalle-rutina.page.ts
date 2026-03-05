@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { RouteAnimationService } from '../core/services/route-animation.service';
 
 @Component({
   selector: 'app-detalle-rutina',
@@ -12,11 +14,25 @@ export class DetalleRutinaPage {
   isOpenModal3 = false;
   isOpenModal4 = false;
   isOpenModal5 = false;
+  isAnimating = false;
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private routeAnimationService: RouteAnimationService
+  ) {}
 
   onWillPresent() {
     console.log('Modal está a punto de abrirse');
+  }
+
+  startRoutine() {
+    // Agregar animación
+    this.isAnimating = true;
+    
+    // Esperar a que la animación termine y luego navegar
+    setTimeout(() => {
+      this.routeAnimationService.navigateWithAnimation(['/rutina-en-progreso'], 'slide');
+    }, 300);
   }
 
   openModal(modalNumber: number) {
