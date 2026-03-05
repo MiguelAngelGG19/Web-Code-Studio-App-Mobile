@@ -4,9 +4,21 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: '', // Al entrar a /tabs...
+    path: '',
     component: TabsPage,
     children: [
+      {
+        path: 'report',
+        loadChildren: () => import('../report/report.module').then(m => m.Tab6PageModule)
+      },
+      {
+        path: 'detail',
+        loadChildren: () => import('../detail/detail.module').then(m => m.DetailPageModule)
+      },
+            {
+        path: 'my-progress',
+        loadChildren: () => import('../your-progress/your-progress.module').then(m => m.Tab4PageModule)
+      },  
       {
         path: 'my-progress',
         loadChildren: () => import('../my-progress/my-progress.module').then(m => m.MyProgressPageModule)
@@ -21,9 +33,10 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'my-progress', // Si entras a /tabs, te manda directo a my-progress 
+        redirectTo: 'my-progress',
         pathMatch: 'full'
       }
+    
     ]
     
   }

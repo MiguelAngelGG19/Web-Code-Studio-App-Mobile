@@ -1,0 +1,48 @@
+.light-content {
+  --background: #f8f9fa;
+}
+
+.white-card {
+  --background: #ffffff;
+  border-radius: 20px;
+  padding: 8px;
+}
+
+.status-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.specialist-card {
+  .large-avatar {
+    width: 65px;
+    height: 65px;
+    border: 2px solid #eef2ff;
+    border-radius: 16px;
+    img { border-radius: 16px; }
+  }
+  .doctor-name { color: #1d4ed8; font-size: 1.2rem; }
+  .clinic-text { font-size: 0.85rem; display: flex; align-items: center; gap: 4px; }
+}
+
+// Estilos para los iconos con fondo de color
+.icon-bg {
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 24px;
+}
+.blue-bg { background: #eff6ff; color: #2563eb; }
+.purple-bg { background: #f5f3ff; color: #7c3aed; }
+.red-bg { background: #fef2f2; color: #dc2626; }
+
+.info-title { font-weight: 800; color: #1f2937; margin-bottom: 2px; }
+.info-subtitle { color: #6b7280; font-weight: 500; font-size: 0.95rem; }
+
+.prep-card {
+  --background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  .prep-title { font-weight: 800; color: #78350f; }
+  .prep-text { color: #92400e; font-size: 0.9rem; line-height: 1.4; }
+}
