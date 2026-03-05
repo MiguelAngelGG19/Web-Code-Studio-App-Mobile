@@ -7,6 +7,12 @@ const routes: Routes = [
     redirectTo: 'welcome',
     pathMatch: 'full'
   },
+    {
+      path: 'my-progress',
+      loadChildren: () => import('./your-progress/your-progress.module').then( m => m.Tab4PageModule)
+    },
+      
+    
   {
     path: 'welcome',
     loadChildren: () => import('./welcome/welcome.module').then( m => m.WelcomePageModule)
@@ -20,11 +26,13 @@ const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.module').then( m => m.TabsPageModule)
   },
   {
-    path: 'tab6',
+    path: 'report',
     loadChildren: () => import('./report/report.module').then( m => m.Tab6PageModule)
   },
-
- 
+  {
+    path: 'detail',
+    loadChildren: () => import('./detail/detail.module').then( m => m.DetailPageModule)
+  },
   
 ];
 
