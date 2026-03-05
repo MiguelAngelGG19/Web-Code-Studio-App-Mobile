@@ -7,14 +7,25 @@ const routes: Routes = [
     path: '', // Al entrar a /tabs...
     component: TabsPage,
     children: [
-      
+      {
+        path: 'my-progress',
+        loadChildren: () => import('../my-progress/my-progress.module').then(m => m.MyProgressPageModule)
+      },
+      {
+        path: 'confirmed-appointment',
+        loadChildren: () => import('../confirmed-appointment/confirmed-appointment.module').then(m => m.ConfirmedAppointmentPageModule)
+      },
+      {
+        path: 'detalle-rutina',
+        loadChildren: () => import('../detalle-rutina/detalle-rutina.module').then(m => m.DetalleRutinaPageModule)
+      },
       {
         path: '',
-        redirectTo: 'tab3', // Si entras a /tabs, te manda directo a la 3
+        redirectTo: 'my-progress', // Si entras a /tabs, te manda directo a my-progress 
         pathMatch: 'full'
       }
     ]
-
+    
   }
 ];
 
