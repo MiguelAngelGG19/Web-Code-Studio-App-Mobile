@@ -8,19 +8,17 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-card>
+  <ion-card *ngFor="let rutina of routines">
     <ion-card-header>
-      <ion-card-subtitle>Rutina para fortalecer los meniscos</ion-card-subtitle>
-      <ion-card-title>Rutina Semana 1</ion-card-title>
+      <ion-card-title>{{ rutina.name }}</ion-card-title>
     </ion-card-header>
-
     <ion-card-content>
       <img src="assets/icon/tiempo.png" alt="Tiempo" style="width: 20px; height: auto; margin-bottom: 16px; margin-right: 150px;">
-      <p style="margin-top: -42px; margin-left: 30px;"><strong>Duración:</strong> 30 minutos</p>
+      <p style="margin-top: -42px; margin-left: 30px;"><strong>Fecha Inicio:</strong> {{ rutina.startDate }}</p>
       <img src="assets/icon/user.png" alt="Usuario" style="width: 20px; height: auto; margin-bottom: 16px; margin-right: 150px;">
-      <p style="margin-top: -42px; margin-left: 30px;"><strong>Fisioterapeuta:</strong> Marco Fernandez Lopez</p>
+      <p style="margin-top: -42px; margin-left: 30px;"><strong>Fisioterapeuta:</strong> {{ rutina.physiotherapistId }}</p>
       <img src="assets/icon/calendar.png" alt="Calendario" style="width: 20px; height: auto; margin-bottom: 16px; margin-right: 150px;">
-      <p style="margin-top: -42px; margin-left: 30px;"><strong>Fecha Inicio:</strong> 2025-10-12</p>
+      <p style="margin-top: -42px; margin-left: 30px;"><strong>Fecha Fin:</strong> {{ rutina.endDate }}</p>
     </ion-card-content>
   </ion-card>
   <ion-card>

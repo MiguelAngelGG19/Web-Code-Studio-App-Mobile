@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouteAnimationService } from '../core/services/route-animation.service';
+import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 
 @Component({
   selector: 'app-detalle-rutina',
@@ -8,18 +9,28 @@ import { RouteAnimationService } from '../core/services/route-animation.service'
   styleUrls: ['detalle-rutina.page.scss'],
   standalone: false,
 })
-export class DetalleRutinaPage {
+export class DetalleRutinaPage implements OnInit {
   isOpenModal = false;
   isOpenModal2 = false;
   isOpenModal3 = false;
   isOpenModal4 = false;
   isOpenModal5 = false;
   isAnimating = false;
+  routines: any[] = [];
 
   constructor(
     private router: Router,
-    private routeAnimationService: RouteAnimationService
+    private routeAnimationService: RouteAnimationService,
+    private routineApi: RoutineApiService
   ) {}
+
+  ngOnInit() {
+    // Cambia el patientId según el usuario autenticado
+    const patientId = 1;
+    this.routineApi.getRoutines(patientId).subscribe(res => {
+      this.routines = res.data || [];
+    });
+  }
 
   onWillPresent() {
     console.log('Modal está a punto de abrirse');

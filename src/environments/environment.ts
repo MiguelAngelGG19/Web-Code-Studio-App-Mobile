@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://jsonplaceholder.typicode.com'
+  // cuando pruebes localmente ajusta al puerto donde corre tu servidor
+  apiUrl: 'http://localhost:3000/api'
 };
 
 /*
