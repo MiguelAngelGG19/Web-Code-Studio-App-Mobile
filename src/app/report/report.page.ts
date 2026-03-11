@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core'; // Ya no necesitamos OnInit
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -13,7 +13,7 @@ import { Tracking } from '../../core/domain/models/tracking.model';
   styleUrls: ['./report.page.scss'],
   standalone: false
 })
-export class Tab6Page implements OnInit {
+export class Tab6Page { // Quitamos el "implements OnInit"
   reportForm: FormGroup;
   selectedPainLevel: number | null = null;
   isLoading = false;
@@ -35,12 +35,17 @@ export class Tab6Page implements OnInit {
     });
   }
 
-  async ngOnInit() {
+  // 🔥 CAMBIO CLAVE: Usamos ionViewWillEnter en lugar de ngOnInit
+  async ionViewWillEnter() {
     // Inicializar storage
     await this.storage.create();
 
     // Intentar obtener routineId de diferentes fuentes
     await this.loadCurrentRoutineId();
+    
+    // Limpiamos el formulario cada vez que el usuario vuelve a esta pantalla
+    this.reportForm.reset();
+    this.selectedPainLevel = null;
   }
 
   private async loadCurrentRoutineId() {
