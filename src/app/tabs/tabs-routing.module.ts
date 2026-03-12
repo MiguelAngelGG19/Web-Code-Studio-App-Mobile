@@ -28,6 +28,10 @@ const routes: Routes = [
         loadChildren: () => import('../report/report.module').then( m => m.Tab6PageModule)
       },
       {
+        path: 'profile',
+        loadChildren: () => import('../profile/profile.module').then( m => m.ProfilePageModule)
+      },
+      {
         path: '',
         redirectTo: 'your-progress', // Si entras a /tabs, te manda directo a your-progress 
         pathMatch: 'full'
