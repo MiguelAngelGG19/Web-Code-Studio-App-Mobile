@@ -1,3 +1,18 @@
+ion-tab-bar {
+  --background: #fff;
+  --border: 1px solid var(--activa-border);
+  padding: 10px 0 16px;
+  height: 72px;
+}
 
+ion-tab-button {
+  --color: var(--activa-text);
+  --color-selected: var(--activa-primary);
+  font-size: 11px;
+  font-weight: 700;
 
-
+  ion-icon {
+    font-size: 26px;
+    margin-bottom: 4px;
+  }
+}

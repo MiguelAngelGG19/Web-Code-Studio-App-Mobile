@@ -15,14 +15,17 @@ export class ExerciseApiService implements ExerciseRepository {
   constructor(private http: HttpClient) {}
 
   getExercises(): Observable<Exercise[]> {
-    return this.http.get<any[]>(this.baseUrl).pipe(
-      map(apiExercises => apiExercises.map(apiExercise => ({
-        id: apiExercise.idEjercicio,
-        name: apiExercise.name,
-        bodyZone: apiExercise.body_zone,
-        description: apiExercise.description,
-        videoUrl: apiExercise.video_url
-      }))),
+    return this.http.get<{ success: boolean; rows?: any[] }>(this.baseUrl).pipe(
+      map((res) => {
+        const rows = res.rows ?? [];
+        return rows.map((e: any) => ({
+          id: e.id ?? e.idEjercicio,
+          name: e.name,
+          bodyZone: e.bodyZone ?? e.body_zone,
+          description: e.description,
+          videoUrl: e.videoUrl ?? e.video_url
+        }));
+      }),
       catchError(err => throwError(() => new Error(err.message ?? 'Error fetching exercises')))
     );
   }

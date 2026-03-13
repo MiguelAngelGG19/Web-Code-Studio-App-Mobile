@@ -1,13 +1,72 @@
 /*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
+ * ACTIVA - App Global CSS
  */
+
+@import "theme/variables";
+
+/* Texto y placeholder visibles en inputs con fondo claro (evita problemas con dark mode) */
+ion-input.input-dark-text,
+ion-textarea.input-dark-text,
+.input-wrapper ion-input {
+  --color: #0f172a !important;
+  --placeholder-color: #475569 !important;
+  --placeholder-opacity: 1 !important;
+}
+
+/* Modal de ejercicio: fondo claro y texto visible (Detalle Rutina) */
+ion-content.modal-content-light {
+  --background: #ffffff !important;
+  --color: #0f172a !important;
+
+  .modal-body,
+  .description h4,
+  .description p,
+  .modal-body h2 {
+    color: #0f172a !important;
+  }
+}
+
+/* Detail (ejercicio en curso): texto visible en card */
+ion-content.content-light .main-details-card,
+ion-content.content-light .exercise-title,
+ion-content.content-light .zone-badge,
+ion-content.content-light .description-block h3,
+ion-content.content-light .description-block p {
+  color: #0f172a !important;
+}
+
+/* Cita confirmada: fondo claro y texto visible */
+ion-content.content-light {
+  --background: #f1f5f9 !important;
+  --color: #0f172a !important;
+
+  .appointment-content,
+  .specialist-card,
+  .info-list,
+  .prep-card,
+  ion-item,
+  ion-list-header ion-label,
+  .doctor-name,
+  .specialty,
+  .location-name,
+  h2, h3, p {
+    color: #0f172a !important;
+    --color: #0f172a !important;
+  }
+  .specialist-card,
+  .info-list {
+    --background: #ffffff !important;
+    background: #ffffff !important;
+  }
+  .prep-card {
+    --background: #ccfbf1 !important;
+    background: #ccfbf1 !important;
+  }
+  .prep-card h3,
+  .prep-card p {
+    color: #0f172a !important;
+  }
+}
 
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
@@ -294,14 +353,7 @@ ion-button {
   }
 }
 
-/* Aplicar animación de carga a contenido principal */
-ion-content > * {
-  animation: pageLoad 0.5s ease-in-out;
-  animation-fill-mode: both;
-  
-  @for $i from 1 through 10 {
-    &:nth-child(#{$i}) {
-      animation-delay: #{$i * 0.05}s;
-    }
-  }
+/* Animación suave de entrada para contenido */
+ion-content {
+  animation: fadeIn 0.3s ease-out;
 }

@@ -4,7 +4,7 @@
     <ion-row class="ion-justify-content-center">
       <ion-col size="auto" class="avatar-wrapper">
         <ion-avatar class="custom-avatar">
-          <span class="inner-square"></span>
+          <img [src]="getAvatarUrl()" alt="Avatar" />
         </ion-avatar>
         <ion-fab-button size="small" class="edit-btn">
           <ion-icon name="pencil"></ion-icon>
@@ -13,7 +13,7 @@
     </ion-row>
     <ion-row class="ion-justify-content-center ion-text-center">
       <ion-col>
-        <ion-text color="dark"><h2 class="user-name">Carlos</h2></ion-text>
+        <ion-text color="dark"><h2 class="user-name">{{ userName }}</h2></ion-text>
         <ion-text color="medium"><p class="user-subtitle">Paciente desde Oct 2023</p></ion-text>
       </ion-col>
     </ion-row>
@@ -24,7 +24,7 @@
       <ion-col size="4">
         <ion-card class="stat-card ion-no-margin">
           <ion-card-header class="ion-text-center">
-            <ion-card-title>28</ion-card-title>
+            <ion-card-title>{{ patient?.birthYear ? (2025 - patient.birthYear) : '—' }}</ion-card-title>
             <ion-card-subtitle>EDAD</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
@@ -32,7 +32,7 @@
       <ion-col size="4">
         <ion-card class="stat-card ion-no-margin">
           <ion-card-header class="ion-text-center">
-            <ion-card-title>75kg</ion-card-title>
+            <ion-card-title>{{ patient?.weight ? patient.weight + 'kg' : '—' }}</ion-card-title>
             <ion-card-subtitle>PESO</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
@@ -80,7 +80,7 @@
     </ion-item>
   </ion-list>
 
-  <ion-button expand="block" class="logout-btn ion-margin">
+  <ion-button expand="block" class="logout-btn ion-margin" (click)="cerrarSesion()">
     <ion-icon name="log-out-outline" slot="start"></ion-icon>
     Cerrar Sesión
   </ion-button>

@@ -105,17 +105,29 @@ export class Tab6Page { // Quitamos el "implements OnInit"
     await loading.present();
 
     const formValue = this.reportForm.value;
+    const routineId = Number(this.currentRoutineId) || 1;
 
-    // Crear objeto Tracking
-    // Construir el objeto sin el campo id
+    if (!routineId || routineId < 1) {
+      await loading.dismiss();
+      this.isLoading = false;
+      const toast = await this.toastController.create({
+        message: 'No hay rutina activa. Inicia una rutina desde el detalle.',
+        duration: 3000,
+        position: 'bottom',
+        color: 'warning'
+      });
+      await toast.present();
+      return;
+    }
+
     const tracking = {
-      startTime: new Date().toTimeString().split(' ')[0], // HH:MM:SS
+      startTime: new Date().toTimeString().split(' ')[0],
       endTime: new Date().toTimeString().split(' ')[0],
       painLevel: Number(formValue.painLevel),
-      postObservations: formValue.observations,
+      postObservations: formValue.observations || '',
       intraObservations: '',
-      alert: formValue.painLevel >= 7 ? 1 : 0, // Debe ser 0 o 1
-      routineId: Number(this.currentRoutineId)
+      alert: Number(formValue.painLevel) >= 7 ? 1 : 0,
+      routineId
     };
 
     this.registerPainLevelUseCase.execute(tracking).subscribe({
@@ -146,14 +158,15 @@ export class Tab6Page { // Quitamos el "implements OnInit"
         await loading.dismiss();
         this.isLoading = false;
 
+        const msg = error?.error?.details || error?.error?.message || error?.message || 'Error al enviar reporte';
         const toast = await this.toastController.create({
-          message: 'Error al enviar reporte. Inténtalo de nuevo.',
+          message: typeof msg === 'string' ? msg : 'Error al enviar reporte. Inténtalo de nuevo.',
           duration: 3000,
           position: 'bottom',
           color: 'danger'
         });
         await toast.present();
-        console.error('Error sending report:', error);
+        console.error('Error sending report:', error?.error || error);
       }
     });
   }

@@ -30,10 +30,12 @@ export class TrackingApiService implements TrackingRepository {
     }).pipe(
       catchError(err => {
         console.error('tracking-api error', err);
-        // include status code/message in thrown error
-        const msg = err?.message || 'Error registering pain level';
+        const body = err?.error;
+        const msg = body?.details || body?.message || err?.message || 'Error al registrar';
         const status = err?.status || err?.statusCode;
-        return throwError(() => new Error(`${msg} (status ${status})`));
+        const e = new Error(`${msg} (status ${status})`) as any;
+        e.error = body;
+        return throwError(() => e);
       })
     );
   }
