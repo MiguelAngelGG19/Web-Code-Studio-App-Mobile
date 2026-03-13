@@ -101,4 +101,10 @@ export class DetalleRutinaPage implements OnInit {
 
   getExerciseVideoUrl = getExerciseVideoUrl;
   getExerciseYouTubeEmbedUrl = getExerciseYouTubeEmbedUrl;
+
+  ionViewWillLeave() {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
 }

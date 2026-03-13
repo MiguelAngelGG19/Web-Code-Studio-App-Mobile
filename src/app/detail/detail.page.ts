@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { Storage } from '@ionic/storage-angular';
 import { RoutineApiService, RoutineExercise } from '../core/infrastructure/api/routine-api.service';
 import { RouteAnimationService } from '../core/services/route-animation.service';
@@ -10,6 +10,14 @@ import { getExerciseVideoUrl, getExerciseYouTubeEmbedUrl } from '../core/helpers
   templateUrl: './detail.page.html',
   styleUrls: ['./detail.page.scss'],
   standalone: false,
+  animations: [
+    trigger('exerciseTransition', [
+      transition('* => *', [
+        style({ opacity: 0, transform: 'translateY(8px)' }),
+        animate('220ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+    ]),
+  ],
 })
 export class DetailPage implements OnInit {
   currentExercise: RoutineExercise | null = null;
@@ -19,7 +27,6 @@ export class DetailPage implements OnInit {
   loading = true;
 
   constructor(
-    private router: Router,
     private storage: Storage,
     private routineApi: RoutineApiService,
     private routeAnimationService: RouteAnimationService
@@ -47,6 +54,22 @@ export class DetailPage implements OnInit {
     this.routeAnimationService.navigateWithAnimation(['/tabs/report'], 'slide');
   }
 
+  onExerciseDone() {
+    if (this.isLastExercise()) {
+      this.goToReport();
+    } else {
+      this.nextExercise();
+    }
+  }
+
+  isLastExercise(): boolean {
+    return this.exercises.length === 0 || this.exerciseIndex >= this.exercises.length - 1;
+  }
+
+  hasSeriesReps(ex: RoutineExercise | null): boolean {
+    return !!(ex && ((ex.series != null && ex.series > 0) || (ex.reps != null && ex.reps > 0)));
+  }
+
   nextExercise() {
     if (this.exerciseIndex < this.exercises.length - 1) {
       this.exerciseIndex++;
@@ -63,4 +86,10 @@ export class DetailPage implements OnInit {
 
   getExerciseVideoUrl = getExerciseVideoUrl;
   getExerciseYouTubeEmbedUrl = getExerciseYouTubeEmbedUrl;
+
+  ionViewWillLeave() {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
 }

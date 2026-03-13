@@ -35,7 +35,12 @@ export class Tab6Page { // Quitamos el "implements OnInit"
     });
   }
 
-  // 🔥 CAMBIO CLAVE: Usamos ionViewWillEnter en lugar de ngOnInit
+  ionViewWillLeave() {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
+
   async ionViewWillEnter() {
     // Inicializar storage
     await this.storage.create();

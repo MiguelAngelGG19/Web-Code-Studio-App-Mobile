@@ -127,10 +127,58 @@
   border-radius: 14px;
   font-size: 14px;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 
   ion-icon {
     font-size: 18px;
+  }
+}
+
+.series-reps-row {
+  margin-bottom: 20px;
+}
+
+.series-reps-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(13, 148, 136, 0.12);
+  color: var(--activa-primary-dark);
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+
+  ion-icon {
+    font-size: 18px;
+  }
+}
+
+.consejo-block {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.12) 0%, rgba(245, 158, 11, 0.08) 100%);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #92400e;
+    margin: 0 0 10px 0;
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+  p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #0f172a;
+    margin: 0;
   }
 }
 

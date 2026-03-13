@@ -17,8 +17,11 @@ export interface RoutineExercise {
   id: number;
   name: string;
   bodyZone: string;
-  description: string;
+  description: string;  // Puede ser personalizada por rutina (descripcion del link) o la base del ejercicio
   videoUrl: string;
+  series?: number;
+  reps?: number;
+  consejo?: string;
 }
 
 export interface RoutineWithExercises extends Routine {
@@ -50,7 +53,10 @@ export class RoutineApiService {
               name: e.name ?? '',
               bodyZone: e.bodyZone ?? e.body_zone ?? '',
               description: e.description ?? '',
-              videoUrl: e.videoUrl ?? e.video_url ?? ''
+              videoUrl: e.videoUrl ?? e.video_url ?? '',
+              series: e.series ?? 3,
+              reps: e.reps ?? 10,
+              consejo: e.consejo ?? ''
             }))
           };
         }),

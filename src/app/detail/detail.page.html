@@ -40,7 +40,7 @@
     <!-- Contenido -->
     <ion-row class="details-row">
       <ion-col size="12" class="ion-no-padding">
-        <ion-card class="main-details-card ion-no-margin" mode="ios">
+        <ion-card class="main-details-card ion-no-margin" mode="ios" [@exerciseTransition]="exerciseIndex">
           <ion-card-content>
             <div class="exercise-header">
               <span class="exercise-counter" *ngIf="exercises.length > 1">{{ exerciseIndex + 1 }} / {{ exercises.length }}</span>
@@ -61,15 +61,27 @@
               {{ currentExercise.bodyZone }}
             </div>
 
+            <div class="series-reps-row" *ngIf="hasSeriesReps(currentExercise)">
+              <span class="series-reps-badge">
+                <ion-icon name="repeat-outline"></ion-icon>
+                {{ currentExercise.series }} series × {{ currentExercise.reps }} repeticiones
+              </span>
+            </div>
+
             <div class="description-block" *ngIf="currentExercise.description">
               <h3>Descripción</h3>
               <p>{{ currentExercise.description }}</p>
             </div>
 
+            <div class="consejo-block" *ngIf="currentExercise.consejo">
+              <h3><ion-icon name="bulb-outline"></ion-icon> Consejo del fisio</h3>
+              <p>{{ currentExercise.consejo }}</p>
+            </div>
+
             <div class="action-buttons">
-              <ion-button expand="block" class="btn-done" (click)="goToReport()">
+              <ion-button expand="block" class="btn-done" (click)="onExerciseDone()">
                 <ion-icon slot="start" name="checkmark-circle"></ion-icon>
-                ¡Listo!
+                {{ isLastExercise() ? '¡Terminé la rutina!' : 'Terminé este ejercicio' }}
               </ion-button>
               <ion-button expand="block" fill="outline" class="btn-alert" (click)="goToReport()">
                 <ion-icon slot="start" name="warning"></ion-icon>

@@ -62,4 +62,11 @@ export class Tab4Page implements OnInit {
   goToProfile() {
     this.routeAnimationService.navigateWithAnimation(['/profile'], 'slide');
   }
+
+  ionViewWillLeave() {
+    // Evita el aviso "aria-hidden" al navegar: blur del elemento con foco
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
 }
