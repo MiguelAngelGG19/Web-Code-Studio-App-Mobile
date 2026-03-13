@@ -6,9 +6,11 @@ import { RouterModule } from '@angular/router';
 import { LoginPage } from './login.page';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { loginPageRoutingModule } from './login-routing.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
+    HttpClientModule, 
     IonicModule,
     CommonModule,
     ReactiveFormsModule,
