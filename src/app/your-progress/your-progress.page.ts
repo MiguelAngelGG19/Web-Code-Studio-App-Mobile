@@ -1,8 +1,11 @@
 import { Component, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 import { RouteAnimationService } from '../core/services/route-animation.service';
 import { PatientRepository } from '../../core/domain/repositories/patient.repository';
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
+import { TrackingApiService } from '../core/infrastructure/api/tracking-api.service';
+import { PhysiotherapistApiService } from '../core/infrastructure/api/physiotherapist-api.service';
 import { Storage } from '@ionic/storage-angular';
 
 @Component({
@@ -15,21 +18,26 @@ import { Storage } from '@ionic/storage-angular';
 export class Tab4Page implements OnInit {
   user = signal({
     fullName: 'Cargando...',
-    progress: 0.65,
+    progress: 0,
     specialist: 'Fisioterapeuta',
     nextAppointment: '—',
     routineName: 'Tu rutina',
-    avatarUrl: 'https://i.pravatar.cc/150?u=default'
+    avatarUrl: 'https://i.pravatar.cc/150?u=default',
+    physioAvatarUrl: ''
   });
 
   dias = ['L', 'M', 'X', 'J', 'V', 'S'];
+  diasActivos = signal<boolean[]>([false, false, false, false, false, false, false]);
 
   constructor(
     private router: Router,
     private routeAnimationService: RouteAnimationService,
     private patientRepo: PatientRepository,
     private routineApi: RoutineApiService,
-    private storage: Storage
+    private trackingApi: TrackingApiService,
+    private physioApi: PhysiotherapistApiService,
+    private storage: Storage,
+    private toast: ToastController
   ) {}
 
   async ngOnInit() {
@@ -41,6 +49,15 @@ export class Tab4Page implements OnInit {
         const fullName = [patient.firstName, patient.lastNameP, patient.lastNameM].filter(Boolean).join(' ') || 'Paciente';
         const avatarUrl = `https://i.pravatar.cc/150?u=${patient.id}`;
         this.user.update(u => ({ ...u, fullName, avatarUrl }));
+        if (patient.physiotherapistId) {
+          this.physioApi.getById(patient.physiotherapistId).subscribe((p) => {
+            if (p) this.user.update(u => ({
+              ...u,
+              specialist: p.fullName,
+              physioAvatarUrl: `https://i.pravatar.cc/150?u=physio${p.id}`
+            }));
+          });
+        }
       },
       error: () => {
         this.user.update(u => ({ ...u, fullName: 'Inicia sesión' }));
@@ -57,14 +74,25 @@ export class Tab4Page implements OnInit {
         }));
       }
     });
+    this.trackingApi.getByPatientId(id, 7).subscribe((trackings) => {
+      const count = trackings.length;
+      const progress = Math.min(count / 7, 1);
+      this.user.update(u => ({ ...u, progress }));
+      const activos = this.dias.map((_, i) => i < count);
+      this.diasActivos.set(activos);
+    });
   }
 
   goToProfile() {
     this.routeAnimationService.navigateWithAnimation(['/profile'], 'slide');
   }
 
+  async proximamente() {
+    const t = await this.toast.create({ message: 'Notificaciones próximamente', duration: 2000, position: 'bottom', color: 'primary' });
+    await t.present();
+  }
+
   ionViewWillLeave() {
-    // Evita el aviso "aria-hidden" al navegar: blur del elemento con foco
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }

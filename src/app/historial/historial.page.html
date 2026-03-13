@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Historial de sesiones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding content-light">
+  <div *ngIf="loading" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando historial...</p>
+  </div>
+
+  <div *ngIf="!loading && trackings.length === 0" class="empty-state ion-text-center ion-padding">
+    <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
+    <h3>Sin registros aún</h3>
+    <p>Cuando completes rutinas y envíes reportes de molestias, aparecerán aquí.</p>
+  </div>
+
+  <ion-list *ngIf="!loading && trackings.length > 0" lines="none">
+    <ion-item *ngFor="let t of trackings" class="historial-item">
+      <ion-icon [name]="t.painLevel <= 3 ? 'happy-outline' : (t.painLevel <= 6 ? 'sad-outline' : 'warning-outline')" 
+                slot="start" [color]="getPainColor(t.painLevel)"></ion-icon>
+      <ion-label>
+        <h2>Sesión #{{ t.id }}</h2>
+        <p>Dolor: {{ t.painLevel }}/10 ({{ getPainLabel(t.painLevel) }})</p>
+        <p *ngIf="t.postObservations" class="obs">{{ t.postObservations }}</p>
+      </ion-label>
+      <ion-badge [color]="getPainColor(t.painLevel)" slot="end">{{ t.painLevel }}/10</ion-badge>
+    </ion-item>
+  </ion-list>
+</ion-content>

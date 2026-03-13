@@ -1,0 +1,41 @@
+.empty-state {
+  padding-top: 3rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--ion-color-medium);
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-weight: 700;
+    color: var(--ion-text-color);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 0.95rem;
+  }
+}
+
+.historial-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 0.5rem;
+  border-radius: 12px;
+  background: var(--ion-card-background, #fff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  ion-icon {
+    font-size: 1.5rem;
+    margin-right: 12px;
+  }
+
+  .obs {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    margin-top: 4px;
+    white-space: normal;
+  }
+}

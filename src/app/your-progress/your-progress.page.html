@@ -8,7 +8,7 @@
       <h1 class="name">¡Hola, {{ user().fullName }}!</h1>
     </ion-label>
     <ion-buttons slot="end">
-      <ion-button>
+      <ion-button (click)="proximamente()">
         <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -48,7 +48,7 @@
             </ion-button>
           </div>
           <div class="doctor-avatar">
-            <img src="https://i.pravatar.cc/150?img=11" alt="Fisioterapeuta" />
+            <img [src]="user().physioAvatarUrl || 'https://i.pravatar.cc/150?img=11'" alt="Fisioterapeuta" />
           </div>
         </div>
       </ion-card-content>
@@ -77,11 +77,12 @@
 
   <section class="weekly-section">
     <h3 class="section-subtitle">Actividad Semanal</h3>
+    <p class="weekly-hint">Sesiones completadas esta semana</p>
     <div class="week-days">
       @for (dia of dias; track $index) {
-        <div class="day-item" [class.active]="dia === 'L' || dia === 'M'">
+        <div class="day-item" [class.active]="diasActivos()[$index]">
           <ion-badge class="day-badge">{{ dia }}</ion-badge>
-          @if (dia === 'L' || dia === 'M') {
+          @if (diasActivos()[$index]) {
             <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
           }
         </div>
