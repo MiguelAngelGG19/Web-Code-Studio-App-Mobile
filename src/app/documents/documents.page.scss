@@ -1,0 +1,76 @@
+.documents-content {
+  --background: var(--activa-bg, #f5f5f9);
+}
+
+.empty-state {
+  .empty-icon {
+    font-size: 64px;
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+  h3 {
+    font-weight: 700;
+    color: var(--activa-text, #1a1a1a);
+  }
+  p {
+    color: var(--activa-text-muted, #666);
+  }
+}
+
+.doc-list {
+  background: transparent;
+}
+
+.doc-card {
+  border-radius: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--activa-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.06));
+}
+
+.doc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.doc-icon {
+  font-size: 28px;
+  color: var(--ion-color-primary);
+  flex-shrink: 0;
+}
+
+.doc-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.doc-name {
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 0 4px 0;
+  color: var(--activa-text, #1a1a1a);
+}
+
+.doc-meta {
+  font-size: 0.85rem;
+  color: var(--activa-text-muted, #666);
+  margin: 0;
+}
+
+.doc-open {
+  font-size: 20px;
+  color: var(--ion-color-medium);
+}
+
+.add-form {
+  background: #fff;
+  border-radius: 16px;
+  margin: 16px 0;
+  box-shadow: var(--activa-shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.06));
+}
+
+.form-hint {
+  font-size: 0.85rem;
+  color: var(--activa-text-muted, #666);
+  margin: 0 0 16px 0;
+}

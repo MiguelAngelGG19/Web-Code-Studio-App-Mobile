@@ -6,6 +6,7 @@ import { PatientRepository } from '../../core/domain/repositories/patient.reposi
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 import { TrackingApiService } from '../core/infrastructure/api/tracking-api.service';
 import { PhysiotherapistApiService } from '../core/infrastructure/api/physiotherapist-api.service';
+import { NotificationApiService } from '../core/infrastructure/api/notification-api.service';
 import { Storage } from '@ionic/storage-angular';
 
 @Component({
@@ -28,6 +29,7 @@ export class Tab4Page implements OnInit {
 
   dias = ['L', 'M', 'X', 'J', 'V', 'S'];
   diasActivos = signal<boolean[]>([false, false, false, false, false, false, false]);
+  unreadCount = signal(0);
 
   constructor(
     private router: Router,
@@ -36,8 +38,8 @@ export class Tab4Page implements OnInit {
     private routineApi: RoutineApiService,
     private trackingApi: TrackingApiService,
     private physioApi: PhysiotherapistApiService,
-    private storage: Storage,
-    private toast: ToastController
+    private notificationApi: NotificationApiService,
+    private storage: Storage
   ) {}
 
   async ngOnInit() {
@@ -81,15 +83,21 @@ export class Tab4Page implements OnInit {
       const activos = this.dias.map((_, i) => i < count);
       this.diasActivos.set(activos);
     });
+    this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
+  }
+
+  ionViewWillEnter() {
+    this.storage.get('currentPatientId').then((id) => {
+      if (id) this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
+    });
   }
 
   goToProfile() {
-    this.routeAnimationService.navigateWithAnimation(['/profile'], 'slide');
+    this.routeAnimationService.navigateWithAnimation(['/tabs/profile'], 'slide');
   }
 
-  async proximamente() {
-    const t = await this.toast.create({ message: 'Notificaciones próximamente', duration: 2000, position: 'bottom', color: 'primary' });
-    await t.present();
+  goToNotifications() {
+    this.router.navigate(['/tabs/notifications']);
   }
 
   ionViewWillLeave() {

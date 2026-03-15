@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/your-progress"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding content-light notifications-content">
+  <div *ngIf="loading" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando...</p>
+  </div>
+
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state ion-text-center ion-padding">
+    <ion-icon name="notifications-off-outline" class="empty-icon"></ion-icon>
+    <h3>Sin notificaciones</h3>
+    <p>Aquí aparecerán mensajes de tu fisioterapeuta, recordatorios y consejos.</p>
+  </div>
+
+  <ion-list *ngIf="!loading && notifications.length > 0" lines="none" class="notif-list">
+    <ion-card *ngFor="let n of notifications" class="notif-card" mode="ios" [class.read]="n.isRead" (click)="markAsRead(n)">
+      <ion-card-content>
+        <div class="notif-row">
+          <ion-icon [name]="getIcon(n.type)" [color]="getIconColor(n.type)" class="notif-icon"></ion-icon>
+          <div class="notif-body">
+            <h2 class="notif-title">{{ n.title }}</h2>
+            <p *ngIf="n.body" class="notif-body-text">{{ n.body }}</p>
+            <p class="notif-date">{{ formatDate(n.createdAt) }}</p>
+          </div>
+          <ion-badge *ngIf="!n.isRead" color="primary" class="unread-badge">Nuevo</ion-badge>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+</ion-content>

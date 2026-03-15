@@ -24,7 +24,7 @@
       <ion-col size="4">
         <ion-card class="stat-card ion-no-margin">
           <ion-card-header class="ion-text-center">
-            <ion-card-title>{{ patient?.birthYear ? (2025 - patient.birthYear) : '—' }}</ion-card-title>
+            <ion-card-title>{{ patient?.birthYear ? (currentYear - patient.birthYear) : '—' }}</ion-card-title>
             <ion-card-subtitle>EDAD</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
@@ -68,12 +68,12 @@
       <ion-label>Historial de sesiones</ion-label>
     </ion-item>
     
-    <ion-item button detail="true" class="menu-item" (click)="proximamente('Documentos médicos')">
+    <ion-item button detail="true" class="menu-item" (click)="goToDocuments()">
       <ion-icon name="document-text-outline" slot="start"></ion-icon>
       <ion-label>Documentos médicos</ion-label>
     </ion-item>
     
-    <ion-item button detail="true" class="menu-item" (click)="proximamente('Notificaciones')">
+    <ion-item button detail="true" class="menu-item" (click)="goToNotifications()">
       <ion-icon name="notifications-outline" slot="start"></ion-icon>
       <ion-label>Notificaciones</ion-label>
       <ion-badge slot="end" class="notification-dot"></ion-badge>

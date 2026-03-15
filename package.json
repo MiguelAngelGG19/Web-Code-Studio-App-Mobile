@@ -1,8 +1,9 @@
 {
-  "name": "web-code-app-mobile",
-  "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "name": "activa-fisioterapia",
+  "version": "1.0.0",
+  "author": "ACTIVA",
+  "description": "ACTIVA - App de fisioterapia para pacientes. Rutinas personalizadas, reportes de dolor y seguimiento.",
+  "homepage": "https://github.com/your-org/activa",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

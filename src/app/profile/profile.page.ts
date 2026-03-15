@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage-angular';
 import { ToastController } from '@ionic/angular';
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 import { PhysiotherapistApiService, Physiotherapist } from '../core/infrastructure/api/physiotherapist-api.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -14,10 +15,11 @@ import { PhysiotherapistApiService, Physiotherapist } from '../core/infrastructu
 export class ProfilePage implements OnInit {
   userName = 'Cargando...';
   patient: any = null;
+  currentYear = new Date().getFullYear();
   physio: Physiotherapist | null = null;
   tratamiento = '—';
   pacienteDesde = '—';
-  clinicName = 'ACTIVA Health Center';
+  clinicName = environment.clinicName ?? 'ACTIVA Health Center';
 
   constructor(
     private router: Router,
@@ -60,8 +62,16 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/tabs/historial']);
   }
 
+  goToNotifications() {
+    this.router.navigate(['/tabs/notifications']);
+  }
+
+  goToDocuments() {
+    this.router.navigate(['/tabs/documents']);
+  }
+
   async proximamente(feature: string) {
-    const t = await this.toast.create({ message: `${feature} próximamente`, duration: 2000, position: 'bottom', color: 'primary' });
+    const t = await this.toast.create({ message: `${feature} — disponible en futuras actualizaciones`, duration: 2500, position: 'bottom', color: 'medium' });
     await t.present();
   }
 

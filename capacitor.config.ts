@@ -1,12 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'web-code-app-mobile',
-  webDir: 'www',
-  server: {
-    androidScheme: 'https'
-  }
+  appId: 'com.activa.fisioterapia',
+  appName: 'ACTIVA',
+  webDir: 'www'
 };
 
 export default config;

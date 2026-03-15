@@ -145,6 +145,15 @@ ion-grid.ion-padding-top {
       background: var(--activa-warning);
     }
   }
+  .menu-item-disabled {
+    opacity: 0.7;
+    ion-label {
+      color: var(--activa-text-muted);
+    }
+    ion-icon {
+      opacity: 0.8;
+    }
+  }
 }
 
 .logout-btn {

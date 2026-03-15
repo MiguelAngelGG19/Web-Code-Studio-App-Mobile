@@ -4,8 +4,10 @@
 
 export const environment = {
   production: false,
-  // cuando pruebes localmente ajusta al puerto donde corre tu servidor
-  apiUrl: 'http://localhost:3000/api'
+  apiUrl: 'http://localhost:3000/api',
+  clinicName: 'ACTIVA Health Center',
+  clinicAddress: 'Av. Principal 123, Ciudad',
+  clinicMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia'
 };
 
 /*

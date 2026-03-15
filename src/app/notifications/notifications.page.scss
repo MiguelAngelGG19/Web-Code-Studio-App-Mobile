@@ -1,0 +1,80 @@
+.empty-state {
+  padding-top: 3rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--ion-color-medium);
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-weight: 700;
+    color: var(--ion-text-color);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 0.95rem;
+  }
+}
+
+.notif-list {
+  --background: transparent;
+  padding: 0;
+}
+
+.notif-card {
+  margin: 0 0 10px 0;
+  border-radius: 12px;
+  cursor: pointer;
+
+  &.read {
+    opacity: 0.85;
+  }
+
+  ion-card-content {
+    padding: 14px 16px;
+  }
+}
+
+.notif-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.notif-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.notif-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--ion-text-color);
+}
+
+.notif-body-text {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  margin: 0 0 4px 0;
+  line-height: 1.4;
+}
+
+.notif-date {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.unread-badge {
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}

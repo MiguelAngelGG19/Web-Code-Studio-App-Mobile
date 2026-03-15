@@ -36,6 +36,14 @@ const routes: Routes = [
         loadChildren: () => import('../historial/historial.module').then(m => m.HistorialPageModule)
       },
       {
+        path: 'notifications',
+        loadChildren: () => import('../notifications/notifications.module').then(m => m.NotificationsPageModule)
+      },
+      {
+        path: 'documents',
+        loadChildren: () => import('../documents/documents.module').then(m => m.DocumentsPageModule)
+      },
+      {
         path: '',
         redirectTo: 'your-progress', // Si entras a /tabs, te manda directo a your-progress 
         pathMatch: 'full'

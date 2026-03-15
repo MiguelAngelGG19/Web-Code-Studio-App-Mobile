@@ -35,6 +35,19 @@ export class HistorialPage implements OnInit {
     }
   }
 
+  formatTime(timeStr?: string): string {
+    if (!timeStr) return '';
+    const parts = String(timeStr).split(':');
+    if (parts.length >= 2) {
+      const h = parseInt(parts[0], 10);
+      const m = parts[1];
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return `${h12}:${m} ${ampm}`;
+    }
+    return timeStr;
+  }
+
   getPainLabel(level: number): string {
     if (level <= 2) return 'Bajo';
     if (level <= 5) return 'Moderado';

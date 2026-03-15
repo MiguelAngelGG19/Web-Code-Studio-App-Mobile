@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding content-light">
+<ion-content class="ion-padding content-light historial-content">
   <div *ngIf="loading" class="ion-text-center ion-padding">
     <ion-spinner name="crescent" color="primary"></ion-spinner>
     <p>Cargando historial...</p>
@@ -19,16 +19,26 @@
     <p>Cuando completes rutinas y envíes reportes de molestias, aparecerán aquí.</p>
   </div>
 
-  <ion-list *ngIf="!loading && trackings.length > 0" lines="none">
-    <ion-item *ngFor="let t of trackings" class="historial-item">
-      <ion-icon [name]="t.painLevel <= 3 ? 'happy-outline' : (t.painLevel <= 6 ? 'sad-outline' : 'warning-outline')" 
-                slot="start" [color]="getPainColor(t.painLevel)"></ion-icon>
-      <ion-label>
-        <h2>Sesión #{{ t.id }}</h2>
-        <p>Dolor: {{ t.painLevel }}/10 ({{ getPainLabel(t.painLevel) }})</p>
-        <p *ngIf="t.postObservations" class="obs">{{ t.postObservations }}</p>
-      </ion-label>
-      <ion-badge [color]="getPainColor(t.painLevel)" slot="end">{{ t.painLevel }}/10</ion-badge>
-    </ion-item>
-  </ion-list>
+  <div *ngIf="!loading && trackings.length > 0" class="historial-container">
+    <p class="historial-summary">{{ trackings.length }} {{ trackings.length === 1 ? 'reporte' : 'reportes' }} en tu historial</p>
+    <ion-list lines="none" class="historial-list">
+      <ion-card *ngFor="let t of trackings; let i = index" class="historial-card" [class]="'pain-level-' + getPainColor(t.painLevel)" mode="ios">
+        <ion-card-content>
+          <div class="card-accent" [attr.data-level]="getPainColor(t.painLevel)"></div>
+          <div class="card-header">
+            <div class="pain-icon-wrap" [attr.data-level]="getPainColor(t.painLevel)">
+              <ion-icon [name]="t.painLevel <= 3 ? 'happy-outline' : (t.painLevel <= 6 ? 'sad-outline' : 'warning-outline')" class="pain-icon"></ion-icon>
+            </div>
+            <div class="card-title">
+              <h2>Reporte {{ i + 1 }}</h2>
+              <p *ngIf="t.startTime" class="card-time">{{ formatTime(t.startTime) }}</p>
+            </div>
+            <ion-badge [color]="getPainColor(t.painLevel)" class="pain-badge">{{ t.painLevel }}/10</ion-badge>
+          </div>
+          <p class="pain-label">{{ getPainLabel(t.painLevel) }}</p>
+          <p *ngIf="t.postObservations" class="obs">{{ t.postObservations }}</p>
+        </ion-card-content>
+      </ion-card>
+    </ion-list>
+  </div>
 </ion-content>

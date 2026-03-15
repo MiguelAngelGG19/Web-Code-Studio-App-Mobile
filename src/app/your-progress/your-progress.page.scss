@@ -22,6 +22,22 @@
   }
 }
 
+.notification-btn {
+  position: relative;
+  .notification-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.65rem;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 .header-label {
   flex: 1;
   .greeting {

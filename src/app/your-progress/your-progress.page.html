@@ -8,8 +8,11 @@
       <h1 class="name">¡Hola, {{ user().fullName }}!</h1>
     </ion-label>
     <ion-buttons slot="end">
-      <ion-button (click)="proximamente()">
+      <ion-button (click)="goToNotifications()" class="notification-btn">
         <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+        @if (unreadCount() > 0) {
+          <ion-badge color="danger" class="notification-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</ion-badge>
+        }
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

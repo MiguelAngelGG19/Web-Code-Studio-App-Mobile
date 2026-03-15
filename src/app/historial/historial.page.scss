@@ -19,23 +19,133 @@
   }
 }
 
-.historial-item {
-  --padding-start: 0;
-  --inner-padding-end: 0;
-  margin-bottom: 0.5rem;
-  border-radius: 12px;
-  background: var(--ion-card-background, #fff);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.historial-container {
+  padding-bottom: 1.5rem;
+}
 
-  ion-icon {
+.historial-summary {
+  font-size: 0.95rem;
+  color: var(--activa-text-muted, #475569);
+  font-weight: 600;
+  margin: 0 0 1.25rem 0;
+  padding-left: 2px;
+  letter-spacing: 0.02em;
+}
+
+.historial-list {
+  --background: transparent;
+  padding: 0;
+}
+
+.historial-card {
+  position: relative;
+  margin: 0 0 14px 0;
+  border-radius: var(--activa-radius, 16px);
+  box-shadow: var(--activa-shadow-sm, 0 2px 12px rgba(0, 0, 0, 0.08));
+  --background: var(--activa-card, #ffffff);
+  background: var(--activa-card, #ffffff);
+  overflow: hidden;
+  border: 1px solid var(--activa-border, rgba(0, 0, 0, 0.06));
+
+  ion-card-content {
+    padding: 18px 18px 18px 22px;
+    position: relative;
+  }
+}
+
+.card-accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: var(--activa-radius, 16px) 0 0 var(--activa-radius, 16px);
+
+  &[data-level="success"] {
+    background: var(--activa-success, #059669);
+  }
+  &[data-level="warning"] {
+    background: var(--activa-warning, #d97706);
+  }
+  &[data-level="danger"] {
+    background: var(--activa-danger, #dc2626);
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 8px;
+
+  .pain-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &[data-level="success"] {
+      background: rgba(5, 150, 105, 0.12);
+      color: var(--activa-success, #059669);
+    }
+    &[data-level="warning"] {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--activa-warning, #d97706);
+    }
+    &[data-level="danger"] {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--activa-danger, #dc2626);
+    }
+  }
+
+  .pain-icon {
     font-size: 1.5rem;
-    margin-right: 12px;
   }
 
-  .obs {
-    font-size: 0.85rem;
-    color: var(--ion-color-medium);
-    margin-top: 4px;
-    white-space: normal;
+  .card-title {
+    flex: 1;
+    min-width: 0;
+
+    h2 {
+      font-size: 1.08rem;
+      font-weight: 800;
+      margin: 0 0 4px 0;
+      color: var(--activa-text, #0f172a);
+      letter-spacing: -0.02em;
+    }
+
+    .card-time {
+      font-size: 0.85rem;
+      color: var(--activa-text-muted, #475569);
+      font-weight: 600;
+      margin: 0;
+    }
   }
+
+  .pain-badge {
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 20px;
+  }
+}
+
+.pain-label {
+  font-size: 0.9rem;
+  color: var(--activa-text-soft, #334155);
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  text-transform: capitalize;
+}
+
+.obs {
+  font-size: 0.9rem;
+  color: var(--activa-text-muted, #334155);
+  line-height: 1.5;
+  margin: 0;
+  white-space: normal;
+  font-weight: 500;
 }
