@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+
 
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
