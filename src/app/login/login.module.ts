@@ -1,22 +1,18 @@
-import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { LoginPage } from './login.page';
-import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
+import { FormsModule } from '@angular/forms'; // ← AGREGA
+import { IonicModule } from '@ionic/angular';
 import { loginPageRoutingModule } from './login-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { LoginPage } from './login.page';
+import { HttpClientModule } from '@angular/common/http'; // ← AGREGA
 
 @NgModule({
   imports: [
-    HttpClientModule, 
-    IonicModule,
     CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    ExploreContainerComponentModule,
-    loginPageRoutingModule
+    FormsModule,       // ← AGREGA
+    IonicModule,
+    loginPageRoutingModule,
+    HttpClientModule,  // ← AGREGA
   ],
   declarations: [LoginPage]
 })

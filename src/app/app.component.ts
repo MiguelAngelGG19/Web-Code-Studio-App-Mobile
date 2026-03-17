@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouteAnimationService } from './core/services/route-animation.service';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'; // ← AGREGA
 
 @Component({
   selector: 'app-root',
@@ -9,7 +8,5 @@ import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'; // ← AGRE
   standalone: false,
 })
 export class AppComponent {
-  constructor(private routeAnimationService: RouteAnimationService) {
-    GoogleAuth.initialize(); // ← AGREGA AQUÍ DENTRO DEL CONSTRUCTOR
-  }
+  constructor(private routeAnimationService: RouteAnimationService) {}
 }
