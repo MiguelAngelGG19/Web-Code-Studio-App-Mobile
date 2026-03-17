@@ -2,6 +2,7 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 
@@ -39,4 +40,6 @@ import { UserApiService } from '../core/domain/infrastructure/driven-adapters/us
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+
+
 export class AppModule {}

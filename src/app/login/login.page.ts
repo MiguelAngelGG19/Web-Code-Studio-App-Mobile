@@ -5,7 +5,8 @@ import { Storage } from '@ionic/storage-angular';
 import { HttpClient } from '@angular/common/http';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
-const API_URL = 'http://TU_IP:3000/api';  // ← cambia TU_IP por tu IP local
+const API_URL = 'http://192.168.1.4:3000/api';
+ // ← cambia TU_IP por tu IP local
 
 @Component({
   selector: 'app-login',
