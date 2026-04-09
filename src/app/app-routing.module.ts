@@ -18,7 +18,11 @@ const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.module').then( m => m.TabsPageModule)
+  },  {
+    path: 'physiotherapist-profile',
+    loadChildren: () => import('./physiotherapist-profile/physiotherapist-profile.module').then( m => m.PhysiotherapistProfilePageModule)
   },
+
  
   
 

@@ -19,10 +19,13 @@ export class PatientApiService implements PatientRepository {
       params: { email: email.trim(), limit: '1' }
     }).pipe(
       map((res) => {
-        const rows = res.rows ?? [];
+        const rows = res?.rows ?? [];
         return rows.length > 0 ? this.mapPatient(rows[0]) : null;
       }),
-      catchError(() => of(null))
+      catchError((err) => {
+        // Propagar error para mostrar "Error de conexión" (no confundir con "No encontrado")
+        return throwError(() => err);
+      })
     );
   }
 
@@ -48,17 +51,19 @@ export class PatientApiService implements PatientRepository {
   }
 
   private mapPatient(p: any): Patient {
+    const birthDate = p.birthDate ?? p.birth_date;
+    const birthYear = p.birthYear ?? p.birth_year ?? (birthDate ? new Date(birthDate).getFullYear() : null);
     return {
-      id: p.id ?? p.idPaciente,
+      id: p.id ?? p.id_patient ?? p.idPaciente,
       firstName: p.firstName ?? p.first_name,
-      lastNameP: p.lastNameP ?? p.last_name_p,
-      lastNameM: p.lastNameM ?? p.last_name_m,
-      birthYear: p.birthYear ?? p.birth_year,
-      sex: p.sex,
+      lastNameP: p.lastNameP ?? p.last_name_paternal ?? p.last_name_p,
+      lastNameM: p.lastNameM ?? p.last_name_maternal ?? p.last_name_m,
+      birthYear,
+      sex: p.sex ?? p.gender,
       height: p.height,
       weight: p.weight,
       createdAt: p.createdAt ? new Date(p.createdAt) : (p.created_at ? new Date(p.created_at) : new Date()),
-      physiotherapistId: p.physiotherapistId ?? p.physiotherapist_id,
+      physiotherapistId: p.physioId ?? p.physiotherapistId ?? p.id_physio ?? p.physiotherapist_id ?? 0,
       email: p.email
     };
   }

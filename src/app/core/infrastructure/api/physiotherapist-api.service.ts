@@ -10,6 +10,11 @@ export interface Physiotherapist {
   lastNameP: string;
   lastNameM?: string;
   fullName: string;
+  birthYear?: number;
+  professionalLicense?: string;
+  curp?: string;
+  licenseDocUrl?: string;
+  photoUrl?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +37,11 @@ export class PhysiotherapistApiService {
           lastNameP: lastP,
           lastNameM: lastM,
           fullName: [first, lastP, lastM].filter(Boolean).join(' ') || 'Fisioterapeuta',
+          birthYear: p.birthYear ?? p.birth_year,
+          professionalLicense: p.professionalLicense ?? p.professional_license,
+          curp: p.curp,
+          licenseDocUrl: p.licenseDocUrl ?? p.license_doc_url,
+          photoUrl: p.photoUrl ?? p.photo_url,
         };
       }),
       catchError(() => of(null))

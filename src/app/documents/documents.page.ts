@@ -13,9 +13,11 @@ export class DocumentsPage implements OnInit {
   documents: MedicalDocument[] = [];
   loading = true;
   showAddForm = false;
+  
+  // Variables del formulario
   newName = '';
   newType = 'otro';
-  newFileUrl = '';
+  selectedFile: File | null = null; // Guardará el archivo PDF físico
   saving = false;
 
   constructor(
@@ -51,28 +53,53 @@ export class DocumentsPage implements OnInit {
   toggleAddForm() {
     this.showAddForm = !this.showAddForm;
     if (!this.showAddForm) {
+      // Limpiamos el formulario al cerrar
       this.newName = '';
       this.newType = 'otro';
-      this.newFileUrl = '';
+      this.selectedFile = null; 
+    }
+  }
+
+  // Captura el archivo cuando el usuario lo selecciona
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        this.toast.create({ message: 'Por favor, selecciona un archivo PDF válido.', duration: 2500, position: 'bottom', color: 'warning' }).then(t => t.present());
+        return;
+      }
+      this.selectedFile = file;
     }
   }
 
   async addDocument() {
     const name = (this.newName || '').trim();
-    const fileUrl = (this.newFileUrl || '').trim();
-    if (!name || !fileUrl) {
-      const t = await this.toast.create({ message: 'Nombre y URL del archivo son obligatorios', duration: 2500, position: 'bottom', color: 'warning' });
+    
+    // Validamos que exista el nombre y el archivo PDF
+    if (!name || !this.selectedFile) {
+      const t = await this.toast.create({ message: 'El nombre y el archivo PDF son obligatorios', duration: 2500, position: 'bottom', color: 'warning' });
       await t.present();
       return;
     }
+    
     const patientId = await this.storage.get('currentPatientId');
     if (!patientId) {
       const t = await this.toast.create({ message: 'No se pudo identificar al paciente', duration: 2000, position: 'bottom', color: 'danger' });
       await t.present();
       return;
     }
+
     this.saving = true;
-    this.documentApi.create({ patientId, name, type: this.newType, fileUrl }).subscribe({
+
+    // IMPORTANTE: Preparamos los datos como FormData para poder enviar el archivo físico
+    const formData = new FormData();
+    formData.append('patientId', patientId);
+    formData.append('name', name);
+    formData.append('type', this.newType);
+    formData.append('file', this.selectedFile);
+
+    // Nota: Usamos "as any" temporalmente por si tu servicio aún espera un JSON estricto
+    this.documentApi.create(formData as any).subscribe({
       next: (doc) => {
         this.saving = false;
         if (doc) {
@@ -85,7 +112,7 @@ export class DocumentsPage implements OnInit {
       },
       error: () => {
         this.saving = false;
-        this.toast.create({ message: 'Error de conexión', duration: 2000, position: 'bottom', color: 'danger' }).then((x) => x.present());
+        this.toast.create({ message: 'Error de conexión o al subir archivo', duration: 2000, position: 'bottom', color: 'danger' }).then((x) => x.present());
       },
     });
   }

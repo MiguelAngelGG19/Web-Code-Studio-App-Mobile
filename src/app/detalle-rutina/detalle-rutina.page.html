@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="tabs/your-progress" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Detalle de Rutina</ion-title>
+    <ion-title>{{ selectedRoutine ? selectedRoutine.name : 'Detalle de Rutina' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -38,18 +38,16 @@
     <div *ngIf="selectedRoutine && exercises.length > 0" class="exercises-section">
       <h3 class="list-label">Ejercicios</h3>
       <ion-list lines="none">
-        <ion-item *ngFor="let ex of exercises; let i = index" class="exercise-item" button (click)="openModal(ex)">
+        <ion-item *ngFor="let ex of exercises" class="exercise-item" button (click)="openModal(ex)">
           <div class="ex-left" slot="start">
-            <span class="ex-number">{{ i + 1 }}</span>
             <ion-thumbnail class="ex-thumb">
               <img [src]="getExerciseImage(ex)" [alt]="ex.name" (error)="$any($event.target).src='assets/icon/ico-activa.png'" />
             </ion-thumbnail>
           </div>
           <ion-label>
             <h2>{{ ex.name }}</h2>
-            <p *ngIf="ex.bodyZone">{{ ex.bodyZone }}</p>
+            <p>{{ ex.duration }}</p>
           </ion-label>
-          <ion-icon name="chevron-forward" slot="end"></ion-icon>
         </ion-item>
       </ion-list>
     </div>
@@ -110,7 +108,6 @@
 
 <div class="floating-btn-wrap" *ngIf="selectedRoutine && exercises.length > 0">
   <ion-button class="floating-btn" expand="block" (click)="startRoutine()">
-    <ion-icon name="play-circle"></ion-icon>
-    Comenzar rutina
+    Comienzo
   </ion-button>
 </div>

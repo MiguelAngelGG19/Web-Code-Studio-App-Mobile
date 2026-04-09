@@ -16,7 +16,7 @@
   <div *ngIf="!loading && documents.length === 0 && !showAddForm" class="empty-state ion-text-center ion-padding">
     <ion-icon name="document-text-outline" class="empty-icon"></ion-icon>
     <h3>Sin documentos</h3>
-    <p>Aquí puedes guardar enlaces a informes, radiografías o análisis. Añade el primero abajo.</p>
+    <p>Aquí puedes guardar informes, radiografías o análisis en formato PDF. Añade el primero abajo.</p>
   </div>
 
   <ion-list *ngIf="!loading && documents.length > 0" lines="none" class="doc-list">
@@ -42,7 +42,8 @@
       <ion-label position="stacked">Nombre del documento</ion-label>
       <ion-input [(ngModel)]="newName" placeholder="Ej. Radiografía hombro"></ion-input>
     </ion-item>
-    <ion-item lines="full">
+    
+    <ion-item lines="full" class="ion-margin-bottom">
       <ion-label position="stacked">Tipo</ion-label>
       <ion-select [(ngModel)]="newType" interface="action-sheet">
         <ion-select-option value="informe">Informe</ion-select-option>
@@ -52,11 +53,23 @@
         <ion-select-option value="otro">Otro</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item lines="full">
-      <ion-label position="stacked">URL del archivo</ion-label>
-      <ion-input [(ngModel)]="newFileUrl" type="url" placeholder="https://..."></ion-input>
-    </ion-item>
-    <p class="form-hint">Pega el enlace donde está guardado el archivo (ej. Google Drive, OneDrive, o tu clínica).</p>
+
+    <div class="file-upload-section">
+      <p class="section-label">Archivo PDF</p>
+      
+      <input type="file" #fileInput accept="application/pdf" (change)="onFileSelected($event)" style="display: none;">
+      
+      <ion-button expand="block" fill="outline" class="upload-btn" (click)="fileInput.click()">
+        <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+        {{ selectedFile ? 'Cambiar documento' : 'Seleccionar PDF' }}
+      </ion-button>
+
+      <div *ngIf="selectedFile" class="selected-file-badge">
+        <ion-icon name="document-text"></ion-icon>
+        <span>{{ selectedFile.name }}</span>
+      </div>
+    </div>
+
     <ion-button expand="block" (click)="addDocument()" [disabled]="saving">
       {{ saving ? 'Guardando...' : 'Guardar documento' }}
     </ion-button>

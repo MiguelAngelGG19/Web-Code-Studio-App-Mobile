@@ -21,6 +21,7 @@ export interface RoutineExercise {
   videoUrl: string;
   series?: number;
   reps?: number;
+  duration?: string;
   consejo?: string;
 }
 
@@ -56,6 +57,7 @@ export class RoutineApiService {
               videoUrl: e.videoUrl ?? e.video_url ?? '',
               series: e.series ?? 3,
               reps: e.reps ?? 10,
+              duration: e.duration ?? '01:00',
               consejo: e.consejo ?? ''
             }))
           };

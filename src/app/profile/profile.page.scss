@@ -110,8 +110,16 @@ ion-grid.ion-padding-top {
       font-size: 1rem;
     }
     p {
-      font-size: 0.85rem;
-      color: var(--activa-text);
+      color: #5f6368;
+      font-size: 0.9rem;
+    }
+
+    .view-details {
+      color: #4285f4;
+      font-size: 0.8rem;
+      margin-top: 4px;
+      font-weight: 500;
+      text-decoration: underline;
     }
   }
 }

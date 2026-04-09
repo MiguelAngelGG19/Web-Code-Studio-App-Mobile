@@ -44,6 +44,10 @@ const routes: Routes = [
         loadChildren: () => import('../documents/documents.module').then(m => m.DocumentsPageModule)
       },
       {
+        path: 'physiotherapist-profile',
+        loadChildren: () => import('../physiotherapist-profile/physiotherapist-profile.module').then(m => m.PhysiotherapistProfilePageModule)
+      },
+      {
         path: '',
         redirectTo: 'your-progress', // Si entras a /tabs, te manda directo a your-progress 
         pathMatch: 'full'

@@ -48,15 +48,21 @@ export class HistorialPage implements OnInit {
     return timeStr;
   }
 
+  // --- CAMBIOS PARA UNA VIBRA MÁS POSITIVA ---
+
   getPainLabel(level: number): string {
-    if (level <= 2) return 'Bajo';
-    if (level <= 5) return 'Moderado';
-    return 'Alto';
+    // Cambiamos "Bajo, Moderado, Alto" por frases que celebren el esfuerzo
+    if (level <= 3) return 'Excelente ritmo';
+    if (level <= 6) return 'Buen esfuerzo';
+    return 'Máxima intensidad';
   }
 
   getPainColor(level: number): string {
-    if (level <= 2) return 'success';
-    if (level <= 5) return 'warning';
+    // Alineamos los rangos (3 y 6) con la lógica de los íconos del HTML
+    // Ojo: Seguimos devolviendo success/warning/danger porque así los nombramos en el SCSS,
+    // pero recuerda que visualmente ahora son Azul, Amarillo y Naranja.
+    if (level <= 3) return 'success'; 
+    if (level <= 6) return 'warning'; 
     return 'danger';
   }
 

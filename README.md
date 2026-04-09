@@ -20,6 +20,9 @@ npm start
 
 Abre la URL que indique el CLI (ej. `http://localhost:8100`). La app usa `src/environments/environment.ts` (`apiUrl: 'http://localhost:3000/api'`).
 
+- **Emulador Android:** en `environment.ts` pon `apiUrl: 'http://10.0.2.2:3000/api'` (el emulador usa esa IP para llegar a tu PC).
+- **Teléfono físico:** teléfono y PC deben estar en la **misma red Wi‑Fi**. En la PC ejecuta `ipconfig` (Windows) y anota la **IPv4** (ej. 192.168.1.100). En `environment.prod.ts` pon `apiUrl: 'http://192.168.1.100:3000/api'` (usa tu IP). Luego: `npm run build -- --configuration=production`, `npx cap sync android`, y vuelve a instalar la app en el teléfono. Asegúrate de que el backend esté corriendo en la PC y, si hace falta, permite el puerto 3000 en el firewall de Windows.
+
 ---
 
 ## Build para producción y Android

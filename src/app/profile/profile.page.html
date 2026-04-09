@@ -6,7 +6,7 @@
         <ion-avatar class="custom-avatar">
           <img [src]="getAvatarUrl()" alt="Avatar" />
         </ion-avatar>
-        <ion-fab-button size="small" class="edit-btn">
+        <ion-fab-button size="small" class="edit-btn" (click)="changePhoto()">
           <ion-icon name="pencil"></ion-icon>
         </ion-fab-button>
       </ion-col>
@@ -53,11 +53,12 @@
   </ion-text>
 
   <ion-card class="plan-card ion-margin-horizontal">
-    <ion-item lines="none" detail="false" class="plan-item">
+    <ion-item lines="none" detail="true" class="plan-item" (click)="goToPhysioProfile()">
       <ion-icon name="business" slot="start" class="plan-icon"></ion-icon>
       <ion-label>
         <h2>{{ clinicName }}</h2>
         <p>Fisioterapeuta: {{ physio?.fullName || '—' }}</p>
+        <p class="view-details" *ngIf="physio">Ver información general</p>
       </ion-label>
     </ion-item>
   </ion-card>
