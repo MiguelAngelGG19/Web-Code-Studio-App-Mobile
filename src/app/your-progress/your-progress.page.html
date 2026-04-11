@@ -1,88 +1,95 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="transparent-toolbar ion-padding-horizontal">
-    <ion-avatar slot="start" class="header-avatar">
-      <img src="https://i.pravatar.cc/150?u=carlos" alt="User" />
+  <ion-toolbar class="header-toolbar">
+    <ion-avatar slot="start" class="header-avatar" (click)="goToProfile()">
+      <img [src]="user().avatarUrl" alt="Avatar" />
     </ion-avatar>
-    <ion-label>
+    <ion-label class="header-label">
       <p class="greeting">BUENOS DÍAS</p>
       <h1 class="name">¡Hola, {{ user().fullName }}!</h1>
     </ion-label>
     <ion-buttons slot="end">
-      <ion-button color="dark">
-        <ion-icon name="notifications" slot="icon-only"></ion-icon>
+      <ion-button (click)="goToNotifications()" class="notification-btn">
+        <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+        @if (unreadCount() > 0) {
+          <ion-badge color="danger" class="notification-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</ion-badge>
+        }
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding custom-bg">
-  
-  <ion-row class="ion-align-items-end ion-margin-bottom">
-    <ion-col size="9" class="ion-no-padding">
+<ion-content class="ion-padding content-area">
+  <section class="progress-section">
+    <div class="progress-header">
       <h2 class="section-title">Tu progreso hoy</h2>
-    </ion-col>
-    <ion-col size="3" class="ion-no-padding ion-text-end">
-      <span class="progress-text">{{ (user().progress * 100) | number:'1.0-0' }}%</span>
-    </ion-col>
-  </ion-row>
-  <ion-progress-bar [value]="user().progress" class="custom-progress"></ion-progress-bar>
+      <span class="progress-value">{{ (user().progress * 100) | number:'1.0-0' }}%</span>
+    </div>
+    <ion-progress-bar [value]="user().progress" class="progress-bar"></ion-progress-bar>
+  </section>
 
-  <ion-row class="ion-align-items-center ion-margin-top appointment-header">
-    <ion-col size="6" class="ion-no-padding">
+  <section class="appointment-section">
+    <div class="section-header">
       <h3 class="section-subtitle">Próxima Cita</h3>
-    </ion-col>
-    <ion-col size="6" class="ion-no-padding ion-text-end">
-      <ion-text color="tertiary" class="link-text">Ver calendario</ion-text>
-    </ion-col>
-  </ion-row>
-
-  <ion-card class="appointment-card ion-no-margin ion-margin-bottom" mode="ios">
-    <ion-card-content class="ion-no-padding">
-      <ion-row class="ion-align-items-center">
-        <ion-col size="8" class="appointment-info">
-          <p class="tag"><ion-icon name="medkit"></ion-icon> SESIÓN DE FISIOTERAPIA</p>
-          <h2 class="doctor-name">{{ user().specialist }}</h2>
-          <p class="date">{{ user().nextAppointment }}</p>
-          <ion-button fill="clear" color="tertiary" size="small" class="details-btn">
-            <ion-icon name="calendar-outline" slot="start"></ion-icon> Ver detalles
-          </ion-button>
-        </ion-col>
-        <ion-col size="4" class="doctor-img-col ion-text-center">
-          <img src="https://i.pravatar.cc/150?img=11" class="doctor-img" />
-        </ion-col>
-      </ion-row>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card class="routine-card ion-no-margin ion-margin-top" mode="ios">
-    <ion-card-content class="ion-text-center">
-      <ion-icon name="barbell" class="routine-icon"></ion-icon>
-      <h2 class="routine-title">Tu rutina personalizada</h2>
-      <p class="routine-desc">Continúa con tu recuperación. Hoy toca enfoque en movilidad de hombro.</p>
-      
-      <ion-button expand="block" class="start-btn" shape="round" tab="detalle-rutina" href="/tabs/detalle-rutina">
-        EMPEZAR RUTINA <ion-icon name="play-circle" slot="end"></ion-icon>
+      <ion-button fill="clear" size="small" routerLink="/tabs/confirmed-appointment">
+        <ion-icon name="calendar-outline"></ion-icon>
+        Ver
       </ion-button>
-      
-      <ion-row class="routine-meta ion-justify-content-center">
-        <ion-col size="auto"><ion-icon name="time-outline"></ion-icon> 15 mins</ion-col>
-        <ion-col size="auto"><ion-icon name="list-outline"></ion-icon> 5 ejercicios</ion-col>
-      </ion-row>
-    </ion-card-content>
-  </ion-card>
+    </div>
+    <ion-card class="appointment-card" mode="ios">
+      <ion-card-content>
+        <div class="appointment-content">
+          <div class="appointment-info">
+            <div class="tag">
+              <ion-icon name="medkit-outline"></ion-icon>
+              <span>SESIÓN DE FISIOTERAPIA</span>
+            </div>
+            <h2 class="doctor-name">{{ user().specialist }}</h2>
+            <p class="date">{{ user().nextAppointment }}</p>
+            <ion-button fill="clear" size="small" routerLink="/tabs/confirmed-appointment">
+              <ion-icon name="arrow-forward-circle-outline" slot="start"></ion-icon>
+              Ver detalles
+            </ion-button>
+          </div>
+          <div class="doctor-avatar">
+            <img [src]="user().physioAvatarUrl || 'https://i.pravatar.cc/150?img=11'" alt="Fisioterapeuta" />
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </section>
 
-  <h3 class="section-subtitle ion-margin-top block-title">Actividad Semanal</h3>
-  <ion-grid class="weekly-grid ion-no-padding">
-    <ion-row class="ion-justify-content-between">
+  <section class="routine-section">
+    <ion-card class="routine-card" mode="ios">
+      <ion-card-content>
+        <div class="routine-icon-wrap">
+          <ion-icon name="barbell-outline"></ion-icon>
+        </div>
+        <h2 class="routine-title">Tu rutina personalizada</h2>
+        <p class="routine-desc">{{ user().routineName }}. Continúa con tu recuperación.</p>
+        <ion-button expand="block" class="start-btn" routerLink="/tabs/detalle-rutina">
+          <ion-icon name="play-circle" slot="start"></ion-icon>
+          Empezar rutina
+        </ion-button>
+        <div class="routine-meta">
+          <span><ion-icon name="time-outline"></ion-icon> 15 mins</span>
+          <span><ion-icon name="list-outline"></ion-icon> Ejercicios</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </section>
+
+  <section class="weekly-section">
+    <h3 class="section-subtitle">Actividad Semanal</h3>
+    <p class="weekly-hint">Sesiones completadas esta semana</p>
+    <div class="week-days">
       @for (dia of dias; track $index) {
-        <ion-col size="auto" class="day-col">
-          <ion-badge [class.active-day]="dia === 'L' || dia === 'M'" class="day-badge" mode="ios">
-            {{ dia }}
-          </ion-badge>
-          <ion-icon *ngIf="dia === 'L' || dia === 'M'" name="checkmark-circle" class="check-icon"></ion-icon>
-        </ion-col>
+        <div class="day-item" [class.active]="diasActivos()[$index]">
+          <ion-badge class="day-badge">{{ dia }}</ion-badge>
+          @if (diasActivos()[$index]) {
+            <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          }
+        </div>
       }
-    </ion-row>
-  </ion-grid>
-
+    </div>
+  </section>
 </ion-content>

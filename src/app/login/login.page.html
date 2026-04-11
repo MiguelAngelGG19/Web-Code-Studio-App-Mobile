@@ -1,47 +1,35 @@
 <ion-content [fullscreen]="true" class="login-content">
-  <div class="login-container">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-container">
     <div class="logo-section">
-      <img src="assets/icon/ico-activa.png" 
-           alt="Logo Activa" 
-           width="200" 
-           height="150" 
-           class="logo-image">
-      <h2 class="logo-title" style="margin-top: -30px; font-weight: bold;">ACTIVA</h2>
+      <div class="logo-circle">
+        <img src="assets/icon/ico-activa.png" alt="ACTIVA" class="logo-image" width="52" height="52" />
+      </div>
+      <h1 class="logo-title">ACTIVA</h1>
+      <p class="logo-subtitle">Inicia sesión con tu correo</p>
     </div>
 
     <div class="form-section">
-      <ion-input
-        type="email"
-        fill="solid"
-        label="Correo electrónico"
-        labelPlacement="floating"
-        helperText="Introduce un correo electrónico válido"
-        errorText="Correo electrónico inválido"
-        ngModel
-        email
-        class="login-input"
-        style="margin-top: -40px;"
-      ></ion-input>
-
-      <ion-input
-        type="password"
-        fill="solid"
-        label="Contraseña"
-        labelPlacement="floating"
-        errorText="Contraseña inválida"
-        ngModel
-        password
-        class="login-input"
-      >
-        <ion-icon slot="start" name="lock-closed" aria-hidden="true"></ion-icon>
-      </ion-input>
-
-      <ion-button fill="clear" size="small" expand="block" class="forgot-password">¿Olvidaste tu contraseña?</ion-button>
+      <label class="input-label">Correo electrónico</label>
+      <ion-item lines="none" class="input-wrapper">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-input
+          type="email"
+          formControlName="email"
+          placeholder="paciente@activa.com"
+          class="login-input input-dark-text"
+        ></ion-input>
+      </ion-item>
     </div>
 
     <div class="button-section">
-      <ion-button expand="block" class="login-button-primary" tab="your-progress" href="/tabs/your-progress">Validar y Continuar</ion-button>
-      <ion-button fill="clear" size="small" expand="block" class="login-button-secondary" tab="detalle-rutina" href="/tabs/detalle-rutina">Ayuda - Privacidad</ion-button>
+      <ion-button expand="block" class="login-btn-primary" type="submit">
+        <ion-icon name="arrow-forward-circle" slot="start"></ion-icon>
+        Validar y continuar
+      </ion-button>
+      <ion-button fill="clear" class="login-btn-secondary" routerLink="/welcome">
+        <ion-icon name="help-circle-outline" slot="start"></ion-icon>
+        Ayuda
+      </ion-button>
     </div>
-  </div>
+  </form>
 </ion-content>

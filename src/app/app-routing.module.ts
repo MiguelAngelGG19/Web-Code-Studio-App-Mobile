@@ -18,12 +18,19 @@ const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.module').then( m => m.TabsPageModule)
+  },  {
+    path: 'physiotherapist-profile',
+    loadChildren: () => import('./physiotherapist-profile/physiotherapist-profile.module').then( m => m.PhysiotherapistProfilePageModule)
   },
+
+ 
+  
+
 ]
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, useHash: true })
   ],
   exports: [RouterModule]
 })

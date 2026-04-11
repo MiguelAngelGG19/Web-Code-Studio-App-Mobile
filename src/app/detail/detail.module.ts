@@ -1,16 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { DetailPageRoutingModule } from './detail-routing.module';
 import { DetailPage } from './detail.page';
+import { SafeUrlPipe } from '../core/pipes/safe-url.pipe';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule, // Esencial para que funcionen <ion-card>, <ion-button>, etc.
-    DetailPageRoutingModule
+    RouterModule,
+    IonicModule,
+    DetailPageRoutingModule,
+    SafeUrlPipe
   ],
   declarations: [DetailPage]
 })

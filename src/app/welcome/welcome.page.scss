@@ -1,37 +1,136 @@
 .welcome-content {
-  --background: #000000;
+  --background: transparent;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
 }
 
-// Video de fondo fullscreen
-.background-video {
+.bg-gradient {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(152deg, #0d9488 0%, #0f766e 35%, #115e59 70%, #134e4a 100%);
+  z-index: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -30%;
+    right: -20%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -15%;
+    left: -15%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+  }
 }
 
-// Overlay con contenido
-.video-overlay {
+.welcome-overlay {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 20px;
-  text-align: center;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 48px 28px 56px;
 }
 
-// Asegurar que todo el video se reproduzca
-ion-content {
-  --padding-bottom: 0 !important;
-  --padding-top: 0 !important;
-  --padding-start: 0 !important;
-  --padding-end: 0 !important;
+.branding {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  animation: brandFadeIn 0.8s ease-out;
+}
+
+@keyframes brandFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-wrapper {
+  width: 180px;
+  height: 180px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 40px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.logo {
+  width: 450px;
+  height: 450px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+}
+
+.app-name {
+  font-size: 44px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 6px;
+  margin: 0 0 12px 0;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+}
+
+.tagline {
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.3px;
+  max-width: 260px;
+  line-height: 1.4;
+}
+
+.actions {
+  width: 100%;
+  max-width: 340px;
+  animation: brandFadeIn 0.8s ease-out 0.3s backwards;
+}
+
+.btn-continue {
+  --background: #fff;
+  --color: var(--activa-primary-dark);
+  --border-radius: 16px;
+  --box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  height: 58px;
+  font-weight: 800;
+  font-size: 17px;
+  text-transform: none;
+  letter-spacing: 0.3px;
+
+  ion-icon {
+    font-size: 22px;
+    margin-left: 8px;
+  }
 }

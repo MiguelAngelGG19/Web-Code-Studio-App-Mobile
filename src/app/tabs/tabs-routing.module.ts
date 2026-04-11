@@ -28,6 +28,26 @@ const routes: Routes = [
         loadChildren: () => import('../report/report.module').then( m => m.Tab6PageModule)
       },
       {
+        path: 'profile',
+        loadChildren: () => import('../profile/profile.module').then( m => m.ProfilePageModule)
+      },
+      {
+        path: 'historial',
+        loadChildren: () => import('../historial/historial.module').then(m => m.HistorialPageModule)
+      },
+      {
+        path: 'notifications',
+        loadChildren: () => import('../notifications/notifications.module').then(m => m.NotificationsPageModule)
+      },
+      {
+        path: 'documents',
+        loadChildren: () => import('../documents/documents.module').then(m => m.DocumentsPageModule)
+      },
+      {
+        path: 'physiotherapist-profile',
+        loadChildren: () => import('../physiotherapist-profile/physiotherapist-profile.module').then(m => m.PhysiotherapistProfilePageModule)
+      },
+      {
         path: '',
         redirectTo: 'your-progress', // Si entras a /tabs, te manda directo a your-progress 
         pathMatch: 'full'

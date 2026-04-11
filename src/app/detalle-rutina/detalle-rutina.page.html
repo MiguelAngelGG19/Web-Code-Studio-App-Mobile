@@ -1,308 +1,113 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button default-href="tabs/your-progress"></ion-back-button>
+      <ion-back-button defaultHref="tabs/your-progress" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title style="text-align: center; ;">Detalle de Rutina</ion-title>
+    <ion-title>{{ selectedRoutine ? selectedRoutine.name : 'Detalle de Rutina' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-subtitle>Rutina para fortalecer los meniscos</ion-card-subtitle>
-      <ion-card-title>Rutina Semana 1</ion-card-title>
-    </ion-card-header>
+<ion-content [fullscreen]="true" class="rutina-content">
+  <div *ngIf="loading" class="loading-state">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando rutina...</p>
+  </div>
 
-    <ion-card-content>
-      <img src="assets/icon/tiempo.png" alt="Tiempo" style="width: 20px; height: auto; margin-bottom: 16px; margin-right: 150px;">
-      <p style="margin-top: -42px; margin-left: 30px;"><strong>Duración:</strong> 30 minutos</p>
-      <img src="assets/icon/user.png" alt="Usuario" style="width: 20px; height: auto; margin-bottom: 16px; margin-right: 150px;">
-      <p style="margin-top: -42px; margin-left: 30px;"><strong>Fisioterapeuta:</strong> Marco Fernandez Lopez</p>
-      <img src="assets/icon/calendar.png" alt="Calendario" style="width: 20px; height: auto; margin-bottom: 16px; margin-right: 150px;">
-      <p style="margin-top: -42px; margin-left: 30px;"><strong>Fecha Inicio:</strong> 2025-10-12</p>
-    </ion-card-content>
-  </ion-card>
-  <ion-card>
-  <ion-card-header>
-    <ion-card-title style="font-size: 30px; font-weight: bold; margin-top: 10px;">Ejercicios</ion-card-title> 
-  </ion-card-header>
-  <ion-card-content>
-    <ion-list>
-      <ion-item  id="openModal">
-        <ion-modal [isOpen]="isOpenModal" (willPresent)="onWillPresent()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Lagartijas</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeModal(1)"> Close </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content [scrollY]="true" class="ion-padding">
-        <div style="padding: 20px;">
-          <img src="/assets/ejercicios/lagartijas.gif" style="width: 100%; border-radius: 12px; margin-bottom: 20px;" />
-          
-          <h2 style="color: #00c795; margin-bottom: 15px;">Lagartijas</h2>
-          
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Descripción</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6;">Las lagartijas son un ejercicio de peso corporal que fortalece el pecho, hombros y brazos. También ayuda a estabilizar el core y mejorar la postura.</p>
+  <ng-container *ngIf="!loading">
+    <div class="rutinas-list" *ngIf="routines.length > 0">
+      <h3 class="list-label">Tus rutinas</h3>
+      <ion-card *ngFor="let rutina of routines" class="rutina-card" (click)="selectRoutine(rutina)" [class.selected]="selectedRoutine?.id === rutina.id">
+        <ion-card-content>
+          <div class="rutina-header">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <h2>{{ rutina.name }}</h2>
           </div>
+          <div class="rutina-dates">
+            <span><ion-icon name="play-outline"></ion-icon> {{ rutina.startDate }}</span>
+            <span><ion-icon name="stop-outline"></ion-icon> {{ rutina.endDate }}</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
 
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Duración</h3>
-            <p style="color: #00c795; font-weight: bold; font-size: 14px;">30 segundos</p>
-          </div>
+    <div *ngIf="routines.length === 0" class="empty-state">
+      <ion-icon name="barbell-outline"></ion-icon>
+      <p>No tienes rutinas asignadas.</p>
+    </div>
 
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Instrucciones</h3>
-            <ol style="color: #666; font-size: 14px; line-height: 1.8; padding-left: 20px;">
-              <li>Colócate en posición de plank con las manos al ancho de los hombros</li>
-              <li>Baja tu cuerpo doblando los codos hasta que casi toques el suelo</li>
-              <li>Mantén los codos cerca del cuerpo durante el movimiento</li>
-              <li>Sube levantando los brazos hasta la posición inicial</li>
-              <li>Repite el movimiento de forma controlada</li>
-            </ol>
+    <div *ngIf="selectedRoutine && exercises.length > 0" class="exercises-section">
+      <h3 class="list-label">Ejercicios</h3>
+      <ion-list lines="none">
+        <ion-item *ngFor="let ex of exercises" class="exercise-item" button (click)="openModal(ex)">
+          <div class="ex-left" slot="start">
+            <ion-thumbnail class="ex-thumb">
+              <img [src]="getExerciseImage(ex)" [alt]="ex.name" (error)="$any($event.target).src='assets/icon/ico-activa.png'" />
+            </ion-thumbnail>
           </div>
+          <ion-label>
+            <h2>{{ ex.name }}</h2>
+            <p>{{ ex.duration }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
 
-          <div>
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Comentarios del Fisioterapeuta</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6; background: #f0fdf9; padding: 12px; border-radius: 8px; border-left: 4px solid #00c795;">Mantén el cuerpo recto en todo momento. No dejes que la cadera caiga. Si es muy difícil, puedes empezar con las rodillas apoyadas.</p>
-          </div>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-         <ion-thumbnail slot="start" (click)="openModal(1)">
-          <img alt="lagartijas" src="/assets/ejercicios/lagartijas.gif" style="width: 70px;" />
-          </ion-thumbnail>
-          <ion-label style="margin-top: -10px; font-weight: bold;" (click)="openModal(1)">Lagartijas</ion-label>
-          <ion-label style="font-size: 15px; margin-top: 50px; margin-left: -238px; color: #797979; font-weight: bold;">00:30</ion-label>
-      </ion-item>
-
-      <ion-item  id="openModal2">
-        <ion-modal [isOpen]="isOpenModal2" (willPresent)="onWillPresent()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Sentadillas</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeModal(2)"> Close </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content [scrollY]="true" class="ion-padding">
-        <div style="padding: 20px;">
-          <img src="/assets/ejercicios/sentadilla.gif" style="width: 100%; border-radius: 12px; margin-bottom: 20px;" />
-          
-          <h2 style="color: #00c795; margin-bottom: 15px;">Sentadillas</h2>
-          
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Descripción</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6;">Las sentadillas fortalecen los músculos de las piernas (cuádriceps, glúteos e isquiotibiales) y mejoran la estabilidad de las rodillas. Es uno de los ejercicios más completos para la parte inferior del cuerpo.</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Duración</h3>
-            <p style="color: #00c795; font-weight: bold; font-size: 14px;">45 segundos</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Instrucciones</h3>
-            <ol style="color: #666; font-size: 14px; line-height: 1.8; padding-left: 20px;">
-              <li>Colócate de pie con los pies al ancho de los hombros</li>
-              <li>Baja el cuerpo flexionando las rodillas como si te fueras a sentar</li>
-              <li>Mantén el pecho elevado y la espalda recta</li>
-              <li>Baja hasta formar un ángulo de 90 grados en las rodillas</li>
-              <li>Sube con los talones impulsándote hacia arriba</li>
-            </ol>
-          </div>
-
-          <div>
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Comentarios del Fisioterapeuta</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6; background: #f0fdf9; padding: 12px; border-radius: 8px; border-left: 4px solid #00c795;">Las rodillas deben estar alineadas con los dedos de los pies. El movimiento debe ser controlado y suave. Respira hacia adentro al bajar y hacia afuera al subir.</p>
-          </div>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-         <ion-thumbnail slot="start" (click)="openModal(2)">
-          <img alt="sentadillas" src="/assets/ejercicios/sentadilla.gif" style="width: 70px;" />
-          </ion-thumbnail>
-          <ion-label style="margin-top: -10px; font-weight: bold;" (click)="openModal(2)">Sentadillas</ion-label>
-          <ion-label style="font-size: 15px; margin-top: 50px; margin-left: -238px; color: #797979; font-weight: bold;">00:45</ion-label>
-      </ion-item>
-
-      <ion-item  id="openModal3">
-        <ion-modal [isOpen]="isOpenModal3" (willPresent)="onWillPresent()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Estocadas</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeModal(3)"> Close </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content [scrollY]="true" class="ion-padding">
-        <div style="padding: 20px;">
-          <img src="/assets/ejercicios/estocadas.gif" style="width: 100%; border-radius: 12px; margin-bottom: 20px;" />
-          
-          <h2 style="color: #00c795; margin-bottom: 15px;">Estocadas</h2>
-          
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Descripción</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6;">Las estocadas trabajan un lado del cuerpo a la vez, mejorando el equilibrio y fortaleciendo las piernas de manera unilateral. Son excelentes para corregir desequilibrios musculares.</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Duración</h3>
-            <p style="color: #00c795; font-weight: bold; font-size: 14px;">40 segundos</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Instrucciones</h3>
-            <ol style="color: #666; font-size: 14px; line-height: 1.8; padding-left: 20px;">
-              <li>De pie, da un paso hacia adelante con una pierna</li>
-              <li>Baja el cuerpo flexionando ambas rodillas hasta formar ángulos de 90 grados</li>
-              <li>La rodilla trasera debe casi tocar el suelo</li>
-              <li>Sube dejando los talones en el suelo</li>
-              <li>Regresa a la posición inicial y alterna con la otra pierna</li>
-            </ol>
-          </div>
-
-          <div>
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Comentarios del Fisioterapeuta</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6; background: #f0fdf9; padding: 12px; border-radius: 8px; border-left: 4px solid #00c795;">Mantén el torso recto y la vista al frente. No dejes que la rodilla delantera sobrepase los dedos del pie. Este ejercicio mejora el equilibrio significativamente.</p>
-          </div>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-         <ion-thumbnail slot="start" (click)="openModal(3)">
-          <img alt="estocadas" src="/assets/ejercicios/estocadas.gif" style="width: 70px;" />
-          </ion-thumbnail>
-          <ion-label style="margin-top: -10px; font-weight: bold;" (click)="openModal(3)">Estocadas</ion-label>
-          <ion-label style="font-size: 15px; margin-top: 50px; margin-left: -238px; color: #797979; font-weight: bold;">00:40</ion-label>
-      </ion-item>
-
-      <ion-item  id="openModal4">
-        <ion-modal [isOpen]="isOpenModal4" (willPresent)="onWillPresent()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Planchas</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeModal(4)"> Close </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content [scrollY]="true" class="ion-padding">
-        <div style="padding: 20px;">
-          <img src="/assets/ejercicios/planchas.jpeg" style="width: 100%; border-radius: 12px; margin-bottom: 20px;" />
-          
-          <h2 style="color: #00c795; margin-bottom: 15px;">Planchas</h2>
-          
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Descripción</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6;">Las planchas son un ejercicio isométrico que fortalece el core, la espalda baja y los hombros. Mejora la estabilidad y ayuda a prevenir el dolor de espalda.</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Duración</h3>
-            <p style="color: #00c795; font-weight: bold; font-size: 14px;">1 minuto</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Instrucciones</h3>
-            <ol style="color: #666; font-size: 14px; line-height: 1.8; padding-left: 20px;">
-              <li>Colócate en posición de plank con los antebrazos en el suelo</li>
-              <li>Los codos deben estar directamente bajo los hombros</li>
-              <li>Mantén el cuerpo recto desde la cabeza hasta los talones</li>
-              <li>Aprieta el core y los glúteos para mantener la estabilidad</li>
-              <li>Respira normalmente y aguanta la posición</li>
-            </ol>
-          </div>
-
-          <div>
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Comentarios del Fisioterapeuta</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6; background: #f0fdf9; padding: 12px; border-radius: 8px; border-left: 4px solid #00c795;">No dejes que la cadera se hunda. Si sientes dolor en la espalda baja, reduce el tiempo. Comienza con 20-30 segundos si es muy difícil.</p>
-          </div>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-         <ion-thumbnail slot="start" (click)="openModal(4)">
-          <img alt="planchas" src="/assets/ejercicios/planchas.jpeg" style="width: 70px;" />
-          </ion-thumbnail>
-          <ion-label style="margin-top: -10px; font-weight: bold;" (click)="openModal(4)">Planchas</ion-label>
-          <ion-label style="font-size: 15px; margin-top: 50px; margin-left: -238px; color: #797979; font-weight: bold;">01:00</ion-label>
-      </ion-item>
-
-      <ion-item  id="openModal5" lines="none">
-        <ion-modal [isOpen]="isOpenModal5" (willPresent)="onWillPresent()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Elevación de Piernas</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="closeModal(5)"> Close </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content [scrollY]="true" class="ion-padding">
-        <div style="padding: 20px;">
-          <img src="/assets/ejercicios/elevacion-piernas.gif" style="width: 100%; border-radius: 12px; margin-bottom: 20px;" />
-          
-          <h2 style="color: #00c795; margin-bottom: 15px;">Elevación de Piernas</h2>
-          
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Descripción</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6;">La elevación de piernas fortalece el abdomen inferior, los flexores de cadera y los cuádriceps. Es excelente para el fortalecimiento del core y la estabilidad pélvica.</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Duración</h3>
-            <p style="color: #00c795; font-weight: bold; font-size: 14px;">35 segundos</p>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Instrucciones</h3>
-            <ol style="color: #666; font-size: 14px; line-height: 1.8; padding-left: 20px;">
-              <li>Acuéstate boca arriba con las piernas extendidas</li>
-              <li>Coloca las manos bajo los glúteos para apoyo</li>
-              <li>Levanta ambas piernas lentamente hasta formar un ángulo de 90 grados</li>
-              <li>Baja las piernas sin tocar el suelo</li>
-              <li>Repite el movimiento de forma controlada</li>
-            </ol>
-          </div>
-
-          <div>
-            <h3 style="color: #333; font-size: 16px; margin-bottom: 8px;">Comentarios del Fisioterapeuta</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.6; background: #f0fdf9; padding: 12px; border-radius: 8px; border-left: 4px solid #00c795;">Mantén la espalda baja contra el suelo. No arquees excesivamente. Si es muy difícil, puedes doblar las rodillas ligeramente para facilitar el movimiento.</p>
-          </div>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-         <ion-thumbnail slot="start" (click)="openModal(5)">
-          <img alt="elevacion-piernas" src="/assets/ejercicios/elevacion-piernas.gif" style="width: 70px;" />
-          </ion-thumbnail>
-          <ion-label style="margin-top: -10px; font-weight: bold;" (click)="openModal(5)">Elevación de Piernas</ion-label>
-          <ion-label style="font-size: 15px; margin-top: 50px; margin-left: -238px; color: #797979; font-weight: bold;">00:35</ion-label>
-      </ion-item>
-    </ion-list>
-    <br><br><br>
-  </ion-card-content>
-</ion-card>
+    <div *ngIf="selectedRoutine && exercises.length === 0" class="empty-exercises">
+      <ion-icon name="fitness-outline"></ion-icon>
+      <p>Esta rutina no tiene ejercicios asignados.</p>
+    </div>
+  </ng-container>
 </ion-content>
 
+<ion-modal [isOpen]="isModalOpen" (ionModalDidDismiss)="closeModal()" class="exercise-modal">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ selectedExercise?.name }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding modal-content-light" *ngIf="selectedExercise">
+      <div class="modal-body">
+        <div *ngIf="selectedExercise.bodyZone" class="zone-badge">
+          <ion-icon name="location-outline"></ion-icon>
+          {{ selectedExercise.bodyZone }}
+        </div>
+        <h2>{{ selectedExercise.name }}</h2>
+        <div class="description">
+          <h4>Descripción</h4>
+          <p>{{ selectedExercise.description || 'Sin descripción.' }}</p>
+        </div>
 
-<!-- Botón flotante fijo y largo -->
-<div class="floating-button-container">
-  <ion-button class="floating-btn" color="success" expand="block" tab="detail" href="/tabs/detail">
-    Comenzar
+        <div class="video-section" *ngIf="getExerciseVideoUrl(selectedExercise)">
+          <h4>Video del ejercicio</h4>
+          <div class="video-container" *ngIf="getExerciseYouTubeEmbedUrl(selectedExercise)">
+            <iframe
+              [src]="getExerciseYouTubeEmbedUrl(selectedExercise) | safeUrl"
+              title="Video del ejercicio"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <a *ngIf="!getExerciseYouTubeEmbedUrl(selectedExercise)" [href]="getExerciseVideoUrl(selectedExercise)" target="_blank" rel="noopener" class="video-link">
+            <ion-icon name="play-circle-outline"></ion-icon> Ver video
+          </a>
+          <a *ngIf="getExerciseYouTubeEmbedUrl(selectedExercise)" [href]="getExerciseVideoUrl(selectedExercise)" target="_blank" rel="noopener" class="video-link">
+            <ion-icon name="open-outline"></ion-icon> Abrir en YouTube
+          </a>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<div class="floating-btn-wrap" *ngIf="selectedRoutine && exercises.length > 0">
+  <ion-button class="floating-btn" expand="block" (click)="startRoutine()">
+    Comienzo
   </ion-button>
 </div>

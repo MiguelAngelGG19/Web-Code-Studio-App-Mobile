@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DetalleRutinaPage } from './detalle-rutina.page';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
+import { SafeUrlPipe } from '../core/pipes/safe-url.pipe';
 
 import { detalleRutinaPageRoutingModule } from './detalle-rutina-routing.module';
 
@@ -13,7 +14,8 @@ import { detalleRutinaPageRoutingModule } from './detalle-rutina-routing.module'
     CommonModule,
     FormsModule,
     ExploreContainerComponentModule,
-    detalleRutinaPageRoutingModule
+    detalleRutinaPageRoutingModule,
+    SafeUrlPipe
   ],
   declarations: [DetalleRutinaPage]
 })

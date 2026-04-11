@@ -7,53 +7,95 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="exercise-content">
-  <ion-grid class="ion-no-padding full-height-grid">
-    
-    <ion-row class="video-row ion-justify-content-center ion-align-items-center">
-      <ion-col size="auto">
-        <ion-fab-button class="play-btn-blur">
-          <ion-icon name="play-sharp"></ion-icon>
-        </ion-fab-button>
+<ion-content [fullscreen]="true" class="exercise-content content-light">
+  <div *ngIf="loading" class="ion-padding ion-text-center loading-wrap">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando ejercicio...</p>
+  </div>
+
+  <ion-grid *ngIf="!loading && currentExercise" class="ion-no-padding full-height-grid">
+    <!-- Video embebido -->
+    <ion-row class="video-row">
+      <ion-col size="12" class="ion-no-padding">
+        <div class="video-wrapper" *ngIf="getExerciseYouTubeEmbedUrl(currentExercise)">
+          <iframe
+            [src]="getExerciseYouTubeEmbedUrl(currentExercise) | safeUrl"
+            title="Video del ejercicio"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-placeholder" *ngIf="!getExerciseYouTubeEmbedUrl(currentExercise)">
+          <a *ngIf="getExerciseVideoUrl(currentExercise)" [href]="getExerciseVideoUrl(currentExercise)" target="_blank" rel="noopener" class="video-link">
+            <ion-fab-button class="play-btn-blur">
+              <ion-icon name="play-sharp"></ion-icon>
+            </ion-fab-button>
+          </a>
+          <p *ngIf="getExerciseVideoUrl(currentExercise)">Toca para ver el video</p>
+        </div>
       </ion-col>
     </ion-row>
 
+    <!-- Contenido -->
     <ion-row class="details-row">
       <ion-col size="12" class="ion-no-padding">
-        <ion-card class="main-details-card ion-no-margin" mode="ios">
+        <ion-card class="main-details-card ion-no-margin" mode="ios" [@exerciseTransition]="exerciseIndex">
           <ion-card-content>
-            <ion-row class="ion-justify-content-center">
-              <ion-badge class="drag-handle-badge" mode="ios"></ion-badge>
-            </ion-row>
+            <div class="exercise-header">
+              <span class="exercise-counter" *ngIf="exercises.length > 1">{{ exerciseIndex + 1 }} / {{ exercises.length }}</span>
+              <div class="nav-buttons" *ngIf="exercises.length > 1">
+                <ion-button fill="clear" size="small" [disabled]="exerciseIndex === 0" (click)="prevExercise()">
+                  <ion-icon name="chevron-back"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" [disabled]="exerciseIndex >= exercises.length - 1" (click)="nextExercise()">
+                  <ion-icon name="chevron-forward"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
 
-            <ion-card-title class="exercise-title">Sentadilla Asistida</ion-card-title>
-            
-            <ion-row class="ion-margin-bottom">
-              <ion-badge color="success" mode="ios" class="info-badge">3 series</ion-badge>
-              <ion-badge color="primary" mode="ios" class="info-badge ion-margin-start">12 repeticiones</ion-badge>
-            </ion-row>
+            <h1 class="exercise-title">{{ currentExercise.name }}</h1>
 
-            <ion-item lines="none" class="tip-item ion-margin-bottom">
-              <ion-icon name="information-circle" slot="start" color="warning"></ion-icon>
-              <ion-label class="ion-text-wrap">
-                <ion-text color="dark"><strong>Consejo del terapeuta</strong></ion-text>
-                <p>Mantén la espalda recta y utiliza el apoyo solo para mantener el equilibrio, no para impulsarte.</p>
-              </ion-label>
-            </ion-item>
+            <div class="zone-badge" *ngIf="currentExercise.bodyZone">
+              <ion-icon name="body-outline"></ion-icon>
+              {{ currentExercise.bodyZone }}
+            </div>
 
-            <ion-button expand="block" color="success" shape="round" class="action-btn" tab="report" href="/tabs/report">
-              <ion-icon slot="start" name="checkmark-circle"></ion-icon>
-              ¡Listo!
-            </ion-button>
-            
-            <ion-button expand="block" fill="outline" color="danger" shape="round" class="action-btn ion-margin-top">
-              <ion-icon slot="start" name="warning"></ion-icon>
-              ¡Alerta / Me duele!
-            </ion-button>
+            <div class="series-reps-row" *ngIf="hasSeriesReps(currentExercise)">
+              <span class="series-reps-badge">
+                <ion-icon name="repeat-outline"></ion-icon>
+                {{ currentExercise.series }} series × {{ currentExercise.reps }} repeticiones
+              </span>
+            </div>
+
+            <div class="description-block" *ngIf="currentExercise.description">
+              <h3>Descripción</h3>
+              <p>{{ currentExercise.description }}</p>
+            </div>
+
+            <div class="consejo-block" *ngIf="currentExercise.consejo">
+              <h3><ion-icon name="bulb-outline"></ion-icon> Consejo del fisio</h3>
+              <p>{{ currentExercise.consejo }}</p>
+            </div>
+
+            <div class="action-buttons">
+              <ion-button expand="block" class="btn-done" (click)="onExerciseDone()">
+                <ion-icon slot="start" name="checkmark-circle"></ion-icon>
+                {{ isLastExercise() ? '¡Terminé la rutina!' : 'Terminé este ejercicio' }}
+              </ion-button>
+              <ion-button expand="block" fill="outline" class="btn-alert" (click)="goToReport()">
+                <ion-icon slot="start" name="warning"></ion-icon>
+                ¡Alerta / Me duele!
+              </ion-button>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
-
   </ion-grid>
+
+  <div *ngIf="!loading && !currentExercise" class="ion-padding ion-text-center">
+    <p>No hay ejercicios en esta rutina.</p>
+    <ion-button fill="clear" routerLink="/tabs/your-progress">Volver</ion-button>
+  </div>
 </ion-content>

@@ -1,91 +1,299 @@
-/* Header */
-.transparent-toolbar { --background: #ffffff; }
-.header-avatar { width: 45px; height: 45px; margin-right: 15px; border-radius: 12px; }
-.avatar-button {
+.header-toolbar {
+  --background: #fff;
+  --border-width: 0 0 2px 0;
+  --border-color: var(--activa-border);
+  padding: 14px 18px;
+  min-height: 76px;
+}
+
+.header-avatar {
+  width: 48px;
+  height: 48px;
+  margin-right: 14px;
+  border-radius: 16px;
+  overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  &:active {
-    transform: scale(0.98);
+  box-shadow: var(--activa-shadow-sm);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
-.greeting { font-size: 10px; font-weight: 800; color: #00c795; letter-spacing: 1px; margin: 0; }
-.name { font-size: 20px; font-weight: 800; color: #1a1a1a; margin: 2px 0 0 0; }
 
-/* General Content */
-.custom-bg { --background: #ffffff; }
-.section-title { font-size: 24px; font-weight: 800; color: #1a1a1a; margin: 0; }
-.section-subtitle { font-size: 16px; font-weight: 800; color: #1a1a1a; margin: 0; }
-.link-text { font-size: 14px; font-weight: 700; color: #00c795; }
-.block-title { display: block; margin-bottom: 15px; }
+.notification-btn {
+  position: relative;
+  .notification-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.65rem;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
 
-/* Progress Bar */
-.progress-text { font-size: 14px; font-weight: 800; color: #00c795; }
-.custom-progress { height: 12px; border-radius: 6px; --background: #e2e8f0; --progress-background: #00c795; margin-top: 10px; }
+.header-label {
+  flex: 1;
+  .greeting {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--activa-primary);
+    letter-spacing: 1.5px;
+    margin: 0;
+  }
+  .name {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--activa-text);
+    margin: 3px 0 0 0;
+  }
+}
 
-/* Appointment Card */
-.appointment-header { margin-bottom: 10px; }
+.content-area {
+  --background: var(--activa-bg);
+}
+
+.progress-section {
+  margin-bottom: 28px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--activa-text);
+  margin: 0;
+}
+
+.progress-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--activa-primary);
+}
+
+.progress-bar {
+  height: 12px;
+  border-radius: 8px;
+  --background: #cbd5e1;
+  --progress-background: linear-gradient(90deg, var(--activa-primary) 0%, var(--activa-primary-dark) 100%);
+}
+
+.appointment-section,
+.routine-section,
+.weekly-section {
+  margin-bottom: 28px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+
+  ion-button {
+    --color: var(--activa-primary);
+    font-weight: 700;
+    font-size: 14px;
+  }
+}
+
+.section-subtitle {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--activa-text);
+  margin: 0;
+}
+
 .appointment-card {
   border-radius: 20px;
-  --background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 199, 149, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--activa-shadow-sm);
+  --background: #fff;
+  overflow: hidden;
+  border: 1px solid var(--activa-border);
 }
-.appointment-info {
-  padding: 15px;
-  .tag { font-size: 10px; font-weight: 800; color: #00c795; letter-spacing: 0.5px; margin: 0 0 5px 0; display: flex; align-items: center; gap: 4px;}
-  .doctor-name { font-size: 18px; font-weight: 800; color: #1a1a1a; margin: 0 0 4px 0; }
-  .date { font-size: 12px; color: #666; margin: 0; }
-  .details-btn { --padding-start: 0; font-weight: 700; color: #00c795; margin-top: 5px; font-size: 12px;}
-}
-.doctor-img-col { padding: 10px; }
-.doctor-img { width: 100%; border-radius: 15px; background: #f0f8f5; }
 
-/* Routine Card */
-.routine-card {
-  border-radius: 30px;
-  --background: #f0fdf9;
-  box-shadow: 0 2px 8px rgba(0, 199, 149, 0.08);
-  border: 1px solid #d4f9f0;
-  padding: 10px;
+.appointment-content {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
 }
-.routine-icon { font-size: 32px; color: #00c795; margin-bottom: 5px; }
-.routine-title { font-size: 18px; font-weight: 800; color: #1a1a1a; margin: 5px 0; }
-.routine-desc { font-size: 13px; color: #666; margin-bottom: 20px; padding: 0 10px; }
-.start-btn {
-  --background: #00c795;
-  --background-hover: #00b080;
-  height: 54px;
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: 1px;
-  color: #ffffff;
-  
-  &:active {
-    --background: #009469;
+
+.appointment-info {
+  flex: 1;
+  padding-right: 18px;
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--activa-primary);
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+
+    ion-icon {
+      font-size: 14px;
+    }
+  }
+  .doctor-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--activa-text);
+    margin: 0 0 4px 0;
+  }
+  .date {
+    font-size: 14px;
+    color: var(--activa-text);
+    margin: 0 0 10px 0;
+  }
+  ion-button {
+    --color: var(--activa-primary);
+    font-weight: 700;
+    font-size: 14px;
+    --padding-start: 0;
   }
 }
-.routine-meta {
-  margin-top: 15px; color: #999; font-size: 11px; font-weight: 700;
-  ion-icon { margin-right: 4px; font-size: 14px; vertical-align: text-bottom; }
+
+.doctor-avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: var(--activa-shadow-sm);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
-/* Weekly Activity */
-.day-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.day-badge {
-  width: 42px; height: 42px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  --background: #f0f0f0;
-  color: #999;
-  font-size: 14px; font-weight: 800;
-  transition: 0.3s all ease;
-  &.active-day { --background: #00c795; color: #ffffff; }
+.routine-card {
+  border-radius: 24px;
+  --background: linear-gradient(152deg, var(--activa-primary-soft) 0%, var(--activa-primary-light) 100%);
+  box-shadow: var(--activa-shadow);
+  border: 1px solid rgba(13, 148, 136, 0.15);
+  padding: 26px;
 }
-.check-icon { color: #00c795; font-size: 16px; }
+
+.routine-icon-wrap {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 12px rgba(13, 148, 136, 0.1);
+
+  ion-icon {
+    font-size: 28px;
+    color: var(--activa-primary);
+  }
+}
+
+.routine-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--activa-text);
+  margin: 0 0 8px 0;
+}
+
+.routine-desc {
+  font-size: 15px;
+  color: var(--activa-text);
+  margin: 0 0 22px 0;
+  line-height: 1.5;
+}
+
+.start-btn {
+  --background: linear-gradient(145deg, var(--activa-primary) 0%, var(--activa-primary-dark) 100%);
+  --color: #fff;
+  --border-radius: 16px;
+  --box-shadow: var(--activa-shadow);
+  height: 54px;
+  font-weight: 800;
+  font-size: 16px;
+  text-transform: none;
+  margin-bottom: 18px;
+
+  ion-icon {
+    font-size: 22px;
+    margin-right: 10px;
+  }
+}
+
+.routine-meta {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--activa-text);
+
+  ion-icon {
+    font-size: 15px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+}
+
+.weekly-hint {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin: 4px 0 0 0;
+}
+
+.week-days {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.day-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  &.active .day-badge {
+    --background: linear-gradient(145deg, var(--activa-primary) 0%, var(--activa-primary-dark) 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+  }
+}
+
+.day-badge {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  --background: #cbd5e1;
+  color: var(--activa-text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.check-icon {
+  color: var(--activa-primary);
+  font-size: 20px;
+}
