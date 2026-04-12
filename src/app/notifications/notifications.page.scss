@@ -10,6 +10,13 @@ ion-toolbar.notif-toolbar {
     color: var(--activa-text);
     padding-inline-start: 0;
   }
+
+  // ── Back button visible
+  ion-back-button {
+    --color: var(--activa-primary);
+    --icon-font-size: 22px;
+    display: block;
+  }
 }
 
 .mark-all-btn {
@@ -121,13 +128,18 @@ ion-toolbar.notif-toolbar {
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   cursor: pointer;
   position: relative;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.2s ease;
   border: 1.5px solid transparent;
 
   &.unread {
     background: #fff;
     border-color: var(--activa-primary);
     box-shadow: 0 3px 14px rgba(0,160,110,0.10);
+  }
+
+  // Las leídas se ven un poco más apagadas
+  &:not(.unread) {
+    opacity: 0.75;
   }
 
   &:active { transform: scale(0.985); }

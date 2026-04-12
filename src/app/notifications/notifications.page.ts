@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { NotificationApiService, Notification } from '../core/infrastructure/api/notification-api.service';
 
+const READ_KEY = 'notifications_read_ids';
+
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.page.html',
@@ -25,16 +27,37 @@ export class NotificationsPage implements OnInit {
     return this.unreadCount > 0;
   }
 
+  // Obtiene los IDs guardados localmente como leídos
+  private async getLocalReadIds(): Promise<number[]> {
+    const ids = await this.storage.get(READ_KEY);
+    return ids ?? [];
+  }
+
+  // Guarda un ID como leído localmente
+  private async saveLocalReadId(id: number) {
+    const ids = await this.getLocalReadIds();
+    if (!ids.includes(id)) {
+      ids.push(id);
+      await this.storage.set(READ_KEY, ids);
+    }
+  }
+
   async ngOnInit() {
     await this.storage.create();
     const patientId = await this.storage.get('currentPatientId');
     if (patientId) {
       this.notificationApi.getByPatientId(patientId).subscribe({
-        next: (rows) => {
-          // Más recientes primero
-          this.notifications = rows.sort((a, b) =>
-            new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
-          );
+        next: async (rows) => {
+          // Combina estado del back con los leídos guardados localmente
+          const localReadIds = await this.getLocalReadIds();
+          this.notifications = rows
+            .map(n => ({
+              ...n,
+              isRead: n.isRead || localReadIds.includes(n.id)
+            }))
+            .sort((a, b) =>
+              new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+            );
           this.loading = false;
         },
         error: () => { this.loading = false; },
@@ -46,14 +69,15 @@ export class NotificationsPage implements OnInit {
 
   async markAsRead(n: Notification) {
     if (n.isRead) return;
+    // Optimistic update inmediato
+    n.isRead = true;
+    // Guarda localmente para que persista aunque el back falle
+    await this.saveLocalReadId(n.id);
     const patientId = await this.storage.get('currentPatientId');
     if (!patientId) return;
-    // Optimistic update — cambia en pantalla de inmediato sin esperar al back
-    n.isRead = true;
     this.notificationApi.markAsRead(n.id, patientId).subscribe({
       error: () => {
-        // Si falla revert
-        n.isRead = false;
+        // No revertimos visualmente — el estado local ya lo tiene como leído
       },
     });
   }
@@ -61,14 +85,16 @@ export class NotificationsPage implements OnInit {
   async markAllAsRead() {
     const unread = this.notifications.filter(n => !n.isRead);
     if (unread.length === 0) return;
+    // Optimistic: marca todas en UI
+    unread.forEach(n => (n.isRead = true));
+    // Guarda todas localmente
+    for (const n of unread) {
+      await this.saveLocalReadId(n.id);
+    }
     const patientId = await this.storage.get('currentPatientId');
     if (!patientId) return;
-    // Optimistic: marca todas en UI de inmediato
-    unread.forEach(n => (n.isRead = true));
     unread.forEach(n => {
-      this.notificationApi.markAsRead(n.id, patientId).subscribe({
-        error: () => { n.isRead = false; },
-      });
+      this.notificationApi.markAsRead(n.id, patientId).subscribe();
     });
   }
 
