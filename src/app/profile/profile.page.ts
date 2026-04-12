@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController, AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 import { PhysiotherapistApiService, Physiotherapist } from '../core/infrastructure/api/physiotherapist-api.service';
+import { PatientApiService, PatientProfile } from '../core/infrastructure/api/patient-api.service';
 import { SessionService, SessionPatient } from '../core/services/session.service';
 import { environment } from '../../environments/environment';
 
@@ -13,63 +14,81 @@ import { environment } from '../../environments/environment';
   standalone: false,
 })
 export class ProfilePage implements OnInit {
-  patient: SessionPatient | null = null;
+  session: SessionPatient | null = null;
+  patient: PatientProfile | null = null;
   physio: Physiotherapist | null = null;
   tratamiento = '—';
+  loading = true;
   clinicName = environment.clinicName ?? 'ACTIVA Health Center';
 
   constructor(
     private router: Router,
-    private session: SessionService,
+    private sessionSvc: SessionService,
     private routineApi: RoutineApiService,
     private physioApi: PhysiotherapistApiService,
-    private toast: ToastController,
+    private patientApi: PatientApiService,
     private alert: AlertController
   ) {}
 
   async ngOnInit() {
-    await this.session.init();
-    const p = this.session.current;
-    if (!p) return;
-    this.patient = p;
+    await this.sessionSvc.init();
+    const s = this.sessionSvc.current;
+    if (!s) { this.loading = false; return; }
+    this.session = s;
 
-    if (p.physiotherapistId) {
-      this.physioApi.getById(p.physiotherapistId).subscribe((ph) => (this.physio = ph));
+    // 1. Datos completos del paciente desde el back
+    this.patientApi.getById(s.id).subscribe({
+      next: (p) => { this.patient = p; this.loading = false; },
+      error: () => { this.loading = false; }
+    });
+
+    // 2. Fisioterapeuta asignado
+    if (s.physiotherapistId) {
+      this.physioApi.getById(s.physiotherapistId).subscribe({
+        next: (ph) => (this.physio = ph)
+      });
     }
 
-    this.routineApi.getRoutines(p.id).subscribe((routines) => {
-      if (routines.length > 0) this.tratamiento = routines[0].name ?? '—';
+    // 3. Rutina activa
+    this.routineApi.getRoutines(s.id).subscribe({
+      next: (routines) => {
+        if (routines.length > 0) this.tratamiento = routines[0].name ?? '—';
+      }
     });
   }
 
   // ─ Getters ───────────────────────────────────────────────────────────
 
   get fullName(): string {
-    if (!this.patient) return 'Paciente';
-    const parts = [this.patient.firstName, this.patient.lastNameP, this.patient.lastNameM].filter(Boolean);
+    if (!this.patient) return this.session?.firstName ?? 'Paciente';
+    const parts = [
+      this.patient.firstName,
+      this.patient.lastNameP,
+      this.patient.lastNameM
+    ].filter(Boolean);
     return parts.join(' ') || 'Paciente';
   }
 
-  /** El modelo guarda birthYear (número), no birthDate */
+  /** birthYear viene del back (ej. 1995) */
   get age(): string {
-    const year = (this.patient as any)?.birthYear;
+    const year = this.patient?.birthYear;
     if (!year) return '—';
     return `${new Date().getFullYear() - year}`;
   }
 
   get weight(): string {
-    const w = (this.patient as any)?.weight;
-    return w ? `${w} kg` : '—';
+    const w = this.patient?.weight;
+    return w != null ? `${w} kg` : '—';
   }
 
   get height(): string {
-    const h = (this.patient as any)?.height;
-    return h ? `${h} m` : '—';
+    const h = this.patient?.height;
+    return h != null ? `${h} m` : '—';
   }
 
   get imc(): string {
-    const w = (this.patient as any)?.weight;
-    const h = (this.patient as any)?.height;
+    const w = this.patient?.weight;
+    const h = this.patient?.height;
     if (!w || !h || h === 0) return '—';
     return (w / (h * h)).toFixed(1);
   }
@@ -92,15 +111,10 @@ export class ProfilePage implements OnInit {
     return 'imc-danger';
   }
 
-  get memberSince(): string {
-    const d = (this.patient as any)?.createdAt;
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
-  }
-
+  /** 'M' → 'Masculino', 'F' → 'Femenino', 'Other' → 'Otro' */
   get gender(): string {
     const map: Record<string, string> = { M: 'Masculino', F: 'Femenino', Other: 'Otro' };
-    const s = (this.patient as any)?.sex ?? (this.patient as any)?.gender;
+    const s = this.patient?.sex;
     return s ? (map[s] ?? '—') : '—';
   }
 
@@ -128,7 +142,7 @@ export class ProfilePage implements OnInit {
           text: 'Salir',
           role: 'destructive',
           handler: async () => {
-            await this.session.clear();  // limpia token + IDs en Storage
+            await this.sessionSvc.clear();
             this.router.navigate(['/login']);
           },
         },

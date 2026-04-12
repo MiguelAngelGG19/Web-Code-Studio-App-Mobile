@@ -6,127 +6,148 @@
 
 <ion-content class="profile-content">
 
-  <!-- HERO -->
-  <div class="profile-hero">
-    <div class="avatar-ring">
-      <div class="avatar-circle">
-        <ion-icon name="person" class="avatar-icon"></ion-icon>
+  <!-- LOADING -->
+  <ng-container *ngIf="loading">
+    <div class="profile-hero skeleton-hero">
+      <div class="avatar-ring">
+        <div class="avatar-circle skeleton"></div>
       </div>
+      <div class="skeleton skeleton-name"></div>
+      <div class="skeleton skeleton-badge"></div>
     </div>
-    <h2 class="profile-name">{{ fullName }}</h2>
-    <div class="profile-badge">
-      <ion-icon name="medical-outline" class="badge-icon"></ion-icon>
-      <span>{{ tratamiento !== '—' ? tratamiento : 'Sin tratamiento activo' }}</span>
-    </div>
-    <p class="profile-since">
-      <ion-icon name="calendar-outline"></ion-icon>
-      Paciente desde {{ memberSince }}
-    </p>
-  </div>
+  </ng-container>
 
-  <!-- STATS: Edad · Peso · Estatura · IMC -->
-  <div class="stats-card">
-    <div class="stat-item">
-      <span class="stat-value">{{ age }}</span>
-      <span class="stat-label">años</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <span class="stat-value">{{ weight }}</span>
-      <span class="stat-label">peso</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <span class="stat-value">{{ height }}</span>
-      <span class="stat-label">estatura</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <span class="stat-value" [class]="imcClass">{{ imc }}</span>
-      <span class="stat-label">IMC</span>
-    </div>
-  </div>
+  <!-- CONTENIDO REAL -->
+  <ng-container *ngIf="!loading">
 
-  <!-- INFO PERSONAL -->
-  <div class="section-block">
-    <p class="section-label">Información personal</p>
-    <div class="info-card">
-      <div class="info-row">
-        <div class="info-icon-wrap teal">
-          <ion-icon name="transgender-outline"></ion-icon>
-        </div>
-        <div class="info-text">
-          <span class="info-sublabel">Género</span>
-          <span class="info-value">{{ gender }}</span>
+    <!-- HERO -->
+    <div class="profile-hero">
+      <div class="avatar-ring">
+        <div class="avatar-circle">
+          <ion-icon name="person" class="avatar-icon"></ion-icon>
         </div>
       </div>
-      <div class="info-divider"></div>
-      <div class="info-row">
-        <div class="info-icon-wrap green">
-          <ion-icon name="body-outline"></ion-icon>
-        </div>
-        <div class="info-text">
-          <span class="info-sublabel">Condición IMC</span>
-          <span class="info-value" [class]="imcClass">{{ imcLabel }}</span>
-        </div>
+      <h2 class="profile-name">{{ fullName }}</h2>
+      <div class="profile-badge">
+        <ion-icon name="medical-outline" class="badge-icon"></ion-icon>
+        <span>{{ tratamiento !== '—' ? tratamiento : 'Sin Tratamiento Activo' }}</span>
       </div>
-      <div class="info-divider"></div>
-      <div class="info-row">
-        <div class="info-icon-wrap blue">
-          <ion-icon name="location-outline"></ion-icon>
+    </div>
+
+    <!-- STATS: Edad · Peso · Estatura · IMC -->
+    <div class="stats-card">
+      <div class="stat-item">
+        <span class="stat-value">{{ age }}</span>
+        <span class="stat-label">AÑOS</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">{{ weight }}</span>
+        <span class="stat-label">PESO</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">{{ height }}</span>
+        <span class="stat-label">ESTATURA</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value" [class]="imcClass">{{ imc }}</span>
+        <span class="stat-label">IMC</span>
+      </div>
+    </div>
+
+    <!-- INFORMACIÓN PERSONAL -->
+    <div class="section-block">
+      <p class="section-label">Información personal</p>
+      <div class="info-card">
+
+        <!-- Género -->
+        <div class="info-row">
+          <div class="info-icon-wrap teal">
+            <ion-icon name="transgender-outline"></ion-icon>
+          </div>
+          <div class="info-text">
+            <span class="info-sublabel">Género</span>
+            <span class="info-value">{{ gender }}</span>
+          </div>
         </div>
-        <div class="info-text">
-          <span class="info-sublabel">Clínica</span>
-          <span class="info-value">{{ clinicName }}</span>
+
+        <!-- Solo mostrar Condición IMC si tenemos los datos -->
+        <ng-container *ngIf="patient?.height && patient?.weight">
+          <div class="info-divider"></div>
+          <div class="info-row">
+            <div class="info-icon-wrap green">
+              <ion-icon name="body-outline"></ion-icon>
+            </div>
+            <div class="info-text">
+              <span class="info-sublabel">Condición IMC</span>
+              <span class="info-value" [class]="imcClass">{{ imcLabel }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="info-divider"></div>
+        <!-- Clínica -->
+        <div class="info-row">
+          <div class="info-icon-wrap blue">
+            <ion-icon name="location-outline"></ion-icon>
+          </div>
+          <div class="info-text">
+            <span class="info-sublabel">Clínica</span>
+            <span class="info-value">{{ clinicName }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MI FISIOTERAPEUTA -->
+    <div class="section-block">
+      <p class="section-label">Mi fisioterapeuta</p>
+      <div class="physio-card" (click)="goToPhysioProfile()">
+        <div class="physio-avatar-wrap">
+          <ion-icon name="person-circle" class="physio-avatar-icon"></ion-icon>
+        </div>
+        <div class="physio-info">
+          <p class="physio-name">{{ physioName }}</p>
+          <p class="physio-clinic">Fisioterapeuta · {{ clinicName }}</p>
+        </div>
+        <div class="physio-arrow-wrap">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- MI FISIOTERAPEUTA -->
-  <div class="section-block">
-    <p class="section-label">Mi fisioterapeuta</p>
-    <div class="physio-card" (click)="goToPhysioProfile()">
-      <div class="physio-avatar-wrap">
-        <ion-icon name="person-circle" class="physio-avatar-icon"></ion-icon>
-      </div>
-      <div class="physio-info">
-        <p class="physio-name">{{ physioName }}</p>
-        <p class="physio-clinic">Fisioterapeuta · {{ clinicName }}</p>
-      </div>
-      <div class="physio-arrow-wrap">
-        <ion-icon name="chevron-forward-outline"></ion-icon>
+    <!-- ACCESOS RÁPIDOS -->
+    <div class="section-block">
+      <p class="section-label">Accesos rápidos</p>
+      <div class="menu-list">
+        <div class="menu-item" (click)="goToHistorial()">
+          <div class="menu-icon-wrap purple">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <span class="menu-text">Historial de sesiones</span>
+          <ion-icon name="chevron-forward-outline" class="menu-arrow"></ion-icon>
+        </div>
+        <div class="menu-item" (click)="goToNotifications()">
+          <div class="menu-icon-wrap orange">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <span class="menu-text">Notificaciones</span>
+          <ion-icon name="chevron-forward-outline" class="menu-arrow"></ion-icon>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ACCESOS RÁPIDOS -->
-  <div class="section-block">
-    <p class="section-label">Accesos rápidos</p>
-    <div class="menu-list">
-      <div class="menu-item" (click)="goToHistorial()">
-        <div class="menu-icon-wrap purple">
-          <ion-icon name="time-outline"></ion-icon>
-        </div>
-        <span class="menu-text">Historial de sesiones</span>
-        <ion-icon name="chevron-forward-outline" class="menu-arrow"></ion-icon>
-      </div>
-      <div class="menu-item" (click)="goToNotifications()">
-        <div class="menu-icon-wrap orange">
-          <ion-icon name="notifications-outline"></ion-icon>
-        </div>
-        <span class="menu-text">Notificaciones</span>
-        <ion-icon name="chevron-forward-outline" class="menu-arrow"></ion-icon>
-      </div>
+    <!-- CERRAR SESIÓN -->
+    <div class="logout-wrap">
+      <button class="logout-btn" (click)="cerrarSesion()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Cerrar sesión
+      </button>
     </div>
-  </div>
 
-  <!-- CERRAR SESIÓN -->
-  <div class="logout-wrap">
-    <button class="logout-btn" (click)="cerrarSesion()">
-      <ion-icon name="log-out-outline"></ion-icon>
-      Cerrar sesión
-    </button>
-  </div>
+  </ng-container>
 
 </ion-content>
