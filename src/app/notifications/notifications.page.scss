@@ -1,80 +1,126 @@
-.empty-state {
-  padding-top: 3rem;
+.notif-toolbar {
+  --background: #f8fafa;
+  --border-width: 0;
+  padding: 12px 16px 8px;
+
+  .notif-title-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+  }
+
+  .mark-all-text {
+    font-size: 13px;
+    color: #01696f;
+    font-weight: 600;
+  }
+}
+
+.notif-content {
+  --background: #f8fafa;
+}
+
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  text-align: center;
+  gap: 10px;
+  color: #9ca3af;
 
   .empty-icon {
-    font-size: 4rem;
-    color: var(--ion-color-medium);
-    margin-bottom: 1rem;
+    font-size: 48px;
+    color: #d1d5db;
   }
 
   h3 {
+    font-size: 16px;
     font-weight: 700;
-    color: var(--ion-text-color);
-    margin-bottom: 0.5rem;
+    color: #374151;
+    margin: 0;
   }
 
   p {
-    color: var(--ion-color-medium);
-    font-size: 0.95rem;
+    font-size: 14px;
+    color: #9ca3af;
+    margin: 0;
+    max-width: 260px;
   }
 }
 
 .notif-list {
-  --background: transparent;
-  padding: 0;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.notif-card {
-  margin: 0 0 10px 0;
+.notif-item {
+  background: #fff;
   border-radius: 12px;
-  cursor: pointer;
-
-  &.read {
-    opacity: 0.85;
-  }
-
-  ion-card-content {
-    padding: 14px 16px;
-  }
-}
-
-.notif-row {
+  padding: 14px;
   display: flex;
   align-items: flex-start;
   gap: 12px;
-}
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  position: relative;
 
-.notif-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
+  &.unread {
+    background: #f0fafa;
+  }
 
-.notif-body {
-  flex: 1;
-  min-width: 0;
-}
+  .notif-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 
-.notif-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: var(--ion-text-color);
-}
+    ion-icon { font-size: 20px; }
 
-.notif-body-text {
-  font-size: 0.9rem;
-  color: var(--ion-color-medium);
-  margin: 0 0 4px 0;
-  line-height: 1.4;
-}
+    &.type-cita   { background: #e6f2f2; ion-icon { color: #01696f; } }
+    &.type-alerta { background: #fef3c7; ion-icon { color: #d97706; } }
+    &.type-info   { background: #eff6ff; ion-icon { color: #3b82f6; } }
+    &.type-default{ background: #f3f4f6; ion-icon { color: #6b7280; } }
+  }
 
-.notif-date {
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
-  margin: 0;
-}
+  .notif-body {
+    flex: 1;
 
-.unread-badge {
-  font-size: 0.7rem;
-  flex-shrink: 0;
+    .notif-item-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 3px;
+    }
+
+    .notif-item-body {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0 0 4px;
+      line-height: 1.4;
+    }
+
+    .notif-item-date {
+      font-size: 11px;
+      color: #9ca3af;
+      margin: 0;
+    }
+  }
+
+  .unread-dot {
+    width: 8px;
+    height: 8px;
+    background: #01696f;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
 }
