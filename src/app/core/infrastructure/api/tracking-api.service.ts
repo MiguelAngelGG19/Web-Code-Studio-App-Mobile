@@ -19,19 +19,24 @@ export class TrackingApiService {
 
   constructor(private http: HttpClient) {}
 
+  // ✅ El backend solo tiene POST /tracking — get devuelve vacío de forma segura
   getByPatientId(patientId: number, limit = 50): Observable<Tracking[]> {
+    return of([]);
+  }
+
+  create(data: {
+    routineId: number;
+    patientId: number;
+    painLevel: number;
+    startTime?: string;
+    endTime?: string;
+    postObservations?: string;
+  }): Observable<boolean> {
     return this.http
-      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}?patientId=${patientId}&limit=${limit}`)
+      .post<{ success: boolean }>(this.baseUrl, data)
       .pipe(
-        map((res) => (res.rows ?? []).map((t: any) => ({
-          id: t.id,
-          routineId: t.routineId ?? t.routine_id,
-          painLevel: t.painLevel ?? t.pain_level ?? 0,
-          startTime: t.startTime ?? t.start_time,
-          endTime: t.endTime ?? t.end_time,
-          postObservations: t.postObservations ?? t.post_observations,
-        }))),
-        catchError(() => of([]))
+        map((res) => res.success),
+        catchError(() => of(false))
       );
   }
 }

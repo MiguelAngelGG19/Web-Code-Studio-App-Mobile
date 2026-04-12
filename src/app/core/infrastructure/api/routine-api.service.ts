@@ -17,7 +17,7 @@ export interface RoutineExercise {
   id: number;
   name: string;
   bodyZone: string;
-  description: string;  // Puede ser personalizada por rutina (descripcion del link) o la base del ejercicio
+  description: string;
   videoUrl: string;
   series?: number;
   reps?: number;
@@ -66,19 +66,20 @@ export class RoutineApiService {
       );
   }
 
+  // ✅ Corregido: usar /routines/patient/:patientId
   getRoutines(patientId: number): Observable<Routine[]> {
     return this.http
-      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}?patientId=${patientId}`)
+      .get<{ success: boolean; data?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
         map((res) => {
-          const rows = res.rows ?? [];
+          const rows = res.data ?? [];
           return rows.map((r: any) => ({
             id: r.id,
             name: r.name ?? '',
-            startDate: r.startDate ?? '',
-            endDate: r.endDate ?? '',
-            physiotherapistId: r.physiotherapistId ?? 0,
-            patientId: r.patientId ?? 0,
+            startDate: r.startDate ?? r.start_date ?? '',
+            endDate: r.endDate ?? r.end_date ?? '',
+            physiotherapistId: r.physiotherapistId ?? r.physiotherapist_id ?? 0,
+            patientId: r.patientId ?? r.patient_id ?? 0,
           }));
         }),
         catchError(() => of([]))

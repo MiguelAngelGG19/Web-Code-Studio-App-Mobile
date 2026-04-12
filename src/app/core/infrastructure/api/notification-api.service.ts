@@ -20,9 +20,10 @@ export class NotificationApiService {
 
   constructor(private http: HttpClient) {}
 
+  // ✅ Corregido: usar /notifications/patient/:patientId
   getByPatientId(patientId: number, limit = 50): Observable<Notification[]> {
     return this.http
-      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}?patientId=${patientId}&limit=${limit}`)
+      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
         map((res) =>
           (res.rows ?? []).map((n: any) => ({
@@ -39,21 +40,20 @@ export class NotificationApiService {
       );
   }
 
+  // ✅ Calcula no leídas desde getByPatientId en lugar de ruta inexistente
+  getUnreadCount(patientId: number): Observable<number> {
+    return this.getByPatientId(patientId).pipe(
+      map((notifications) => notifications.filter(n => !n.isRead).length),
+      catchError(() => of(0))
+    );
+  }
+
   markAsRead(id: number, patientId: number): Observable<boolean> {
     return this.http
-      .patch<{ success: boolean }>(`${this.baseUrl}/${id}/read?patientId=${patientId}`, {})
+      .patch<{ success: boolean }>(`${this.baseUrl}/${id}/read`, {})
       .pipe(
         map((res) => res.success),
         catchError(() => of(false))
-      );
-  }
-
-  getUnreadCount(patientId: number): Observable<number> {
-    return this.http
-      .get<{ success: boolean; count?: number }>(`${this.baseUrl}/unread-count?patientId=${patientId}`)
-      .pipe(
-        map((res) => res.count ?? 0),
-        catchError(() => of(0))
       );
   }
 }
