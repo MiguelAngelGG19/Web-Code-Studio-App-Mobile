@@ -1,5 +1,8 @@
+// =====================
+// TOOLBAR
+// =====================
 .profile-toolbar {
-  --background: #f8fafa;
+  --background: #ffffff;
   --border-width: 0;
   padding: 12px 16px 8px;
 
@@ -11,62 +14,133 @@
   }
 }
 
+// =====================
+// PAGE BG
+// =====================
 .profile-content {
-  --background: #f2f4f4;
+  --background: #f0f4f4;
 }
 
+// =====================
 // HERO
+// =====================
 .profile-hero {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 16px 24px;
-  background: linear-gradient(175deg, #01696f 0%, #0c4e54 100%);
+  padding: 32px 16px 28px;
+  background: linear-gradient(160deg, #01696f 0%, #084d52 60%, #0c3b3e 100%);
+  position: relative;
+  overflow: hidden;
 
-  .avatar-circle {
-    width: 88px;
-    height: 88px;
+  // Círculo decorativo de fondo
+  &::before {
+    content: '';
+    position: absolute;
+    width: 220px;
+    height: 220px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid rgba(255, 255, 255, 0.35);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-    margin-bottom: 14px;
-
-    .avatar-initials {
-      font-size: 34px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
+    background: rgba(255,255,255,0.04);
+    top: -60px;
+    right: -50px;
   }
-
-  .profile-name {
-    font-size: 21px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 5px;
-    text-transform: capitalize;
-  }
-
-  .profile-since {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.75);
-    margin: 0;
+  &::after {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    bottom: -30px;
+    left: -20px;
   }
 }
 
+// Anillo exterior
+.avatar-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
+}
+
+// Círculo interior con ícono
+.avatar-circle {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+
+  .avatar-icon {
+    font-size: 44px;
+    color: #ffffff;
+  }
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 10px;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+}
+
+.profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 5px 14px;
+  margin-bottom: 10px;
+
+  .badge-icon {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    text-transform: capitalize;
+  }
+}
+
+.profile-since {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+
+  ion-icon { font-size: 13px; }
+}
+
+// =====================
 // STATS
-.stats-row {
+// =====================
+.stats-card {
   display: flex;
   align-items: center;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 18px;
   margin: 16px 16px 0;
-  padding: 16px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 18px 8px;
+  box-shadow: 0 4px 16px rgba(1,105,111,0.1);
 
   .stat-item {
     flex: 1;
@@ -76,46 +150,57 @@
     gap: 3px;
 
     .stat-value {
-      font-size: 19px;
-      font-weight: 700;
+      font-size: 18px;
+      font-weight: 800;
       color: #111827;
+      line-height: 1;
+
+      &.imc-normal  { color: #437a22; }
+      &.imc-warning { color: #d19900; }
+      &.imc-danger  { color: #a12c7b; }
+      &.imc-low     { color: #006494; }
     }
 
     .stat-label {
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 600;
       color: #9ca3af;
+      text-transform: uppercase;
       letter-spacing: 0.07em;
     }
   }
 
   .stat-divider {
     width: 1px;
-    height: 32px;
+    height: 36px;
     background: #e5e7eb;
   }
 }
 
+// =====================
 // SECCIONES
+// =====================
 .section-block {
-  margin: 16px 16px 0;
+  margin: 18px 16px 0;
 
   .section-label {
     font-size: 11px;
     font-weight: 700;
     color: #9ca3af;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0 0 8px 4px;
+    letter-spacing: 0.09em;
+    margin: 0 0 8px 2px;
   }
 }
 
+// =====================
 // INFO CARD
+// =====================
 .info-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
 .info-row {
@@ -123,30 +208,46 @@
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
+}
 
-  .info-icon {
-    font-size: 20px;
-    color: #01696f;
-    flex-shrink: 0;
+.info-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 20px; color: #fff; }
+
+  &.teal  { background: #01696f; }
+  &.green { background: #437a22; }
+  &.blue  { background: #006494; }
+  &.purple{ background: #7a39bb; }
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .info-sublabel {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 500;
   }
 
-  .info-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  .info-value {
+    font-size: 15px;
+    color: #111827;
+    font-weight: 600;
+    text-transform: capitalize;
 
-    .info-sublabel {
-      font-size: 11px;
-      color: #9ca3af;
-      font-weight: 500;
-    }
-
-    .info-value {
-      font-size: 15px;
-      color: #111827;
-      font-weight: 600;
-      text-transform: capitalize;
-    }
+    &.imc-normal  { color: #437a22; }
+    &.imc-warning { color: #d19900; }
+    &.imc-danger  { color: #a12c7b; }
+    &.imc-low     { color: #006494; }
   }
 }
 
@@ -156,109 +257,135 @@
   margin: 0 16px;
 }
 
+// =====================
 // FISIOTERAPEUTA
+// =====================
 .physio-card {
   background: #fff;
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  gap: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   cursor: pointer;
   transition: background 0.15s;
 
   &:active { background: #f9fafb; }
+}
 
-  .physio-avatar {
-    width: 46px;
-    height: 46px;
-    background: #e6f2f2;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+.physio-avatar-wrap {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #01696f, #0c4e54);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 
-    ion-icon {
-      font-size: 26px;
-      color: #01696f;
-    }
+  .physio-avatar-icon {
+    font-size: 34px;
+    color: #fff;
+  }
+}
+
+.physio-info {
+  flex: 1;
+
+  .physio-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 2px;
+    text-transform: capitalize;
   }
 
-  .physio-info {
-    flex: 1;
-
-    .physio-name {
-      font-size: 15px;
-      font-weight: 700;
-      color: #111827;
-      margin: 0 0 2px;
-      text-transform: capitalize;
-    }
-
-    .physio-clinic {
-      font-size: 12px;
-      color: #6b7280;
-      margin: 0;
-    }
+  .physio-clinic {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
   }
+}
 
-  .physio-arrow {
-    font-size: 18px;
+.physio-arrow-wrap {
+  width: 28px;
+  height: 28px;
+  background: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 15px;
     color: #9ca3af;
   }
 }
 
+// =====================
 // MENÚ
+// =====================
 .menu-list {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-
-  .menu-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 15px 16px;
-    cursor: pointer;
-    border-bottom: 1px solid #f3f4f6;
-    transition: background 0.15s;
-
-    &:last-child { border-bottom: none; }
-    &:active { background: #f9fafb; }
-
-    .menu-icon {
-      font-size: 20px;
-      color: #01696f;
-      flex-shrink: 0;
-    }
-
-    .menu-text {
-      flex: 1;
-      font-size: 15px;
-      color: #111827;
-      font-weight: 500;
-    }
-
-    .menu-arrow {
-      font-size: 16px;
-      color: #d1d5db;
-    }
-  }
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s;
+
+  &:last-child { border-bottom: none; }
+  &:active { background: #f9fafb; }
+}
+
+.menu-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 20px; color: #fff; }
+
+  &.purple { background: #7a39bb; }
+  &.orange { background: #da7101; }
+  &.teal   { background: #01696f; }
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 15px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.menu-arrow {
+  font-size: 16px;
+  color: #d1d5db;
+}
+
+// =====================
 // LOGOUT
+// =====================
 .logout-wrap {
-  padding: 16px 16px 40px;
+  padding: 20px 16px 48px;
 
   .logout-btn {
     width: 100%;
     background: none;
     border: 1.5px solid #fee2e2;
     border-radius: 14px;
-    padding: 14px;
+    padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;

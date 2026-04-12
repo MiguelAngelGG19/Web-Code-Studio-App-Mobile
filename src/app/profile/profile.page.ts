@@ -37,14 +37,10 @@ export class ProfilePage implements OnInit {
       }
       const patientId = await this.storage.get('currentPatientId') ?? patient.id;
       this.routineApi.getRoutines(patientId).subscribe((routines) => {
-        if (routines.length > 0) {
-          this.tratamiento = routines[0].name ?? '—';
-        }
+        if (routines.length > 0) this.tratamiento = routines[0].name ?? '—';
       });
     }
   }
-
-  // --- Getters de datos ---
 
   get fullName(): string {
     if (!this.patient) return 'Paciente';
@@ -54,18 +50,6 @@ export class ProfilePage implements OnInit {
       this.patient.lastNameM ?? this.patient.lastNameMaternal
     ].filter(Boolean);
     return parts.join(' ') || 'Paciente';
-  }
-
-  get initials(): string {
-    const f = (this.patient?.firstName || '').charAt(0).toUpperCase();
-    const l = (this.patient?.lastNameP ?? this.patient?.lastNamePaternal ?? '').charAt(0).toUpperCase();
-    return (f + l) || 'P';
-  }
-
-  get avatarColor(): string {
-    const colors = ['#01696f', '#437a22', '#006494', '#7a39bb', '#a12c7b'];
-    const name = this.patient?.firstName || 'P';
-    return colors[name.charCodeAt(0) % colors.length];
   }
 
   get age(): string {
@@ -89,6 +73,32 @@ export class ProfilePage implements OnInit {
     return h ? `${h} m` : '—';
   }
 
+  get imc(): string {
+    const w = this.patient?.weight;
+    const h = this.patient?.height;
+    if (!w || !h || h === 0) return '—';
+    const val = w / (h * h);
+    return val.toFixed(1);
+  }
+
+  get imcLabel(): string {
+    const v = parseFloat(this.imc);
+    if (isNaN(v)) return '—';
+    if (v < 18.5) return 'Bajo peso';
+    if (v < 25)   return 'Normal';
+    if (v < 30)   return 'Sobrepeso';
+    return 'Obesidad';
+  }
+
+  get imcClass(): string {
+    const v = parseFloat(this.imc);
+    if (isNaN(v)) return '';
+    if (v < 18.5) return 'imc-low';
+    if (v < 25)   return 'imc-normal';
+    if (v < 30)   return 'imc-warning';
+    return 'imc-danger';
+  }
+
   get memberSince(): string {
     const d = this.patient?.createdAt ?? this.patient?.created_at;
     if (!d) return '—';
@@ -109,11 +119,9 @@ export class ProfilePage implements OnInit {
     return 'Sin asignar';
   }
 
-  // --- Navegación ---
-
-  goToHistorial() { this.router.navigate(['/tabs/historial']); }
-  goToPhysioProfile() { this.router.navigate(['/tabs/physiotherapist-profile']); }
-  goToNotifications() { this.router.navigate(['/tabs/notifications']); }
+  goToHistorial()    { this.router.navigate(['/tabs/historial']); }
+  goToPhysioProfile(){ this.router.navigate(['/tabs/physiotherapist-profile']); }
+  goToNotifications(){ this.router.navigate(['/tabs/notifications']); }
 
   async cerrarSesion() {
     const a = await this.alert.create({
@@ -122,8 +130,7 @@ export class ProfilePage implements OnInit {
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
-          text: 'Salir',
-          role: 'destructive',
+          text: 'Salir', role: 'destructive',
           handler: async () => {
             await this.storage.remove('currentPatientId');
             await this.storage.remove('currentPatient');
