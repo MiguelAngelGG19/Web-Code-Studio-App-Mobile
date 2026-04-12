@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
 import { RouteAnimationService } from '../core/services/route-animation.service';
 import { PatientRepository } from '../../core/domain/repositories/patient.repository';
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 import { TrackingApiService } from '../core/infrastructure/api/tracking-api.service';
 import { PhysiotherapistApiService } from '../core/infrastructure/api/physiotherapist-api.service';
 import { NotificationApiService } from '../core/infrastructure/api/notification-api.service';
+import { AppointmentApiService } from '../core/infrastructure/api/appointment-api.service';
 import { Storage } from '@ionic/storage-angular';
 
 @Component({
@@ -21,7 +21,7 @@ export class Tab4Page implements OnInit {
     fullName: 'Cargando...',
     progress: 0,
     specialist: 'Fisioterapeuta',
-    nextAppointment: '—',
+    nextAppointment: 'Sin citas programadas',
     routineName: 'Tu rutina',
     avatarUrl: 'https://i.pravatar.cc/150?u=default',
     physioAvatarUrl: ''
@@ -39,6 +39,7 @@ export class Tab4Page implements OnInit {
     private trackingApi: TrackingApiService,
     private physioApi: PhysiotherapistApiService,
     private notificationApi: NotificationApiService,
+    private appointmentApi: AppointmentApiService,
     private storage: Storage
   ) {}
 
@@ -46,6 +47,8 @@ export class Tab4Page implements OnInit {
     await this.storage.create();
     const patientId = await this.storage.get('currentPatientId');
     const id = patientId ?? 1;
+
+    // Datos del paciente
     this.patientRepo.getPatientById(id).subscribe({
       next: (patient) => {
         const fullName = [patient.firstName, patient.lastNameP, patient.lastNameM].filter(Boolean).join(' ') || 'Paciente';
@@ -65,17 +68,25 @@ export class Tab4Page implements OnInit {
         this.user.update(u => ({ ...u, fullName: 'Inicia sesión' }));
       }
     });
-    this.routineApi.getRoutines(id).subscribe((routines) => {
-      if (routines.length > 0) {
-        const r = routines[0];
-        const startDate = r.startDate ? new Date(r.startDate).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) : '';
-        this.user.update(u => ({
-          ...u,
-          routineName: r.name,
-          nextAppointment: startDate ? `${startDate} • Rutina activa` : 'Rutina activa'
-        }));
+
+    // ✅ Próxima cita REAL del back
+    this.appointmentApi.getNext(id).subscribe((appt) => {
+      if (appt) {
+        const fecha = this.formatAppointmentDate(appt.appointmentDate, appt.appointmentTime);
+        this.user.update(u => ({ ...u, nextAppointment: fecha }));
+      } else {
+        this.user.update(u => ({ ...u, nextAppointment: 'Sin citas programadas' }));
       }
     });
+
+    // Rutina activa
+    this.routineApi.getRoutines(id).subscribe((routines) => {
+      if (routines.length > 0) {
+        this.user.update(u => ({ ...u, routineName: routines[0].name }));
+      }
+    });
+
+    // Tracking semanal
     this.trackingApi.getByPatientId(id, 7).subscribe((trackings) => {
       const count = trackings.length;
       const progress = Math.min(count / 7, 1);
@@ -83,13 +94,40 @@ export class Tab4Page implements OnInit {
       const activos = this.dias.map((_, i) => i < count);
       this.diasActivos.set(activos);
     });
+
+    // Contador notificaciones
     this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
   }
 
   ionViewWillEnter() {
     this.storage.get('currentPatientId').then((id) => {
-      if (id) this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
+      if (!id) return;
+      this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
+      // Refresca la cita al volver a la pantalla
+      this.appointmentApi.getNext(id).subscribe((appt) => {
+        const fecha = appt
+          ? this.formatAppointmentDate(appt.appointmentDate, appt.appointmentTime)
+          : 'Sin citas programadas';
+        this.user.update(u => ({ ...u, nextAppointment: fecha }));
+      });
     });
+  }
+
+  // Formatea la fecha de la cita de forma legible
+  private formatAppointmentDate(dateStr: string, timeStr?: string): string {
+    if (!dateStr) return 'Sin fecha';
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const opciones: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'short' };
+    const fechaTexto = d.toLocaleDateString('es-MX', opciones);
+    if (timeStr) {
+      // Convierte "14:30:00" a "2:30 PM"
+      const [h, m] = timeStr.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hora12 = h % 12 || 12;
+      return `${fechaTexto} • ${hora12}:${String(m).padStart(2, '0')} ${ampm}`;
+    }
+    return fechaTexto;
   }
 
   goToProfile() {
