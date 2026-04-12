@@ -17,8 +17,7 @@ import { Storage } from '@ionic/storage-angular';
 export class Tab4Page implements OnInit {
   user = signal({
     fullName: 'Cargando...',
-    routineName: '',
-    routineDescription: ''
+    routineName: ''
   });
 
   nextAppointment = signal<{ fecha: string; hora: string } | null>(null);
@@ -39,7 +38,6 @@ export class Tab4Page implements OnInit {
     const patientId = await this.storage.get('currentPatientId');
     const id = patientId ?? 1;
 
-    // Nombre del paciente
     this.patientRepo.getPatientById(id).subscribe({
       next: (patient) => {
         const fullName = [patient.firstName, patient.lastNameP, patient.lastNameM].filter(Boolean).join(' ') || 'Paciente';
@@ -48,19 +46,12 @@ export class Tab4Page implements OnInit {
       error: () => this.user.update(u => ({ ...u, fullName: 'Inicia sesión' }))
     });
 
-    // Rutina real asignada por el fisio
     this.routineApi.getRoutines(id).subscribe((routines) => {
       if (routines.length > 0) {
-        const r = routines[0];
-        this.user.update(u => ({
-          ...u,
-          routineName: r.name,
-          routineDescription: r.description ?? ''
-        }));
+        this.user.update(u => ({ ...u, routineName: routines[0].name }));
       }
     });
 
-    // Próxima cita real
     this.appointmentApi.getNext(id).subscribe((apt) => {
       if (apt) {
         const fecha = new Date(apt.appointmentDate).toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -71,7 +62,6 @@ export class Tab4Page implements OnInit {
       }
     });
 
-    // Notificaciones no leídas
     this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
   }
 
