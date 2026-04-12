@@ -22,7 +22,6 @@ export class PatientApiService implements PatientRepository {
     ).pipe(
       map((res) => {
         if (!res?.patient) return null;
-        // Guardar token en localStorage para que las demás peticiones funcionen
         if (res.token) {
           localStorage.setItem('patient_token', res.token);
         }
@@ -58,8 +57,13 @@ export class PatientApiService implements PatientRepository {
   private mapPatient(p: any): Patient {
     const birthDate = p.birthDate ?? p.birth_date;
     const birthYear = p.birthYear ?? p.birth_year ?? (birthDate ? new Date(birthDate).getFullYear() : null);
+
+    // El back puede devolver el id con cualquiera de estos nombres:
+    // id, idpatient, id_patient, idPaciente, id_paciente
+    const id = p.id ?? p.idpatient ?? p.id_patient ?? p.idPaciente ?? p.id_paciente ?? 0;
+
     return {
-      id: p.id ?? p.id_patient ?? p.idPaciente,
+      id,
       firstName: p.firstName ?? p.first_name,
       lastNameP: p.lastNameP ?? p.last_name_paternal ?? p.last_name_p,
       lastNameM: p.lastNameM ?? p.last_name_maternal ?? p.last_name_m,
