@@ -1,37 +1,71 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/your-progress"></ion-back-button>
-    </ion-buttons>
+  <ion-toolbar class="notif-toolbar">
     <ion-title>Notificaciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        fill="clear"
+        class="mark-all-btn"
+        [disabled]="!hasUnread"
+        (click)="markAllAsRead()">
+        Marcar todas
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding content-light notifications-content">
-  <div *ngIf="loading" class="ion-text-center ion-padding">
+<ion-content class="notifications-content">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
     <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p>Cargando...</p>
+    <p>Cargando notificaciones...</p>
   </div>
 
-  <div *ngIf="!loading && notifications.length === 0" class="empty-state ion-text-center ion-padding">
-    <ion-icon name="notifications-off-outline" class="empty-icon"></ion-icon>
-    <h3>Sin notificaciones</h3>
+  <!-- Sin notificaciones -->
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state">
+    <div class="empty-icon-wrap">
+      <ion-icon name="notifications-off-outline"></ion-icon>
+    </div>
+    <h3>Todo al día</h3>
     <p>Aquí aparecerán mensajes de tu fisioterapeuta, recordatorios y consejos.</p>
   </div>
 
-  <ion-list *ngIf="!loading && notifications.length > 0" lines="none" class="notif-list">
-    <ion-card *ngFor="let n of notifications" class="notif-card" mode="ios" [class.read]="n.isRead" (click)="markAsRead(n)">
-      <ion-card-content>
-        <div class="notif-row">
-          <ion-icon [name]="getIcon(n.type)" [color]="getIconColor(n.type)" class="notif-icon"></ion-icon>
-          <div class="notif-body">
-            <h2 class="notif-title">{{ n.title }}</h2>
-            <p *ngIf="n.body" class="notif-body-text">{{ n.body }}</p>
-            <p class="notif-date">{{ formatDate(n.createdAt) }}</p>
-          </div>
-          <ion-badge *ngIf="!n.isRead" color="primary" class="unread-badge">Nuevo</ion-badge>
+  <!-- Lista -->
+  <ng-container *ngIf="!loading && notifications.length > 0">
+
+    <!-- Contador no leídas -->
+    <div class="unread-summary" *ngIf="unreadCount > 0">
+      <span class="unread-dot"></span>
+      {{ unreadCount }} sin leer
+    </div>
+
+    <div class="notif-list">
+      <div
+        *ngFor="let n of notifications"
+        class="notif-card"
+        [class.unread]="!n.isRead"
+        (click)="markAsRead(n)">
+
+        <!-- Ícono tipo -->
+        <div class="notif-icon-wrap" [ngClass]="'type-' + n.type">
+          <ion-icon [name]="getIcon(n.type)"></ion-icon>
         </div>
-      </ion-card-content>
-    </ion-card>
-  </ion-list>
+
+        <!-- Contenido -->
+        <div class="notif-content">
+          <div class="notif-top">
+            <h3 class="notif-title" [class.bold]="!n.isRead">{{ n.title }}</h3>
+            <span class="notif-time">{{ formatDate(n.createdAt) }}</span>
+          </div>
+          <p *ngIf="n.body" class="notif-body">{{ n.body }}</p>
+        </div>
+
+        <!-- Indicador no leída -->
+        <div class="unread-indicator" *ngIf="!n.isRead"></div>
+
+      </div>
+    </div>
+
+  </ng-container>
+
 </ion-content>
