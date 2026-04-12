@@ -2,13 +2,16 @@
   <ion-toolbar class="home-toolbar">
     <div class="toolbar-content">
 
+      <!-- Avatar con iniciales (sin foto en backend) -->
       <button class="avatar-btn" (click)="goToProfile()">
-        <img [src]="avatarUrl()" alt="Avatar" class="header-avatar" />
+        <div class="avatar-initials" [style.background]="avatarColor()">
+          {{ patientInitials() }}
+        </div>
       </button>
 
       <div class="header-text">
         <p class="greeting">{{ greeting() }}</p>
-        <h1 class="patient-name">{{ patientName() }}</h1>
+        <h1 class="patient-name">{{ patientFirstName() }}</h1>
       </div>
 
       <button class="notif-btn" (click)="goToNotifications()">
@@ -24,36 +27,29 @@
 
 <ion-content class="home-content">
 
-  <!-- ===== Próxima Cita ===== -->
+  <!-- ===== Banner próxima cita ===== -->
   @if (nextAppointmentLabel()) {
     <div class="next-appt-card">
-      <div class="appt-icon-col">
-        <div class="appt-icon-wrap">
-          <ion-icon name="calendar-clear-outline"></ion-icon>
-        </div>
+      <div class="appt-icon-wrap">
+        <ion-icon name="calendar-clear-outline"></ion-icon>
       </div>
       <div class="appt-body">
         <p class="appt-eyebrow">Próxima cita</p>
         <p class="appt-date">{{ nextAppointmentLabel() }}</p>
         <p class="appt-meta">
-          {{ nextAppointmentTime() }}
+          @if (nextAppointmentTime()) { {{ nextAppointmentTime() }} }
           @if (physioName()) { · {{ physioName() }} }
         </p>
       </div>
     </div>
   }
 
-  <!-- ===== Progreso del día ===== -->
+  <!-- ===== Semana ===== -->
   <div class="section-card">
     <div class="section-header">
-      <h2 class="section-title">Progreso semanal</h2>
-      <span class="percent-badge">{{ progressPercent() }}%</span>
+      <h2 class="section-title">Esta semana</h2>
+      <!-- TODO backend: mostrar % cuando GET /tracking/patient/:id esté disponible -->
     </div>
-
-    <div class="progress-rail">
-      <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
-    </div>
-
     <div class="week-strip">
       @for (dia of dias; track $index) {
         <div class="day-item" [class.active]="diasActivos()[$index]">
@@ -81,7 +77,6 @@
         </div>
         <ion-icon name="arrow-forward-outline" class="routine-go"></ion-icon>
       </div>
-
       <div class="routine-chips">
         <span class="chip">
           <ion-icon name="layers-outline"></ion-icon>
@@ -92,25 +87,34 @@
           ~{{ exerciseCount() * 3 }} min
         </span>
         @if (routine()!.endDate) {
-          <span class="chip chip-end">
+          <span class="chip chip-amber">
             <ion-icon name="flag-outline"></ion-icon>
-            Fin: {{ routine()!.endDate | date:'d MMM':'':'es' }}
+            Fin {{ routine()!.endDate | date:'d MMM':'':'es' }}
           </span>
         }
       </div>
     </div>
   } @else {
     <div class="routine-empty">
-      <ion-icon name="barbell-outline" class="empty-icon"></ion-icon>
-      <p>Sin rutina asignada aún</p>
-      <span>Tu fisioterapeuta asignará una pronto</span>
+      <div class="empty-icon-wrap">
+        <ion-icon name="barbell-outline"></ion-icon>
+      </div>
+      <div class="empty-body">
+        <p class="empty-title">Sin rutina asignada</p>
+        <p class="empty-sub">Tu fisioterapeuta asignará una pronto</p>
+      </div>
     </div>
   }
 
-  <!-- ===== Motivación / tip ===== -->
+  <!-- ===== Tip del día (rotativo) ===== -->
   <div class="tip-card">
-    <ion-icon name="bulb-outline" class="tip-icon"></ion-icon>
-    <p class="tip-text">Recuerda hidratarte bien antes y después de cada sesión de ejercicios.</p>
+    <div class="tip-left">
+      <ion-icon name="bulb-outline"></ion-icon>
+    </div>
+    <div class="tip-body">
+      <p class="tip-label">Consejo del día</p>
+      <p class="tip-text">{{ dailyTip() }}</p>
+    </div>
   </div>
 
 </ion-content>

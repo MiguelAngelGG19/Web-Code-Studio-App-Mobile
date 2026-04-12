@@ -4,7 +4,7 @@
 .home-toolbar {
   --background: #ffffff;
   --border-width: 0;
-  padding: 14px 18px 12px;
+  padding: 14px 18px 10px;
 
   .toolbar-content {
     display: flex;
@@ -12,38 +12,45 @@
     gap: 12px;
   }
 
+  // Avatar con iniciales
   .avatar-btn {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     flex-shrink: 0;
-
-    .header-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2.5px solid #01696f;
-      display: block;
-    }
   }
 
+  .avatar-initials {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    user-select: none;
+  }
+
+  // Texto de cabecera
   .header-text {
     flex: 1;
     overflow: hidden;
 
     .greeting {
       font-size: 12px;
-      font-weight: 600;
-      color: #6b7280;
-      margin: 0 0 1px;
+      font-weight: 500;
+      color: #9ca3af;
+      margin: 0 0 2px;
       white-space: nowrap;
     }
 
     .patient-name {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 20px;
+      font-weight: 800;
       color: #0f172a;
       margin: 0;
       white-space: nowrap;
@@ -52,28 +59,32 @@
     }
   }
 
+  // Botón notificaciones
   .notif-btn {
-    background: none;
+    background: #f1f5f9;
     border: none;
-    position: relative;
-    cursor: pointer;
-    padding: 6px;
-    color: #374151;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    cursor: pointer;
     flex-shrink: 0;
+    color: #374151;
+    transition: background 0.15s;
 
-    ion-icon {
-      font-size: 24px;
-    }
+    &:active { background: #e2e8f0; }
+
+    ion-icon { font-size: 22px; }
 
     .badge {
       position: absolute;
-      top: 2px;
-      right: 2px;
-      min-width: 16px;
-      height: 16px;
+      top: -4px;
+      right: -4px;
+      min-width: 18px;
+      height: 18px;
       background: #ef4444;
       color: #fff;
       border-radius: 99px;
@@ -95,40 +106,34 @@
   --background: #f5f7fa;
   --padding-start: 0;
   --padding-end: 0;
-  --padding-top: 8px;
-  --padding-bottom: 24px;
+  --padding-top: 12px;
+  --padding-bottom: 28px;
 }
 
 // ============================================================
-// PRÓXIMA CITA
+// BANNER PRÓXIMA CITA
 // ============================================================
 .next-appt-card {
   margin: 0 16px 14px;
   background: linear-gradient(135deg, #01696f 0%, #0a4f54 100%);
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 18px 20px;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 4px 20px rgba(1, 105, 111, 0.28);
-
-  .appt-icon-col {
-    flex-shrink: 0;
-  }
+  box-shadow: 0 6px 24px rgba(1,105,111,0.30);
 
   .appt-icon-wrap {
-    width: 48px;
-    height: 48px;
-    background: rgba(255,255,255,0.15);
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.14);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 
-    ion-icon {
-      font-size: 24px;
-      color: #fff;
-    }
+    ion-icon { font-size: 26px; color: #fff; }
   }
 
   .appt-body {
@@ -138,9 +143,9 @@
     .appt-eyebrow {
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.65);
+      color: rgba(255,255,255,0.6);
       margin: 0 0 4px;
     }
 
@@ -149,15 +154,15 @@
       font-weight: 700;
       color: #fff;
       margin: 0 0 3px;
+      text-transform: capitalize;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-transform: capitalize;
     }
 
     .appt-meta {
       font-size: 13px;
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.7);
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -171,16 +176,16 @@
 // ============================================================
 .section-card {
   background: #ffffff;
-  border-radius: 18px;
+  border-radius: 20px;
   margin: 0 16px 14px;
-  padding: 18px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  padding: 18px 18px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 
   .section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   .section-title {
@@ -189,34 +194,10 @@
     color: #0f172a;
     margin: 0;
   }
-
-  .percent-badge {
-    font-size: 15px;
-    font-weight: 800;
-    color: #01696f;
-  }
 }
 
 // ============================================================
-// BARRA DE PROGRESO
-// ============================================================
-.progress-rail {
-  height: 7px;
-  background: #e9edf2;
-  border-radius: 99px;
-  overflow: hidden;
-  margin-bottom: 16px;
-
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #01696f, #2ab0b7);
-    border-radius: 99px;
-    transition: width 0.6s cubic-bezier(.22,1,.36,1);
-  }
-}
-
-// ============================================================
-// SEMANA
+// STRIP SEMANAL
 // ============================================================
 .week-strip {
   display: flex;
@@ -226,59 +207,55 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 
     span {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      color: #9ca3af;
+      color: #cbd5e1;
+      letter-spacing: 0.04em;
     }
 
-    &.active span {
-      color: #01696f;
-    }
+    &.active span { color: #01696f; }
 
     .day-dot {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: #f1f5f9;
+      background: #f8fafc;
       border: 2px solid #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.25s ease;
 
-      ion-icon {
-        font-size: 16px;
-        color: #fff;
-      }
+      ion-icon { font-size: 17px; color: #fff; }
     }
 
     &.active .day-dot {
       background: #01696f;
       border-color: #01696f;
-      box-shadow: 0 2px 8px rgba(1,105,111,0.35);
+      box-shadow: 0 3px 10px rgba(1,105,111,0.35);
     }
   }
 }
 
 // ============================================================
-// TARJETA RUTINA
+// TARJETA RUTINA ACTIVA
 // ============================================================
 .routine-card {
   background: #ffffff;
-  border-radius: 18px;
+  border-radius: 20px;
   margin: 0 16px 14px;
   padding: 18px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
 
   &:active {
-    transform: scale(0.98);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transform: scale(0.985);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   }
 
   .routine-top {
@@ -289,19 +266,16 @@
   }
 
   .routine-icon {
-    width: 48px;
-    height: 48px;
-    background: #e8f5f5;
-    border-radius: 14px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #e8f5f5 0%, #d1eeee 100%);
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 
-    ion-icon {
-      font-size: 24px;
-      color: #01696f;
-    }
+    ion-icon { font-size: 26px; color: #01696f; }
   }
 
   .routine-meta-col {
@@ -313,7 +287,7 @@
       font-weight: 700;
       letter-spacing: 0.07em;
       text-transform: uppercase;
-      color: #9ca3af;
+      color: #94a3b8;
       margin: 0 0 3px;
     }
 
@@ -346,20 +320,17 @@
     gap: 5px;
     background: #f1f5f9;
     border-radius: 99px;
-    padding: 5px 11px;
+    padding: 5px 12px;
     font-size: 12px;
     font-weight: 600;
     color: #475569;
 
-    ion-icon {
-      font-size: 13px;
-      color: #01696f;
-    }
+    ion-icon { font-size: 13px; color: #01696f; }
 
-    &.chip-end {
-      background: #fef3c7;
+    &.chip-amber {
+      background: #fffbeb;
       color: #92400e;
-
+      border: 1px solid #fde68a;
       ion-icon { color: #d97706; }
     }
   }
@@ -370,55 +341,85 @@
 // ============================================================
 .routine-empty {
   background: #fff;
-  border-radius: 18px;
+  border-radius: 20px;
   margin: 0 16px 14px;
-  padding: 32px 24px;
-  text-align: center;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  padding: 20px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 
-  .empty-icon {
-    font-size: 42px;
-    color: #cbd5e1;
-    margin-bottom: 10px;
+  .empty-icon-wrap {
+    width: 50px;
+    height: 50px;
+    background: #f1f5f9;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    ion-icon { font-size: 26px; color: #cbd5e1; }
   }
 
-  p {
-    font-size: 15px;
-    font-weight: 700;
-    color: #374151;
-    margin: 0 0 4px;
-  }
-
-  span {
-    font-size: 13px;
-    color: #9ca3af;
+  .empty-body {
+    .empty-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #374151;
+      margin: 0 0 3px;
+    }
+    .empty-sub {
+      font-size: 13px;
+      color: #9ca3af;
+      margin: 0;
+    }
   }
 }
 
 // ============================================================
-// TIP
+// TIP DEL DÍA
 // ============================================================
 .tip-card {
   margin: 0 16px 8px;
-  background: #f0faf9;
-  border: 1.5px solid #b2dedd;
-  border-radius: 14px;
+  background: #f0fdf9;
+  border: 1.5px solid #a7f3d0;
+  border-radius: 16px;
   padding: 14px 16px;
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
 
-  .tip-icon {
-    font-size: 20px;
-    color: #01696f;
+  .tip-left {
+    width: 36px;
+    height: 36px;
+    background: #dcfce7;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    margin-top: 1px;
+
+    ion-icon { font-size: 20px; color: #059669; }
   }
 
-  .tip-text {
-    font-size: 13px;
-    line-height: 1.5;
-    color: #374151;
-    margin: 0;
+  .tip-body {
+    flex: 1;
+
+    .tip-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #059669;
+      margin: 0 0 4px;
+    }
+
+    .tip-text {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #374151;
+      margin: 0;
+    }
   }
 }
