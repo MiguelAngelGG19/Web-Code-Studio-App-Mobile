@@ -14,19 +14,27 @@ export interface Notification {
   createdAt?: string;
 }
 
+// ─── MOCK (Fase 1) ───────────────────────────────────────────
+const MOCK_NOTIFICATIONS: Notification[] = [
+  { id: 1, patientId: 1, title: 'Cita confirmada', body: 'Tu cita fue confirmada para el próximo lunes.', type: 'cita', isRead: false, createdAt: new Date().toISOString() },
+  { id: 2, patientId: 1, title: 'Nueva rutina asignada', body: 'Tu fisioterapeuta te asignó una rutina de rehabilitación lumbar.', type: 'rutina', isRead: false, createdAt: new Date().toISOString() },
+];
+// ─────────────────────────────────────────────────────────────
+
 @Injectable({ providedIn: 'root' })
 export class NotificationApiService {
   private baseUrl = `${environment.apiUrl}/notifications`;
 
   constructor(private http: HttpClient) {}
 
-  // ✅ Corregido: usar /notifications/patient/:patientId
-  getByPatientId(patientId: number, limit = 50): Observable<Notification[]> {
+  getByPatientId(patientId: number): Observable<Notification[]> {
     return this.http
       .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
-        map((res) =>
-          (res.rows ?? []).map((n: any) => ({
+        map((res) => {
+          const rows = res.rows ?? [];
+          if (rows.length === 0) return MOCK_NOTIFICATIONS;
+          return rows.map((n: any) => ({
             id: n.id,
             patientId: n.patientId ?? n.patient_id,
             title: n.title ?? '',
@@ -34,17 +42,16 @@ export class NotificationApiService {
             type: n.type ?? 'general',
             isRead: !!(n.isRead ?? n.is_read),
             createdAt: n.createdAt ?? n.created_at,
-          }))
-        ),
-        catchError(() => of([]))
+          }));
+        }),
+        catchError(() => of(MOCK_NOTIFICATIONS))
       );
   }
 
-  // ✅ Calcula no leídas desde getByPatientId en lugar de ruta inexistente
   getUnreadCount(patientId: number): Observable<number> {
     return this.getByPatientId(patientId).pipe(
-      map((notifications) => notifications.filter(n => !n.isRead).length),
-      catchError(() => of(0))
+      map((list) => list.filter((n) => !n.isRead).length),
+      catchError(() => of(2))
     );
   }
 

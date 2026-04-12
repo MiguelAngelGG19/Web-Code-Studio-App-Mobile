@@ -17,6 +17,17 @@ export interface Physiotherapist {
   photoUrl?: string;
 }
 
+// ─── MOCK (Fase 1) ───────────────────────────────────────────
+const MOCK_PHYSIO: Physiotherapist = {
+  id: 1,
+  firstName: 'Carlos',
+  lastNameP: 'Mendoza',
+  lastNameM: 'Ruiz',
+  fullName: 'Carlos Mendoza Ruiz',
+  professionalLicense: 'CED-12345',
+};
+// ─────────────────────────────────────────────────────────────
+
 @Injectable({ providedIn: 'root' })
 export class PhysiotherapistApiService {
   private baseUrl = `${environment.apiUrl}/physiotherapists`;
@@ -27,10 +38,10 @@ export class PhysiotherapistApiService {
     return this.http.get<{ success: boolean; data?: any }>(`${this.baseUrl}/${id}`).pipe(
       map((res) => {
         const p = res.data;
-        if (!p) return null;
+        if (!p) return MOCK_PHYSIO;
         const first = p.firstName ?? p.first_name ?? '';
-        const lastP = p.lastNameP ?? p.last_name_p ?? '';
-        const lastM = p.lastNameM ?? p.last_name_m ?? '';
+        const lastP  = p.lastNameP  ?? p.last_name_p  ?? '';
+        const lastM  = p.lastNameM  ?? p.last_name_m  ?? '';
         return {
           id: p.id ?? p.idFisioterapeuta,
           firstName: first,
@@ -44,7 +55,7 @@ export class PhysiotherapistApiService {
           photoUrl: p.photoUrl ?? p.photo_url,
         };
       }),
-      catchError(() => of(null))
+      catchError(() => of(MOCK_PHYSIO))
     );
   }
 }
