@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Storage } from '@ionic/storage-angular';
 import { ToastController, AlertController } from '@ionic/angular';
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 import { PhysiotherapistApiService, Physiotherapist } from '../core/infrastructure/api/physiotherapist-api.service';
+import { SessionService, SessionPatient } from '../core/services/session.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -13,14 +13,14 @@ import { environment } from '../../environments/environment';
   standalone: false,
 })
 export class ProfilePage implements OnInit {
-  patient: any = null;
+  patient: SessionPatient | null = null;
   physio: Physiotherapist | null = null;
   tratamiento = '—';
   clinicName = environment.clinicName ?? 'ACTIVA Health Center';
 
   constructor(
     private router: Router,
-    private storage: Storage,
+    private session: SessionService,
     private routineApi: RoutineApiService,
     private physioApi: PhysiotherapistApiService,
     private toast: ToastController,
@@ -28,57 +28,50 @@ export class ProfilePage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.storage.create();
-    const patient = await this.storage.get('currentPatient');
-    if (patient) {
-      this.patient = patient;
-      if (patient.physiotherapistId) {
-        this.physioApi.getById(patient.physiotherapistId).subscribe((p) => (this.physio = p));
-      }
-      const patientId = await this.storage.get('currentPatientId') ?? patient.id;
-      this.routineApi.getRoutines(patientId).subscribe((routines) => {
-        if (routines.length > 0) this.tratamiento = routines[0].name ?? '—';
-      });
+    await this.session.init();
+    const p = this.session.current;
+    if (!p) return;
+    this.patient = p;
+
+    if (p.physiotherapistId) {
+      this.physioApi.getById(p.physiotherapistId).subscribe((ph) => (this.physio = ph));
     }
+
+    this.routineApi.getRoutines(p.id).subscribe((routines) => {
+      if (routines.length > 0) this.tratamiento = routines[0].name ?? '—';
+    });
   }
+
+  // ─ Getters ───────────────────────────────────────────────────────────
 
   get fullName(): string {
     if (!this.patient) return 'Paciente';
-    const parts = [
-      this.patient.firstName,
-      this.patient.lastNameP ?? this.patient.lastNamePaternal,
-      this.patient.lastNameM ?? this.patient.lastNameMaternal
-    ].filter(Boolean);
+    const parts = [this.patient.firstName, this.patient.lastNameP, this.patient.lastNameM].filter(Boolean);
     return parts.join(' ') || 'Paciente';
   }
 
+  /** El modelo guarda birthYear (número), no birthDate */
   get age(): string {
-    const birth = this.patient?.birthDate ?? this.patient?.birth_date;
-    if (!birth) return '—';
-    const d = new Date(birth);
-    const today = new Date();
-    let a = today.getFullYear() - d.getFullYear();
-    const m = today.getMonth() - d.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) a--;
-    return `${a}`;
+    const year = (this.patient as any)?.birthYear;
+    if (!year) return '—';
+    return `${new Date().getFullYear() - year}`;
   }
 
   get weight(): string {
-    const w = this.patient?.weight;
+    const w = (this.patient as any)?.weight;
     return w ? `${w} kg` : '—';
   }
 
   get height(): string {
-    const h = this.patient?.height;
+    const h = (this.patient as any)?.height;
     return h ? `${h} m` : '—';
   }
 
   get imc(): string {
-    const w = this.patient?.weight;
-    const h = this.patient?.height;
+    const w = (this.patient as any)?.weight;
+    const h = (this.patient as any)?.height;
     if (!w || !h || h === 0) return '—';
-    const val = w / (h * h);
-    return val.toFixed(1);
+    return (w / (h * h)).toFixed(1);
   }
 
   get imcLabel(): string {
@@ -100,28 +93,30 @@ export class ProfilePage implements OnInit {
   }
 
   get memberSince(): string {
-    const d = this.patient?.createdAt ?? this.patient?.created_at;
+    const d = (this.patient as any)?.createdAt;
     if (!d) return '—';
     return new Date(d).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
   }
 
   get gender(): string {
     const map: Record<string, string> = { M: 'Masculino', F: 'Femenino', Other: 'Otro' };
-    return this.patient?.gender ? (map[this.patient.gender] ?? '—') : '—';
+    const s = (this.patient as any)?.sex ?? (this.patient as any)?.gender;
+    return s ? (map[s] ?? '—') : '—';
   }
 
   get physioName(): string {
-    if (this.physio) {
-      return [(this.physio as any).firstName, (this.physio as any).lastNamePaternal].filter(Boolean).join(' ')
-        || (this.physio as any).fullName
-        || 'Sin asignar';
-    }
-    return 'Sin asignar';
+    if (!this.physio) return 'Sin asignar';
+    return [
+      (this.physio as any).firstName,
+      (this.physio as any).lastNamePaternal
+    ].filter(Boolean).join(' ') || (this.physio as any).fullName || 'Sin asignar';
   }
 
-  goToHistorial()    { this.router.navigate(['/tabs/historial']); }
-  goToPhysioProfile(){ this.router.navigate(['/tabs/physiotherapist-profile']); }
-  goToNotifications(){ this.router.navigate(['/tabs/notifications']); }
+  // ─ Navegación ──────────────────────────────────────────────────────
+
+  goToHistorial()     { this.router.navigate(['/tabs/historial']); }
+  goToPhysioProfile() { this.router.navigate(['/tabs/physiotherapist-profile']); }
+  goToNotifications() { this.router.navigate(['/tabs/notifications']); }
 
   async cerrarSesion() {
     const a = await this.alert.create({
@@ -130,15 +125,14 @@ export class ProfilePage implements OnInit {
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
-          text: 'Salir', role: 'destructive',
+          text: 'Salir',
+          role: 'destructive',
           handler: async () => {
-            await this.storage.remove('currentPatientId');
-            await this.storage.remove('currentPatient');
-            await this.storage.remove('currentRoutineId');
+            await this.session.clear();  // limpia token + IDs en Storage
             this.router.navigate(['/login']);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await a.present();
   }
