@@ -23,21 +23,33 @@ export class NotificationApiService {
   // ✅ Corregido: usar /notifications/patient/:patientId
   getByPatientId(patientId: number, limit = 50): Observable<Notification[]> {
     return this.http
-      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
+      .get<any>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
-        map((res) =>
-          (res.rows ?? []).map((n: any) => ({
-            id: n.id,
-            patientId: n.patientId ?? n.patient_id,
-            title: n.title ?? '',
-            body: n.body,
+        map((res) => {
+          const rows = Array.isArray(res) ? res : (res?.rows ?? []);
+          return rows.map((n: any) => ({
+            id: n.id ?? n.id_notification,
+            patientId: n.patientId ?? n.patient_id ?? n.id_patient,
+            title: n.title || this.generateTitle(n.type),
+            body: n.message ?? n.body ?? '',
             type: n.type ?? 'general',
             isRead: !!(n.isRead ?? n.is_read),
-            createdAt: n.createdAt ?? n.created_at,
-          }))
-        ),
+            createdAt: n.date ?? n.createdAt ?? n.created_at,
+          }));
+        }),
         catchError(() => of([]))
       );
+  }
+
+  private generateTitle(type?: string): string {
+    switch (type?.toLowerCase()) {
+      case 'rutina':        return 'Nueva Rutina Asignada';
+      case 'cita':          return 'Recordatorio de Cita';
+      case 'mensaje':       return 'Mensaje de tu Fisio';
+      case 'progreso':      return 'Tu Progreso';
+      case 'recordatorio':  return 'Recordatorio Importante';
+      default:              return 'Notificación de ACTIVA';
+    }
   }
 
   // ✅ Calcula no leídas desde getByPatientId en lugar de ruta inexistente

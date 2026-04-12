@@ -189,7 +189,7 @@ $red:        #d32f2f;
     .menu-icon    { font-size: 1.2rem; color: $teal; }
     .menu-chevron { font-size: 0.95rem; color: $text-muted; }
 
-    &:active { background: darken($white, 3%); }
+    &:active { background: mix(black, $white, 3%); }
   }
 }
 
@@ -213,6 +213,6 @@ $red:        #d32f2f;
     gap: 8px;
     cursor: pointer;
     ion-icon { font-size: 1.1rem; }
-    &:active { background: darken($red, 8%); }
+    &:active { background: mix(black, $red, 8%); }
   }
 }

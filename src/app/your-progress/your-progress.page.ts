@@ -17,7 +17,8 @@ import { Storage } from '@ionic/storage-angular';
 export class Tab4Page implements OnInit {
   user = signal({
     fullName: 'Cargando...',
-    routineName: ''
+    routineName: '',
+    routineId: null as number | null
   });
 
   nextAppointment = signal<{ fecha: string; hora: string; tipo: string } | null>(null);
@@ -51,7 +52,7 @@ export class Tab4Page implements OnInit {
     // Rutina real asignada por el fisio
     this.routineApi.getRoutines(id).subscribe((routines) => {
       if (routines.length > 0) {
-        this.user.update(u => ({ ...u, routineName: routines[0].name }));
+        this.user.update(u => ({ ...u, routineName: routines[0].name, routineId: routines[0].id }));
       }
     });
 
@@ -89,6 +90,16 @@ export class Tab4Page implements OnInit {
 
   goToNotifications() {
     this.router.navigate(['/tabs/notifications']);
+  }
+
+  async startFirstRoutine() {
+    const rId = this.user().routineId;
+    if (rId) {
+      await this.storage.set('currentRoutineId', rId);
+      this.routeAnimationService.navigateWithAnimation(['/tabs/detail'], 'slide');
+    } else {
+      this.router.navigate(['/tabs/detalle-rutina']);
+    }
   }
 
   ionViewWillLeave() {
