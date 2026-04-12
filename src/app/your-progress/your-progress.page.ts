@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouteAnimationService } from '../core/services/route-animation.service';
+import { SessionService } from '../core/services/session.service';
 import { PatientRepository } from '../../core/domain/repositories/patient.repository';
 import { RoutineApiService, Routine } from '../core/infrastructure/api/routine-api.service';
 import { PhysiotherapistApiService } from '../core/infrastructure/api/physiotherapist-api.service';
@@ -46,14 +47,8 @@ export class Tab4Page implements OnInit {
   readonly dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   diasActivos = signal<boolean[]>([false, false, false, false, false, false, false]);
 
-  // Cuántos días laborables tiene la rutina activa (L-V = 5 por defecto)
-  diasConRutina = computed(() => {
-    // Por ahora fijo en 5 (L-V) hasta que backend exponga días asignados
-    return 5;
-  });
-
+  diasConRutina = computed(() => 5);
   diasCompletados = computed(() => this.diasActivos().filter(Boolean).length);
-
   weekProgressPct = computed(() => {
     const total = this.diasConRutina();
     if (total === 0) return 0;
@@ -70,6 +65,7 @@ export class Tab4Page implements OnInit {
   constructor(
     private router: Router,
     private routeAnimationService: RouteAnimationService,
+    private session: SessionService,
     private patientRepo: PatientRepository,
     private routineApi: RoutineApiService,
     private physioApi: PhysiotherapistApiService,
@@ -80,43 +76,65 @@ export class Tab4Page implements OnInit {
 
   async ngOnInit() {
     await this.storage.create();
-    const patientId = (await this.storage.get('currentPatientId')) ?? 1;
-    this._loadAll(patientId);
+
+    // 1️⃣ Nombre inmediato desde Storage (sin esperar al back)
+    const sessionData = this.session.current;
+    if (sessionData) {
+      const first = sessionData.firstName || '';
+      const lastP = sessionData.lastNameP || '';
+      const full  = [first, lastP].filter(Boolean).join(' ') || 'Paciente';
+      this.patientFirstName.set(first || 'Paciente');
+      this.patientInitials.set(
+        ((first[0] || '') + (lastP[0] || '')).toUpperCase() || 'P'
+      );
+      this.avatarColor.set(this._colorFromName(full));
+    }
+
+    const patientId = sessionData?.id ?? (await this.storage.get('currentPatientId')) ?? 0;
+    if (!patientId) return;
+
+    // 2️⃣ Cargar resto de datos del back
+    this._loadAll(patientId, sessionData?.physiotherapistId);
   }
 
   ionViewWillEnter() {
-    this.storage.get('currentPatientId').then((id) => {
-      if (id) this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
-    });
+    const id = this.session.currentId;
+    if (id) this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
   }
 
-  // true si el índice (0=L...6=D) corresponde al día actual
   isToday(index: number): boolean {
-    const dow = new Date().getDay(); // 0=Dom, 1=Lun...
+    const dow = new Date().getDay();
     const map = [1, 2, 3, 4, 5, 6, 0];
     return map[index] === dow;
   }
 
-  private _loadAll(patientId: number) {
+  private _loadAll(patientId: number, physiotherapistId?: number) {
+    // Nombre de respaldo desde el back (por si Storage estaba vacío)
     this.patientRepo.getPatientById(patientId).subscribe({
       next: (p) => {
         const first = p.firstName || '';
         const lastP = p.lastNameP || '';
         const full  = [first, lastP].filter(Boolean).join(' ') || 'Paciente';
-        this.patientFirstName.set(first || 'Paciente');
-        this.patientInitials.set(
-          ((first[0] || '') + (lastP[0] || '')).toUpperCase() || (full[0] || 'P').toUpperCase()
-        );
-        this.avatarColor.set(this._colorFromName(full));
-        if (p.physiotherapistId) {
-          this.physioApi.getById(p.physiotherapistId).subscribe((ph) => {
+        // Solo sobreescribe si el signal aún tiene el placeholder
+        if (this.patientFirstName() === '...') {
+          this.patientFirstName.set(first || 'Paciente');
+          this.patientInitials.set(
+            ((first[0] || '') + (lastP[0] || '')).toUpperCase() || 'P'
+          );
+          this.avatarColor.set(this._colorFromName(full));
+        }
+        const physioId = physiotherapistId ?? p.physiotherapistId;
+        if (physioId) {
+          this.physioApi.getById(physioId).subscribe((ph) => {
             if (ph) this.physioName.set(ph.fullName);
           });
         }
       },
       error: () => {
-        this.patientFirstName.set('Paciente');
-        this.patientInitials.set('P');
+        if (this.patientFirstName() === '...') {
+          this.patientFirstName.set('Paciente');
+          this.patientInitials.set('P');
+        }
       },
     });
 

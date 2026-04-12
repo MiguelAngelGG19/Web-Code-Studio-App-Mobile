@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 export interface SessionPatient {
   id: number;
@@ -11,17 +12,6 @@ export interface SessionPatient {
   physiotherapistId?: number;
 }
 
-// ─── MOCK (Fase 2) ────────────────────────────────────────────────────────────
-const MOCK_SESSION: SessionPatient = {
-  id: 1,
-  firstName: 'Miguel',
-  lastNameP: 'Ángel',
-  lastNameM: 'González',
-  email: 'miguel@example.com',
-  physiotherapistId: 1,
-};
-// ─────────────────────────────────────────────────────────────────────────────
-
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private _patient$ = new BehaviorSubject<SessionPatient | null>(null);
@@ -29,7 +19,7 @@ export class SessionService {
 
   private _ready = false;
 
-  constructor(private storage: Storage) {}
+  constructor(private storage: Storage, private router: Router) {}
 
   /** Llama una vez en AppComponent.ngOnInit */
   async init(): Promise<void> {
@@ -39,10 +29,8 @@ export class SessionService {
     if (saved) {
       this._patient$.next(saved as SessionPatient);
     } else {
-      // Fase 2: si no hay sesión guardada, usa el mock para poder navegar la app
-      this._patient$.next(MOCK_SESSION);
-      await this.storage.set('currentPatientId', MOCK_SESSION.id);
-      await this.storage.set('currentPatient', MOCK_SESSION);
+      // No hay sesión guardada → redirigir al login
+      this.router.navigate(['/login'], { replaceUrl: true });
     }
     this._ready = true;
   }
@@ -61,6 +49,7 @@ export class SessionService {
     await this.storage.remove('currentPatientId');
     await this.storage.remove('currentPatient');
     this._patient$.next(null);
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   get current(): SessionPatient | null {
@@ -68,6 +57,6 @@ export class SessionService {
   }
 
   get currentId(): number {
-    return this._patient$.getValue()?.id ?? 1;
+    return this._patient$.getValue()?.id ?? 0;
   }
 }
