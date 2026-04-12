@@ -1,179 +1,185 @@
+// ============================================================
+// PROFILE PAGE
+// ============================================================
+
 .profile-content {
-  --background: var(--activa-bg);
+  --background: #f4f6f8;
 }
 
-ion-grid.ion-padding-top {
-  padding-top: 32px;
+// --- HEADER ---
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 16px;
+  background: #ffffff;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  margin-bottom: 16px;
+
+  .avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #e8f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+
+    .avatar-icon {
+      font-size: 44px;
+      color: var(--ion-color-primary, #01696f);
+    }
+  }
+
+  .user-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 4px;
+  }
+
+  .user-subtitle {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+  }
 }
 
-.avatar-wrapper {
-  position: relative;
+// --- STATS ---
+.stats-grid {
   margin-bottom: 12px;
 
-  .custom-avatar {
-    width: 108px;
-    height: 108px;
-    border: 4px solid #fff;
-    box-shadow: var(--activa-shadow);
-    overflow: hidden;
-    border-radius: 50%;
+  .stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 4px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .stat-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
     }
-  }
 
-  .edit-btn {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 36px;
-    height: 36px;
-    --background: linear-gradient(145deg, var(--activa-primary) 0%, var(--activa-primary-dark) 100%);
-    --box-shadow: var(--activa-shadow-sm);
-    border: 2px solid #fff;
-
-    ion-icon {
-      font-size: 18px;
-      color: #fff;
+    .stat-label {
+      font-size: 0.65rem;
+      color: #888;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
     }
   }
 }
 
-.user-name {
-  font-weight: 800;
-  font-size: 1.4rem;
-  color: var(--activa-text);
-  margin: 0;
-}
+// --- IMC ---
+.imc-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  margin-bottom: 16px;
 
-.user-subtitle {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--activa-text-muted);
-  margin: 6px 0 0 0;
-}
+  .imc-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 56px;
 
-.stat-card {
-  border-radius: 18px;
-  --background: #fff;
-  box-shadow: var(--activa-shadow-sm);
+    .imc-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--ion-color-primary, #01696f);
+    }
 
-  ion-card-header {
-    padding: 16px 10px;
+    .imc-title {
+      font-size: 0.7rem;
+      color: #888;
+      letter-spacing: 0.06em;
+    }
   }
-  ion-card-title {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--activa-primary);
-  }
-  ion-card-subtitle {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    color: var(--activa-text);
-    margin-top: 6px;
+
+  .imc-right {
+    flex: 1;
+
+    .imc-badge {
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+    }
+
+    .imc-desc {
+      font-size: 0.78rem;
+      color: #888;
+      margin: 0;
+    }
   }
 }
 
-.section-title h6 {
-  font-weight: 800;
-  color: var(--activa-text);
-  letter-spacing: 1.2px;
-  margin: 28px 0 14px 6px;
+// --- SECTION TITLE ---
+.section-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #555;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  padding-top: 4px;
 }
 
+// --- PLAN CARD ---
 .plan-card {
-  border-radius: 20px;
-  --background: #fff;
-  box-shadow: var(--activa-shadow-sm);
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  margin-bottom: 12px;
 
   .plan-item {
-    --background: transparent;
-    --padding-start: 18px;
-    --padding-end: 18px;
+    --padding-start: 12px;
+  }
 
-    .plan-icon {
-      background: var(--activa-primary-light);
-      color: var(--activa-primary);
-      padding: 12px;
-      border-radius: 14px;
-      font-size: 1.35rem;
-      margin-right: 16px;
-    }
-    h2 {
-      font-weight: 800;
-      color: var(--activa-text);
-      font-size: 1rem;
-    }
-    p {
-      color: #5f6368;
-      font-size: 0.9rem;
-    }
+  .plan-icon {
+    color: var(--ion-color-primary, #01696f);
+    font-size: 1.4rem;
+    margin-right: 8px;
+  }
 
-    .view-details {
-      color: #4285f4;
-      font-size: 0.8rem;
-      margin-top: 4px;
-      font-weight: 500;
-      text-decoration: underline;
-    }
+  .view-details {
+    color: var(--ion-color-primary, #01696f);
+    font-size: 0.8rem;
+    margin: 2px 0 0;
   }
 }
 
+// --- MENU LIST ---
 .menu-list {
   background: transparent;
-  margin-bottom: 28px;
+  margin-bottom: 12px;
 
   .menu-item {
-    --background: #fff;
-    --border-radius: 16px;
-    --padding-start: 18px;
-    --min-height: 62px;
-    margin-bottom: 12px;
-    box-shadow: var(--activa-shadow-sm);
-
-    ion-icon[slot="start"] {
-      color: var(--activa-primary);
-      font-size: 1.35rem;
-      margin-right: 16px;
-    }
-    ion-label {
-      font-weight: 700;
-      color: var(--activa-text);
-    }
-    .notification-dot {
-      width: 10px;
-      height: 10px;
-      padding: 0;
-      border-radius: 50%;
-      background: var(--activa-warning);
-    }
+    --background: #ffffff;
+    --border-radius: 12px;
+    --padding-start: 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   }
-  .menu-item-disabled {
-    opacity: 0.7;
-    ion-label {
-      color: var(--activa-text-muted);
-    }
-    ion-icon {
-      opacity: 0.8;
-    }
+
+  .notification-dot {
+    --background: transparent;
   }
 }
 
+// --- LOGOUT ---
 .logout-btn {
-  --background: var(--activa-danger);
-  --border-radius: 16px;
-  --box-shadow: 0 6px 24px rgba(220, 38, 38, 0.3);
-  height: 56px;
-  font-weight: 800;
-  font-size: 1rem;
-
-  ion-icon {
-    font-size: 22px;
-    margin-right: 10px;
-  }
+  --background: #d32f2f;
+  --border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-top: 8px;
 }

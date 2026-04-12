@@ -1,56 +1,52 @@
 <ion-content [fullscreen]="true" class="profile-content">
-  
-  <ion-grid class="ion-padding-top">
-    <ion-row class="ion-justify-content-center">
-      <ion-col size="auto" class="avatar-wrapper">
-        <ion-avatar class="custom-avatar">
-          <img [src]="getAvatarUrl()" alt="Avatar" />
-        </ion-avatar>
-        <ion-fab-button size="small" class="edit-btn" (click)="changePhoto()">
-          <ion-icon name="pencil"></ion-icon>
-        </ion-fab-button>
-      </ion-col>
-    </ion-row>
-    <ion-row class="ion-justify-content-center ion-text-center">
-      <ion-col>
-        <ion-text color="dark"><h2 class="user-name">{{ userName }}</h2></ion-text>
-        <ion-text color="medium"><p class="user-subtitle">Paciente desde {{ pacienteDesde }}</p></ion-text>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
 
-  <ion-grid class="ion-padding-horizontal">
+  <!-- CABECERA AVATAR + NOMBRE -->
+  <div class="profile-header">
+    <div class="avatar-circle">
+      <ion-icon name="person" class="avatar-icon"></ion-icon>
+    </div>
+    <h2 class="user-name">{{ userName }}</h2>
+    <p class="user-subtitle">Paciente desde {{ pacienteDesde }}</p>
+  </div>
+
+  <!-- STATS: EDAD · PESO · ALTURA -->
+  <ion-grid class="stats-grid ion-padding-horizontal">
     <ion-row>
       <ion-col size="4">
-        <ion-card class="stat-card ion-no-margin">
-          <ion-card-header class="ion-text-center">
-            <ion-card-title>{{ patient?.birthYear ? (currentYear - patient.birthYear) : '—' }}</ion-card-title>
-            <ion-card-subtitle>EDAD</ion-card-subtitle>
-          </ion-card-header>
-        </ion-card>
+        <div class="stat-card">
+          <span class="stat-value">{{ edad }}</span>
+          <span class="stat-label">EDAD</span>
+        </div>
       </ion-col>
       <ion-col size="4">
-        <ion-card class="stat-card ion-no-margin">
-          <ion-card-header class="ion-text-center">
-            <ion-card-title>{{ patient?.weight ? patient.weight + 'kg' : '—' }}</ion-card-title>
-            <ion-card-subtitle>PESO</ion-card-subtitle>
-          </ion-card-header>
-        </ion-card>
+        <div class="stat-card">
+          <span class="stat-value">{{ peso }}</span>
+          <span class="stat-label">PESO</span>
+        </div>
       </ion-col>
       <ion-col size="4">
-        <ion-card class="stat-card ion-no-margin">
-          <ion-card-header class="ion-text-center">
-            <ion-card-title>{{ tratamiento }}</ion-card-title>
-            <ion-card-subtitle>TRATAMIENTO</ion-card-subtitle>
-          </ion-card-header>
-        </ion-card>
+        <div class="stat-card">
+          <span class="stat-value">{{ altura }}</span>
+          <span class="stat-label">ALTURA</span>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>
 
-  <ion-text class="section-title ion-padding-horizontal">
-    <h6>MI PLAN</h6>
-  </ion-text>
+  <!-- IMC -->
+  <div class="imc-card ion-margin-horizontal" *ngIf="imc !== null">
+    <div class="imc-left">
+      <span class="imc-value">{{ imc | number:'1.1-1' }}</span>
+      <span class="imc-title">IMC</span>
+    </div>
+    <div class="imc-right">
+      <ion-badge [color]="imcColor" class="imc-badge">{{ imcLabel }}</ion-badge>
+      <p class="imc-desc">Índice de masa corporal calculado con tu peso y altura.</p>
+    </div>
+  </div>
+
+  <!-- MI PLAN -->
+  <p class="section-title ion-padding-horizontal">MI PLAN</p>
 
   <ion-card class="plan-card ion-margin-horizontal">
     <ion-item lines="none" detail="true" class="plan-item" (click)="goToPhysioProfile()">
@@ -63,17 +59,13 @@
     </ion-item>
   </ion-card>
 
+  <!-- MENÚ -->
   <ion-list class="menu-list ion-margin-horizontal" lines="none">
     <ion-item button detail="true" class="menu-item" (click)="goToHistorial()">
       <ion-icon name="time-outline" slot="start"></ion-icon>
       <ion-label>Historial de sesiones</ion-label>
     </ion-item>
-    
-    <ion-item button detail="true" class="menu-item" (click)="goToDocuments()">
-      <ion-icon name="document-text-outline" slot="start"></ion-icon>
-      <ion-label>Documentos médicos</ion-label>
-    </ion-item>
-    
+
     <ion-item button detail="true" class="menu-item" (click)="goToNotifications()">
       <ion-icon name="notifications-outline" slot="start"></ion-icon>
       <ion-label>Notificaciones</ion-label>
@@ -81,9 +73,10 @@
     </ion-item>
   </ion-list>
 
+  <!-- CERRAR SESIÓN -->
   <ion-button expand="block" class="logout-btn ion-margin" (click)="cerrarSesion()">
     <ion-icon name="log-out-outline" slot="start"></ion-icon>
-    Cerrar Sesión
+    CERRAR SESIÓN
   </ion-button>
 
 </ion-content>

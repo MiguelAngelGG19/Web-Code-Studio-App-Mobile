@@ -4,8 +4,6 @@ import { Storage } from '@ionic/storage-angular';
 import { ToastController } from '@ionic/angular';
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 import { PhysiotherapistApiService, Physiotherapist } from '../core/infrastructure/api/physiotherapist-api.service';
-import { HttpClient } from '@angular/common/http';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -15,21 +13,29 @@ import { environment } from '../../environments/environment';
   standalone: false,
 })
 export class ProfilePage implements OnInit {
-  userName = 'Cargando...';
+  userName     = 'Cargando...';
   patient: any = null;
-  photoTimestamp: number = Date.now();
-  currentYear = new Date().getFullYear();
+  currentYear  = new Date().getFullYear();
   physio: Physiotherapist | null = null;
-  tratamiento = '—';
+  tratamiento  = '—';
   pacienteDesde = '—';
-  clinicName = environment.clinicName ?? 'ACTIVA Health Center';
+  clinicName   = (environment as any).clinicName ?? 'ACTIVA Health Center';
+
+  // Stats mostrados en pantalla
+  edad   = '—';
+  peso   = '—';
+  altura = '—';
+
+  // IMC
+  imc: number | null = null;
+  imcLabel = '';
+  imcColor = 'medium';
 
   constructor(
     private router: Router,
     private storage: Storage,
     private routineApi: RoutineApiService,
     private physioApi: PhysiotherapistApiService,
-    private http: HttpClient,
     private toast: ToastController
   ) {}
 
@@ -38,10 +44,44 @@ export class ProfilePage implements OnInit {
     const patient = await this.storage.get('currentPatient');
     if (patient) {
       this.patient = patient;
-      this.userName = [patient.firstName, patient.lastNameP, patient.lastNameM].filter(Boolean).join(' ') || 'Paciente';
-      if (patient.physiotherapistId) {
-        this.physioApi.getById(patient.physiotherapistId).subscribe((p) => (this.physio = p));
+      this.userName = [patient.firstName, patient.lastNameP, patient.lastNameM]
+        .filter(Boolean).join(' ') || 'Paciente';
+
+      // Edad
+      if (patient.birthdate ?? patient.birthDate) {
+        const bd = new Date(patient.birthdate ?? patient.birthDate);
+        const age = this.currentYear - bd.getFullYear();
+        this.edad = `${age} años`;
       }
+
+      // Peso
+      if (patient.weight) {
+        this.peso = `${patient.weight} kg`;
+      }
+
+      // Altura
+      if (patient.height) {
+        this.altura = `${patient.height} m`;
+      }
+
+      // IMC = peso / (altura^2)
+      const p = parseFloat(patient.weight);
+      const h = parseFloat(patient.height);
+      if (!isNaN(p) && !isNaN(h) && h > 0) {
+        this.imc = p / (h * h);
+        if (this.imc < 18.5)      { this.imcLabel = 'Bajo peso';    this.imcColor = 'warning'; }
+        else if (this.imc < 25)   { this.imcLabel = 'Normal';       this.imcColor = 'success'; }
+        else if (this.imc < 30)   { this.imcLabel = 'Sobrepeso';    this.imcColor = 'warning'; }
+        else                      { this.imcLabel = 'Obesidad';     this.imcColor = 'danger';  }
+      }
+
+      // Fisio
+      const physioId = patient.physiotherapistId ?? patient.idphysio;
+      if (physioId) {
+        this.physioApi.getById(physioId).subscribe((p) => (this.physio = p));
+      }
+
+      // Rutina (para fecha "Paciente desde")
       const patientId = await this.storage.get('currentPatientId') ?? patient.id;
       this.routineApi.getRoutines(patientId).subscribe((routines) => {
         if (routines.length > 0) {
@@ -58,67 +98,9 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  getAvatarUrl(): string {
-    if (this.patient?.photoUrl) {
-      const base = environment.backendUrl;
-      return `${base}/${this.patient.photoUrl}?t=${this.photoTimestamp}`;
-    }
-    return '';
-  }
-
-  async changePhoto() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: true,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Prompt,
-        saveToGallery: true,
-        promptLabelHeader: 'Cambiar Foto de Perfil',
-        promptLabelPhoto: 'Elegir de Galería',
-        promptLabelPicture: 'Tomar Foto'
-      });
-      if (image.dataUrl) {
-        await this.uploadPhoto(image.dataUrl);
-      }
-    } catch (e: any) {
-      if (e.message !== 'User cancelled photos app') {
-        const t = await this.toast.create({ message: 'Error al abrir la cámara/galería', duration: 3000, color: 'danger' });
-        await t.present();
-      }
-    }
-  }
-
-  async uploadPhoto(dataUrl: string) {
-    const patientId = await this.storage.get('currentPatientId') ?? this.patient?.id;
-    if (!patientId) return;
-    const blob = await (await fetch(dataUrl)).blob();
-    const formData = new FormData();
-    formData.append('photo', blob, `patient_${patientId}.jpg`);
-    this.http.post<{ success: boolean; photoUrl: string }>(`${environment.apiUrl}/patients/${patientId}/photo`, formData)
-      .subscribe(async (res) => {
-        if (res.success) {
-          this.patient.photoUrl = res.photoUrl;
-          this.photoTimestamp = Date.now();
-          await this.storage.set('currentPatient', this.patient);
-          const t = await this.toast.create({ message: 'Foto actualizada correctamente', duration: 2000, color: 'success', position: 'bottom' });
-          await t.present();
-        }
-      }, async () => {
-        const t = await this.toast.create({ message: 'Error al subir la imagen', duration: 3000, color: 'danger' });
-        await t.present();
-      });
-  }
-
-  goToHistorial() { this.router.navigate(['/tabs/historial']); }
-  goToPhysioProfile() { this.router.navigate(['/tabs/physiotherapist-profile']); }
-  goToNotifications() { this.router.navigate(['/tabs/notifications']); }
-  goToDocuments() { this.router.navigate(['/tabs/documents']); }
-
-  async proximamente(feature: string) {
-    const t = await this.toast.create({ message: `${feature} — disponible en futuras actualizaciones`, duration: 2500, position: 'bottom', color: 'medium' });
-    await t.present();
-  }
+  goToHistorial()      { this.router.navigate(['/tabs/historial']); }
+  goToPhysioProfile()  { this.router.navigate(['/tabs/physiotherapist-profile']); }
+  goToNotifications()  { this.router.navigate(['/tabs/notifications']); }
 
   async cerrarSesion() {
     await this.storage.create();
