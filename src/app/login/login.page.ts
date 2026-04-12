@@ -46,8 +46,14 @@ export class LoginPage {
     this.patientRepo.getPatientByEmail(email).subscribe({
       next: async (patient) => {
         if (patient) {
+          // Guardar datos del paciente en Storage
           await this.storage.set('currentPatientId', patient.id);
           await this.storage.set('currentPatient', patient);
+          // Guardar token JWT para peticiones posteriores
+          const token = localStorage.getItem('patient_token');
+          if (token) {
+            await this.storage.set('patient_token', token);
+          }
           const toast = await this.toastController.create({
             message: `Bienvenido, ${patient.firstName}`,
             duration: 1500,
@@ -68,7 +74,7 @@ export class LoginPage {
       },
       error: async () => {
         const toast = await this.toastController.create({
-          message: 'Error de conexión. Verifica que el servidor esté activo.',
+          message: 'Correo no registrado o error de conexión.',
           duration: 3000,
           position: 'bottom',
           color: 'danger',
