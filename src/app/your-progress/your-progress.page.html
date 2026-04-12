@@ -2,10 +2,9 @@
   <ion-toolbar class="home-toolbar">
     <div class="toolbar-content">
 
-      <!-- Avatar con iniciales (sin foto en backend) -->
       <button class="avatar-btn" (click)="goToProfile()">
-        <div class="avatar-initials" [style.background]="avatarColor()">
-          {{ patientInitials() }}
+        <div class="avatar-circle" [style.background]="avatarColor()">
+          <ion-icon name="person" class="avatar-icon"></ion-icon>
         </div>
       </button>
 
@@ -17,7 +16,7 @@
       <button class="notif-btn" (click)="goToNotifications()">
         <ion-icon name="notifications-outline"></ion-icon>
         @if (unreadCount() > 0) {
-          <span class="badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
+          <span class="notif-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
         }
       </button>
 
@@ -27,92 +26,99 @@
 
 <ion-content class="home-content">
 
-  <!-- ===== Banner próxima cita ===== -->
+  <!-- ===== BANNER PRÓXIMA CITA ===== -->
   @if (nextAppointmentLabel()) {
-    <div class="next-appt-card">
-      <div class="appt-icon-wrap">
-        <ion-icon name="calendar-clear-outline"></ion-icon>
+    <div class="appt-banner">
+      <div class="appt-left">
+        <div class="appt-icon">
+          <ion-icon name="calendar-clear-outline"></ion-icon>
+        </div>
+        <div class="appt-info">
+          <span class="appt-eyebrow">Próxima cita</span>
+          <span class="appt-date">{{ nextAppointmentLabel() }}</span>
+          @if (nextAppointmentTime() || physioName()) {
+            <span class="appt-meta">{{ nextAppointmentTime() }}{{ physioName() ? ' · ' + physioName() : '' }}</span>
+          }
+        </div>
       </div>
-      <div class="appt-body">
-        <p class="appt-eyebrow">Próxima cita</p>
-        <p class="appt-date">{{ nextAppointmentLabel() }}</p>
-        <p class="appt-meta">
-          @if (nextAppointmentTime()) { {{ nextAppointmentTime() }} }
-          @if (physioName()) { · {{ physioName() }} }
-        </p>
-      </div>
+      <ion-icon name="chevron-forward" class="appt-chevron"></ion-icon>
     </div>
   }
 
-  <!-- ===== Semana ===== -->
-  <div class="section-card">
-    <div class="section-header">
-      <h2 class="section-title">Esta semana</h2>
-      <!-- TODO backend: mostrar % cuando GET /tracking/patient/:id esté disponible -->
+  <!-- ===== ESTA SEMANA ===== -->
+  <div class="week-card">
+    <div class="week-header">
+      <span class="week-title">Esta semana</span>
+      <span class="week-sub">Constancia = resultados</span>
     </div>
     <div class="week-strip">
       @for (dia of dias; track $index) {
-        <div class="day-item" [class.active]="diasActivos()[$index]">
+        <div class="day-item" [class.active]="diasActivos()[$index]" [class.today]="isToday($index)">
           <div class="day-dot">
             @if (diasActivos()[$index]) {
-              <ion-icon name="checkmark-outline"></ion-icon>
+              <ion-icon name="checkmark"></ion-icon>
             }
           </div>
-          <span>{{ dia }}</span>
+          <span class="day-label">{{ dia }}</span>
         </div>
       }
     </div>
   </div>
 
-  <!-- ===== Rutina activa ===== -->
+  <!-- ===== RUTINA ACTIVA ===== -->
   @if (routine()) {
     <div class="routine-card" (click)="goToRutina()">
-      <div class="routine-top">
-        <div class="routine-icon">
+      <div class="routine-header">
+        <div class="routine-icon-wrap">
           <ion-icon name="barbell-outline"></ion-icon>
         </div>
-        <div class="routine-meta-col">
-          <p class="routine-eyebrow">Rutina activa</p>
+        <div class="routine-info">
+          <span class="routine-eyebrow">Rutina activa</span>
           <h3 class="routine-name">{{ routine()!.name }}</h3>
         </div>
-        <ion-icon name="arrow-forward-outline" class="routine-go"></ion-icon>
+        <div class="routine-go">
+          <ion-icon name="arrow-forward"></ion-icon>
+        </div>
       </div>
-      <div class="routine-chips">
-        <span class="chip">
+
+      <div class="routine-divider"></div>
+
+      <div class="routine-stats">
+        <div class="rstat">
           <ion-icon name="layers-outline"></ion-icon>
-          {{ exerciseCount() }} ejercicios
-        </span>
-        <span class="chip">
+          <span>{{ exerciseCount() }} ejercicios</span>
+        </div>
+        <div class="rstat">
           <ion-icon name="time-outline"></ion-icon>
-          ~{{ exerciseCount() * 3 }} min
-        </span>
+          <span>~{{ exerciseCount() * 3 }} min</span>
+        </div>
         @if (routine()!.endDate) {
-          <span class="chip chip-amber">
+          <div class="rstat rstat-amber">
             <ion-icon name="flag-outline"></ion-icon>
-            Fin {{ routine()!.endDate | date:'d MMM':'':'es' }}
-          </span>
+            <span>Fin {{ routine()!.endDate | date:'d MMM':'':'es' }}</span>
+          </div>
         }
       </div>
     </div>
   } @else {
     <div class="routine-empty">
-      <div class="empty-icon-wrap">
+      <div class="empty-icon">
         <ion-icon name="barbell-outline"></ion-icon>
       </div>
-      <div class="empty-body">
+      <div class="empty-text">
         <p class="empty-title">Sin rutina asignada</p>
         <p class="empty-sub">Tu fisioterapeuta asignará una pronto</p>
       </div>
     </div>
   }
 
-  <!-- ===== Tip del día (rotativo) ===== -->
+  <!-- ===== TIP DEL DÍA ===== -->
   <div class="tip-card">
-    <div class="tip-left">
-      <ion-icon name="bulb-outline"></ion-icon>
+    <div class="tip-icon">
+      <ion-icon name="bulb"></ion-icon>
     </div>
     <div class="tip-body">
-      <p class="tip-label">Consejo del día</p>
+      <span class="tip-label">Consejo del día</span>
       <p class="tip-text">{{ dailyTip() }}</p>
     </div>
   </div>

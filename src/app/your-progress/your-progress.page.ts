@@ -14,11 +14,10 @@ import { NotificationApiService } from '../core/infrastructure/api/notification-
 import { AppointmentApiService, Appointment } from '../core/infrastructure/api/appointment-api.service';
 import { Storage } from '@ionic/storage-angular';
 
-// Tips del día — uno por cada día de la semana (0=Dom ... 6=Sáb)
 const DAILY_TIPS: string[] = [
   'Recuerda calentar al menos 5 minutos antes de empezar tu rutina.',
   'Mantén una buena postura durante el día; apoya tu espalda cuando estés sentado.',
-  'Hídratatate bien: 8 vasos de agua al día ayudan a la recuperación muscular.',
+  'Hídratate bien: 8 vasos de agua al día ayudan a la recuperación muscular.',
   'Descansar también es parte del tratamiento. No saltes tu día de recuperación.',
   'Realiza tus ejercicios a la misma hora cada día para crear el hábito.',
   'El dolor leve es normal; si sientes dolor agudo, consulta a tu fisioterapeuta.',
@@ -33,21 +32,15 @@ const DAILY_TIPS: string[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Tab4Page implements OnInit {
-  // Datos del paciente
   patientFirstName = signal('...');
-  patientFullName = signal('Cargando...');
-  patientInitials = signal('?');
-  avatarColor = signal('#01696f');
+  patientInitials  = signal('?');
+  avatarColor      = signal('#01696f');
+  unreadCount      = signal(0);
+  routine          = signal<Routine | null>(null);
+  exerciseCount    = signal(0);
+  nextAppointment  = signal<Appointment | null>(null);
+  physioName       = signal('');
 
-  // Notificaciones
-  unreadCount = signal(0);
-
-  // Rutina activa
-  routine = signal<Routine | null>(null);
-  exerciseCount = signal(0);
-
-  // Próxima cita
-  nextAppointment = signal<Appointment | null>(null);
   nextAppointmentLabel = computed(() => {
     const a = this.nextAppointment();
     if (!a) return null;
@@ -60,15 +53,9 @@ export class Tab4Page implements OnInit {
     return t ? t.slice(0, 5) : '';
   });
 
-  // Fisio
-  physioName = signal('');
-
-  // Semana — sólo visual por ahora (backend no expone tracking GET)
-  // TODO backend: exponer GET /tracking/patient/:id para leer historial
   readonly dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   diasActivos = signal<boolean[]>([false, false, false, false, false, false, false]);
 
-  // Saludo
   greeting = computed(() => {
     const h = new Date().getHours();
     if (h < 12) return 'Buenos días ☀️';
@@ -76,7 +63,6 @@ export class Tab4Page implements OnInit {
     return 'Buenas noches 🌙';
   });
 
-  // Tip del día (rota por día de la semana)
   dailyTip = signal(DAILY_TIPS[new Date().getDay()]);
 
   constructor(
@@ -102,19 +88,23 @@ export class Tab4Page implements OnInit {
     });
   }
 
+  // Retorna true si el índice (0=L...6=D) corresponde al día actual
+  isToday(index: number): boolean {
+    const dow = new Date().getDay(); // 0=Dom,1=Lun...
+    const map = [1, 2, 3, 4, 5, 6, 0]; // L=1, M=2, X=3, J=4, V=5, S=6, D=0
+    return map[index] === dow;
+  }
+
   private _loadAll(patientId: number) {
-    // Paciente
     this.patientRepo.getPatientById(patientId).subscribe({
       next: (p) => {
         const first = p.firstName || '';
         const lastP = p.lastNameP || '';
-        const full = [first, lastP].filter(Boolean).join(' ') || 'Paciente';
+        const full  = [first, lastP].filter(Boolean).join(' ') || 'Paciente';
         this.patientFirstName.set(first || 'Paciente');
-        this.patientFullName.set(full);
-        const initials = (
-          (first[0] || '') + (lastP[0] || '')
-        ).toUpperCase() || (full[0] || 'P').toUpperCase();
-        this.patientInitials.set(initials);
+        this.patientInitials.set(
+          ((first[0] || '') + (lastP[0] || '')).toUpperCase() || (full[0] || 'P').toUpperCase()
+        );
         this.avatarColor.set(this._colorFromName(full));
         if (p.physiotherapistId) {
           this.physioApi.getById(p.physiotherapistId).subscribe((ph) => {
@@ -124,12 +114,10 @@ export class Tab4Page implements OnInit {
       },
       error: () => {
         this.patientFirstName.set('Paciente');
-        this.patientFullName.set('Paciente');
         this.patientInitials.set('P');
       },
     });
 
-    // Rutina activa
     this.routineApi.getRoutines(patientId).subscribe((routines) => {
       if (routines.length > 0) {
         const r = routines[0];
@@ -140,18 +128,10 @@ export class Tab4Page implements OnInit {
       }
     });
 
-    // Próxima cita
     this.appointmentApi.getNext(patientId).subscribe((a) => this.nextAppointment.set(a));
-
-    // Notificaciones no leídas
     this.notificationApi.getUnreadCount(patientId).subscribe((c) => this.unreadCount.set(c));
-
-    // Nota: tracking GET no disponible en backend aún
-    // TODO: cuando el backend exponga GET /tracking/patient/:id,
-    //       reemplazar of([]) en TrackingApiService y conectar aquí los días activos.
   }
 
-  // Genera un color teal/verde determinista basado en el nombre
   private _colorFromName(name: string): string {
     const palette = ['#01696f', '#0c7c81', '#0e6b8a', '#1a6b5a', '#3b7a6f', '#2d6e7e'];
     let hash = 0;
@@ -160,8 +140,8 @@ export class Tab4Page implements OnInit {
   }
 
   goToNotifications() { this.router.navigate(['/tabs/notifications']); }
-  goToRutina() { this.router.navigate(['/tabs/detalle-rutina']); }
-  goToProfile() { this.routeAnimationService.navigateWithAnimation(['/tabs/profile'], 'slide'); }
+  goToRutina()        { this.router.navigate(['/tabs/detalle-rutina']); }
+  goToProfile()       { this.routeAnimationService.navigateWithAnimation(['/tabs/profile'], 'slide'); }
 
   ionViewWillLeave() {
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
