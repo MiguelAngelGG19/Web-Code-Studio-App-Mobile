@@ -22,7 +22,7 @@ export class AuthApiService {
 
   constructor(private http: HttpClient) {}
 
-  loginPatient(email: string, password: string): Observable<LoginPatientResponse> {
-    return this.http.post<LoginPatientResponse>(`${this.base}/login-patient`, { email, password });
+  loginPatient(email: string): Observable<LoginPatientResponse> {
+    return this.http.post<LoginPatientResponse>(`${this.base}/login-patient`, { email });
   }
 }
