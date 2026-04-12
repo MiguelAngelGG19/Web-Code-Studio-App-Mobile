@@ -99,7 +99,7 @@ export class NotificationsPage implements OnInit {
   }
 
   getIcon(type: string): string {
-    switch (type) {
+    switch (type?.toLowerCase()) {
       case 'rutina':        return 'barbell-outline';
       case 'recordatorio':  return 'alarm-outline';
       case 'mensaje':       return 'chatbubble-outline';

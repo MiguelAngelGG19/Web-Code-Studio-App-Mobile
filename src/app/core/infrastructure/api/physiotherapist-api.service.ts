@@ -29,15 +29,19 @@ export class PhysiotherapistApiService {
         const p = res.data;
         if (!p) return null;
         const first = p.firstName ?? p.first_name ?? '';
-        const lastP = p.lastNameP ?? p.last_name_p ?? '';
-        const lastM = p.lastNameM ?? p.last_name_m ?? '';
+        const lastP = p.lastNameP ?? p.last_name_paternal ?? p.last_name_p ?? '';
+        const lastM = p.lastNameM ?? p.last_name_maternal ?? p.last_name_m ?? '';
+        let bYear = p.birthYear ?? p.birth_year;
+        if (!bYear && p.birth_date) {
+          bYear = new Date(p.birth_date).getFullYear();
+        }
         return {
-          id: p.id ?? p.idFisioterapeuta,
+          id: p.id ?? p.id_physio ?? p.idFisioterapeuta,
           firstName: first,
           lastNameP: lastP,
           lastNameM: lastM,
           fullName: [first, lastP, lastM].filter(Boolean).join(' ') || 'Fisioterapeuta',
-          birthYear: p.birthYear ?? p.birth_year,
+          birthYear: bYear,
           professionalLicense: p.professionalLicense ?? p.professional_license,
           curp: p.curp,
           licenseDocUrl: p.licenseDocUrl ?? p.license_doc_url,

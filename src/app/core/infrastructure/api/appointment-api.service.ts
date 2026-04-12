@@ -23,22 +23,22 @@ export class AppointmentApiService {
 
   getNext(patientId: number): Observable<Appointment | null> {
     return this.http
-      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
+      .get<any>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
         map((res) => {
-          const rows = res.rows ?? [];
+          const rows = Array.isArray(res) ? res : (res?.rows ?? []);
           if (rows.length === 0) return null;
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           // Mapear, filtrar solo citas de hoy en adelante, ordenar por fecha
           const sorted = rows
-            .map((d) => this.mapAppointment(d))
-            .filter((a) => {
+            .map((d: any) => this.mapAppointment(d))
+            .filter((a: any) => {
               if (!a.appointmentDate) return false;
-              const d = new Date(a.appointmentDate + 'T12:00:00');
-              return d >= today;
+              const dt = new Date(a.appointmentDate + 'T12:00:00');
+              return dt >= today;
             })
-            .sort((a, b) => new Date(a.appointmentDate + 'T12:00:00').getTime() - new Date(b.appointmentDate + 'T12:00:00').getTime());
+            .sort((a: any, b: any) => new Date(a.appointmentDate + 'T12:00:00').getTime() - new Date(b.appointmentDate + 'T12:00:00').getTime());
           return sorted[0] ?? null;
         }),
         catchError(() => of(null))
@@ -47,9 +47,12 @@ export class AppointmentApiService {
 
   list(patientId: number, limit = 50): Observable<Appointment[]> {
     return this.http
-      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
+      .get<any>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
-        map((res) => (res.rows ?? []).map((d) => this.mapAppointment(d))),
+        map((res) => {
+          const rows = Array.isArray(res) ? res : (res?.rows ?? []);
+          return rows.map((d: any) => this.mapAppointment(d));
+        }),
         catchError(() => of([]))
       );
   }
