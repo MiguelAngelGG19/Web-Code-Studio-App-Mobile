@@ -24,6 +24,7 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class Tab4Page implements OnInit {
   patientFirstName = signal('...');
+  patientLastName  = signal('');
   patientInitials  = signal('?');
   avatarColor      = signal('#01696f');
   unreadCount      = signal(0);
@@ -31,6 +32,19 @@ export class Tab4Page implements OnInit {
   exerciseCount    = signal(0);
   nextAppointment  = signal<Appointment | null>(null);
   physioName       = signal('');
+
+  /** Nombre completo capitalizado para el header */
+  patientFullName = computed(() => {
+    const first = this.patientFirstName();
+    const last  = this.patientLastName();
+    if (first === '...') return '...';
+    const full = [first, last].filter(Boolean).join(' ');
+    return full
+      .toLowerCase()
+      .split(' ')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  });
 
   nextAppointmentLabel = computed(() => {
     const a = this.nextAppointment();
@@ -47,7 +61,7 @@ export class Tab4Page implements OnInit {
   readonly dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   diasActivos = signal<boolean[]>([false, false, false, false, false, false, false]);
 
-  diasConRutina = computed(() => 5);
+  diasConRutina   = computed(() => 5);
   diasCompletados = computed(() => this.diasActivos().filter(Boolean).length);
   weekProgressPct = computed(() => {
     const total = this.diasConRutina();
@@ -80,14 +94,7 @@ export class Tab4Page implements OnInit {
     // 1️⃣ Nombre inmediato desde Storage (sin esperar al back)
     const sessionData = this.session.current;
     if (sessionData) {
-      const first = sessionData.firstName || '';
-      const lastP = sessionData.lastNameP || '';
-      const full  = [first, lastP].filter(Boolean).join(' ') || 'Paciente';
-      this.patientFirstName.set(first || 'Paciente');
-      this.patientInitials.set(
-        ((first[0] || '') + (lastP[0] || '')).toUpperCase() || 'P'
-      );
-      this.avatarColor.set(this._colorFromName(full));
+      this._applySession(sessionData);
     }
 
     const patientId = sessionData?.id ?? (await this.storage.get('currentPatientId')) ?? 0;
@@ -108,20 +115,24 @@ export class Tab4Page implements OnInit {
     return map[index] === dow;
   }
 
+  private _applySession(s: { firstName: string; lastNameP: string; lastNameM?: string }) {
+    const first = s.firstName || '';
+    const lastP = s.lastNameP  || '';
+    const full  = [first, lastP].filter(Boolean).join(' ') || 'Paciente';
+    this.patientFirstName.set(first || 'Paciente');
+    this.patientLastName.set(lastP);
+    this.patientInitials.set(
+      ((first[0] || '') + (lastP[0] || '')).toUpperCase() || 'P'
+    );
+    this.avatarColor.set(this._colorFromName(full));
+  }
+
   private _loadAll(patientId: number, physiotherapistId?: number) {
     // Nombre de respaldo desde el back (por si Storage estaba vacío)
     this.patientRepo.getPatientById(patientId).subscribe({
       next: (p) => {
-        const first = p.firstName || '';
-        const lastP = p.lastNameP || '';
-        const full  = [first, lastP].filter(Boolean).join(' ') || 'Paciente';
-        // Solo sobreescribe si el signal aún tiene el placeholder
         if (this.patientFirstName() === '...') {
-          this.patientFirstName.set(first || 'Paciente');
-          this.patientInitials.set(
-            ((first[0] || '') + (lastP[0] || '')).toUpperCase() || 'P'
-          );
-          this.avatarColor.set(this._colorFromName(full));
+          this._applySession({ firstName: p.firstName, lastNameP: p.lastNameP, lastNameM: p.lastNameM });
         }
         const physioId = physiotherapistId ?? p.physiotherapistId;
         if (physioId) {
@@ -133,6 +144,7 @@ export class Tab4Page implements OnInit {
       error: () => {
         if (this.patientFirstName() === '...') {
           this.patientFirstName.set('Paciente');
+          this.patientLastName.set('');
           this.patientInitials.set('P');
         }
       },
