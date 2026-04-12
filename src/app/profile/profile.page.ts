@@ -17,10 +17,9 @@ export class ProfilePage implements OnInit {
   session: SessionPatient | null = null;
   patient: PatientProfile | null = null;
   physio: Physiotherapist | null = null;
-  /** Nombre de la rutina activa, null = sin rutina */
   rutinaNombre: string | null = null;
   loading = true;
-  clinicName = environment.clinicName ?? 'ACTIVA Health Center';
+  clinicName = (environment as any).clinicName ?? 'ACTIVA Health Center';
 
   constructor(
     private router: Router,
@@ -50,7 +49,7 @@ export class ProfilePage implements OnInit {
       });
     }
 
-    // 3. Rutina activa (solo guarda nombre si existe)
+    // 3. Rutina activa
     this.routineApi.getRoutines(s.id).subscribe({
       next: (routines) => {
         this.rutinaNombre = routines.length > 0 ? (routines[0].name || null) : null;
@@ -106,19 +105,28 @@ export class ProfilePage implements OnInit {
     return 'imc-danger';
   }
 
-  /** Lee 'sex' o 'gender' — el back puede mandar cualquiera */
+  /**
+   * El back devuelve 'gender' en snake_case directo desde Sequelize.toJSON().
+   * Valores posibles: 'M' | 'F' | 'Other' | null
+   */
   get gender(): string {
-    const map: Record<string, string> = { M: 'Masculino', F: 'Femenino', Other: 'Otro' };
-    const raw = this.patient?.sex ?? this.patient?.gender;
-    return raw ? (map[raw] ?? raw) : '—';
+    const labels: Record<string, string> = {
+      M: 'Masculino',
+      F: 'Femenino',
+      Other: 'Otro'
+    };
+    const raw = this.patient?.gender;
+    if (!raw) return '—';
+    return labels[raw] ?? raw;
   }
 
   get physioName(): string {
     if (!this.physio) return 'Sin asignar';
     const p = this.physio as any;
-    return [p.firstName, p.lastNamePaternal].filter(Boolean).join(' ')
-      || p.fullName
-      || 'Sin asignar';
+    return [
+      p.firstName ?? p.first_name,
+      p.lastNamePaternal ?? p.last_name_paternal
+    ].filter(Boolean).join(' ') || p.fullName || 'Sin asignar';
   }
 
   // ─ Navegación ──────────────────────────────────
