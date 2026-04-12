@@ -1,8 +1,10 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="header-toolbar">
-    <ion-avatar slot="start" class="header-avatar" (click)="goToProfile()">
-      <img [src]="user().avatarUrl" alt="Avatar" />
-    </ion-avatar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goToProfile()" class="profile-btn">
+        <ion-icon name="person-circle-outline" slot="icon-only" size="large"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-label class="header-label">
       <p class="greeting">BUENOS DÍAS</p>
       <h1 class="name">¡Hola, {{ user().fullName }}!</h1>
@@ -19,40 +21,20 @@
 </ion-header>
 
 <ion-content class="ion-padding content-area">
-  <section class="progress-section">
-    <div class="progress-header">
-      <h2 class="section-title">Tu progreso hoy</h2>
-      <span class="progress-value">{{ (user().progress * 100) | number:'1.0-0' }}%</span>
-    </div>
-    <ion-progress-bar [value]="user().progress" class="progress-bar"></ion-progress-bar>
-  </section>
 
   <section class="appointment-section">
     <div class="section-header">
       <h3 class="section-subtitle">Próxima Cita</h3>
-      <ion-button fill="clear" size="small" routerLink="/tabs/confirmed-appointment">
-        <ion-icon name="calendar-outline"></ion-icon>
-        Ver
-      </ion-button>
     </div>
     <ion-card class="appointment-card" mode="ios">
       <ion-card-content>
-        <div class="appointment-content">
-          <div class="appointment-info">
-            <div class="tag">
-              <ion-icon name="medkit-outline"></ion-icon>
-              <span>SESIÓN DE FISIOTERAPIA</span>
-            </div>
-            <h2 class="doctor-name">{{ user().specialist }}</h2>
-            <p class="date">{{ user().nextAppointment }}</p>
-            <ion-button fill="clear" size="small" routerLink="/tabs/confirmed-appointment">
-              <ion-icon name="arrow-forward-circle-outline" slot="start"></ion-icon>
-              Ver detalles
-            </ion-button>
+        <div class="appointment-info">
+          <div class="tag">
+            <ion-icon name="medkit-outline"></ion-icon>
+            <span>SESIÓN DE FISIOTERAPIA</span>
           </div>
-          <div class="doctor-avatar">
-            <img [src]="user().physioAvatarUrl || 'https://i.pravatar.cc/150?img=11'" alt="Fisioterapeuta" />
-          </div>
+          <h2 class="doctor-name">{{ user().specialist }}</h2>
+          <p class="date">{{ user().nextAppointment }}</p>
         </div>
       </ion-card-content>
     </ion-card>
@@ -64,7 +46,7 @@
         <div class="routine-icon-wrap">
           <ion-icon name="barbell-outline"></ion-icon>
         </div>
-        <h2 class="routine-title">Tu rutina personalizada</h2>
+        <h2 class="routine-title">Mis rutinas</h2>
         <p class="routine-desc">{{ user().routineName }}. Continúa con tu recuperación.</p>
         <ion-button expand="block" class="start-btn" routerLink="/tabs/detalle-rutina">
           <ion-icon name="play-circle" slot="start"></ion-icon>
@@ -92,4 +74,5 @@
       }
     </div>
   </section>
+
 </ion-content>
