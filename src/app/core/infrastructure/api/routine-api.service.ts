@@ -29,58 +29,78 @@ export interface RoutineWithExercises extends Routine {
   exercises: RoutineExercise[];
 }
 
+// ─── Mapper interno ──────────────────────────────────────────────────────────
+// El back devuelve snake_case directo de Sequelize.toJSON().
+// Todos los campos se normalizan aquí para que el resto del front
+// solo use camelCase y nunca dependa de los nombres de columna de BD.
+
+function mapExercise(e: any): RoutineExercise {
+  const rel = e.routine_exercise ?? e.routineExercise ?? e.RoutineExercise ?? {};
+  return {
+    id:          e.id_exercise ?? e.id ?? 0,
+    name:        e.name        ?? '',
+    bodyZone:    e.body_zone   ?? e.bodyZone   ?? '',
+    description: e.description ?? '',
+    videoUrl:    e.video_url   ?? e.videoUrl   ?? '',
+    series:      rel.sets         ?? e.sets         ?? 3,
+    reps:        rel.repetitions  ?? e.repetitions  ?? 10,
+    duration:    rel.notes        ?? e.notes        ?? '',
+    consejo:     rel.notes        ?? e.consejo       ?? '',
+  };
+}
+
+function mapRoutine(r: any): Routine {
+  return {
+    id:                 r.id_routine        ?? r.id                 ?? 0,
+    name:               r.name              ?? '',
+    startDate:          r.start_date        ?? r.startDate          ?? '',
+    endDate:            r.end_date          ?? r.endDate            ?? '',
+    physiotherapistId:  r.id_physio         ?? r.physiotherapistId  ?? 0,
+    patientId:          r.id_patient        ?? r.patientId          ?? 0,
+  };
+}
+
+function mapRoutineWithExercises(r: any): RoutineWithExercises {
+  return {
+    ...mapRoutine(r),
+    exercises: (r.exercises ?? []).map(mapExercise),
+  };
+}
+
+// ─── Servicio ─────────────────────────────────────────────────────────────────
+
 @Injectable({ providedIn: 'root' })
 export class RoutineApiService {
   private baseUrl = `${environment.apiUrl}/routines`;
 
   constructor(private http: HttpClient) {}
 
+  /** GET /routines/:id  →  detalle completo con ejercicios */
   getRoutineById(id: number): Observable<RoutineWithExercises | null> {
     return this.http
       .get<{ success: boolean; data?: any }>(`${this.baseUrl}/${id}`)
       .pipe(
-        map((res) => {
-          const r = res.data;
-          if (!r) return null;
-          return {
-            id: r.id,
-            name: r.name ?? '',
-            startDate: r.startDate ?? '',
-            endDate: r.endDate ?? '',
-            physiotherapistId: r.physiotherapistId ?? 0,
-            patientId: r.patientId ?? 0,
-            exercises: (r.exercises ?? []).map((e: any) => ({
-              id: e.id,
-              name: e.name ?? '',
-              bodyZone: e.bodyZone ?? e.body_zone ?? '',
-              description: e.description ?? '',
-              videoUrl: e.videoUrl ?? e.video_url ?? '',
-              series: e.series ?? 3,
-              reps: e.reps ?? 10,
-              duration: e.duration ?? '01:00',
-              consejo: e.consejo ?? ''
-            }))
-          };
-        }),
+        map((res) => res.data ? mapRoutineWithExercises(res.data) : null),
         catchError(() => of(null))
       );
   }
 
-  // ✅ Corregido: usar /routines/patient/:patientId
+  /**
+   * GET /routines/patient/:patientId
+   *
+   * ⚠️  El back devuelve UN OBJETO (la rutina más reciente), no un array.
+   *    Se normaliza a array para que el componente siempre itere sin romper.
+   */
   getRoutines(patientId: number): Observable<Routine[]> {
     return this.http
-      .get<{ success: boolean; data?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
+      .get<{ success: boolean; data?: any }>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
         map((res) => {
-          const rows = res.data ?? [];
-          return rows.map((r: any) => ({
-            id: r.id,
-            name: r.name ?? '',
-            startDate: r.startDate ?? r.start_date ?? '',
-            endDate: r.endDate ?? r.end_date ?? '',
-            physiotherapistId: r.physiotherapistId ?? r.physiotherapist_id ?? 0,
-            patientId: r.patientId ?? r.patient_id ?? 0,
-          }));
+          const raw = res.data;
+          if (!raw) return [];
+          // Si el back algún día devuelve array, también funciona
+          const rows: any[] = Array.isArray(raw) ? raw : [raw];
+          return rows.map(mapRoutine);
         }),
         catchError(() => of([]))
       );
