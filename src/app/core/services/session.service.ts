@@ -29,10 +29,17 @@ export class SessionService {
     if (saved) {
       this._patient$.next(saved as SessionPatient);
     } else {
-      // No hay sesión guardada → redirigir al login
       this.router.navigate(['/login'], { replaceUrl: true });
     }
     this._ready = true;
+  }
+
+  /** Devuelve el token guardado — usado por el AuthInterceptor */
+  async getToken(): Promise<string | null> {
+    if (!this._ready) {
+      await this.storage.create();
+    }
+    return this.storage.get('patient_token');
   }
 
   /** Guarda la sesión tras login exitoso */

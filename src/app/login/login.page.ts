@@ -64,20 +64,28 @@ export class LoginPage {
           });
           await t.present();
           this.router.navigate(['/tabs/your-progress']);
+        } else {
+          // El back respondió 200 pero sin token/patient — caso inesperado
+          const t = await this.toastController.create({
+            message: 'Respuesta inesperada del servidor. Intenta de nuevo.',
+            duration: 2500,
+            position: 'bottom',
+            color: 'warning',
+          });
+          await t.present();
         }
       },
-      // ─── Fase 2: si el backend falla, entra con el mock ──────────────────
-      error: async () => {
+      error: async (err) => {
         await loading.dismiss();
-        const mock = this.session.current!;
+        const msg =
+          err?.error?.message ?? 'No se pudo conectar. Verifica tu correo o conexión.';
         const t = await this.toastController.create({
-          message: `¡Bienvenido, ${mock.firstName}! (modo demo)`,
-          duration: 2000,
+          message: msg,
+          duration: 3000,
           position: 'bottom',
-          color: 'warning',
+          color: 'danger',
         });
         await t.present();
-        this.router.navigate(['/tabs/your-progress']);
       },
     });
   }
