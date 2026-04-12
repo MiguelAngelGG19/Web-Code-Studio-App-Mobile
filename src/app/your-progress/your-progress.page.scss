@@ -13,7 +13,6 @@
   }
 }
 
-// Avatar con ícono persona (igual que perfil)
 .avatar-btn {
   background: none;
   border: none;
@@ -31,10 +30,7 @@
   justify-content: center;
   box-shadow: 0 2px 8px rgba(1,105,111,0.3);
 
-  .avatar-icon {
-    font-size: 26px;
-    color: #fff;
-  }
+  .avatar-icon { font-size: 26px; color: #fff; }
 }
 
 .header-text {
@@ -121,7 +117,6 @@
   align-items: center;
   gap: 14px;
   box-shadow: 0 6px 24px rgba(1,105,111,0.28);
-  cursor: pointer;
 
   .appt-left {
     display: flex;
@@ -157,7 +152,6 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.6);
     }
-
     .appt-date {
       font-size: 15px;
       font-weight: 700;
@@ -167,7 +161,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .appt-meta {
       font-size: 12px;
       color: rgba(255,255,255,0.65);
@@ -177,11 +170,7 @@
     }
   }
 
-  .appt-chevron {
-    font-size: 18px;
-    color: rgba(255,255,255,0.5);
-    flex-shrink: 0;
-  }
+  .appt-chevron { font-size: 18px; color: rgba(255,255,255,0.5); flex-shrink: 0; }
 }
 
 // ============================================================
@@ -205,7 +194,6 @@
       font-weight: 700;
       color: #0f172a;
     }
-
     .week-sub {
       font-size: 11px;
       color: #9ca3af;
@@ -243,11 +231,10 @@
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #cbd5e1;
+    color: #94a3b8;        // ← color visible (no tan pálido)
     letter-spacing: 0.04em;
   }
 
-  // Día activo (ejercicio hecho)
   &.active {
     .day-dot {
       background: #01696f;
@@ -257,13 +244,12 @@
     .day-label { color: #01696f; }
   }
 
-  // Día de hoy (resaltar aunque no esté activo)
   &.today:not(.active) {
     .day-dot {
       border-color: #01696f;
       background: #e8f5f5;
     }
-    .day-label { color: #01696f; }
+    .day-label { color: #01696f; font-weight: 800; }
   }
 }
 
@@ -353,6 +339,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-bottom: 14px;
 }
 
 .rstat {
@@ -376,6 +363,33 @@
   }
 }
 
+// Barra de progreso semanal
+.routine-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .progress-bar {
+    height: 7px;
+    background: #f1f5f9;
+    border-radius: 99px;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #01696f, #0c8c93);
+      border-radius: 99px;
+      transition: width 0.5s ease;
+    }
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+}
+
 // ============================================================
 // RUTINA VACÍA
 // ============================================================
@@ -383,7 +397,7 @@
   background: #fff;
   border-radius: 20px;
   margin: 0 16px 14px;
-  padding: 20px 18px;
+  padding: 22px 18px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -412,54 +426,6 @@
     .empty-sub {
       font-size: 13px;
       color: #9ca3af;
-      margin: 0;
-    }
-  }
-}
-
-// ============================================================
-// TIP DEL DÍA
-// ============================================================
-.tip-card {
-  margin: 0 16px 8px;
-  background: linear-gradient(135deg, #f0fdf9 0%, #ecfdf5 100%);
-  border: 1.5px solid #a7f3d0;
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-
-  .tip-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #059669, #047857);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    ion-icon { font-size: 22px; color: #fff; }
-  }
-
-  .tip-body {
-    flex: 1;
-
-    .tip-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: #059669;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .tip-text {
-      font-size: 13px;
-      line-height: 1.6;
-      color: #374151;
       margin: 0;
     }
   }

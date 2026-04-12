@@ -14,16 +14,6 @@ import { NotificationApiService } from '../core/infrastructure/api/notification-
 import { AppointmentApiService, Appointment } from '../core/infrastructure/api/appointment-api.service';
 import { Storage } from '@ionic/storage-angular';
 
-const DAILY_TIPS: string[] = [
-  'Recuerda calentar al menos 5 minutos antes de empezar tu rutina.',
-  'Mantén una buena postura durante el día; apoya tu espalda cuando estés sentado.',
-  'Hídratate bien: 8 vasos de agua al día ayudan a la recuperación muscular.',
-  'Descansar también es parte del tratamiento. No saltes tu día de recuperación.',
-  'Realiza tus ejercicios a la misma hora cada día para crear el hábito.',
-  'El dolor leve es normal; si sientes dolor agudo, consulta a tu fisioterapeuta.',
-  'Termina siempre con estiramientos para reducir la tensión muscular.',
-];
-
 @Component({
   selector: 'app-your-progress',
   templateUrl: './your-progress.page.html',
@@ -56,14 +46,26 @@ export class Tab4Page implements OnInit {
   readonly dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   diasActivos = signal<boolean[]>([false, false, false, false, false, false, false]);
 
+  // Cuántos días laborables tiene la rutina activa (L-V = 5 por defecto)
+  diasConRutina = computed(() => {
+    // Por ahora fijo en 5 (L-V) hasta que backend exponga días asignados
+    return 5;
+  });
+
+  diasCompletados = computed(() => this.diasActivos().filter(Boolean).length);
+
+  weekProgressPct = computed(() => {
+    const total = this.diasConRutina();
+    if (total === 0) return 0;
+    return Math.min(100, Math.round((this.diasCompletados() / total) * 100));
+  });
+
   greeting = computed(() => {
     const h = new Date().getHours();
     if (h < 12) return 'Buenos días ☀️';
     if (h < 19) return 'Buenas tardes 🌤️';
     return 'Buenas noches 🌙';
   });
-
-  dailyTip = signal(DAILY_TIPS[new Date().getDay()]);
 
   constructor(
     private router: Router,
@@ -88,10 +90,10 @@ export class Tab4Page implements OnInit {
     });
   }
 
-  // Retorna true si el índice (0=L...6=D) corresponde al día actual
+  // true si el índice (0=L...6=D) corresponde al día actual
   isToday(index: number): boolean {
-    const dow = new Date().getDay(); // 0=Dom,1=Lun...
-    const map = [1, 2, 3, 4, 5, 6, 0]; // L=1, M=2, X=3, J=4, V=5, S=6, D=0
+    const dow = new Date().getDay(); // 0=Dom, 1=Lun...
+    const map = [1, 2, 3, 4, 5, 6, 0];
     return map[index] === dow;
   }
 

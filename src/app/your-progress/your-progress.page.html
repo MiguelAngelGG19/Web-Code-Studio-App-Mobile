@@ -99,7 +99,16 @@
           </div>
         }
       </div>
+
+      <!-- Barra de progreso visual (semanal) -->
+      <div class="routine-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="weekProgressPct() + '%'"></div>
+        </div>
+        <span class="progress-label">{{ diasCompletados() }}/{{ diasConRutina() }} días completados esta semana</span>
+      </div>
     </div>
+
   } @else {
     <div class="routine-empty">
       <div class="empty-icon">
@@ -111,16 +120,5 @@
       </div>
     </div>
   }
-
-  <!-- ===== TIP DEL DÍA ===== -->
-  <div class="tip-card">
-    <div class="tip-icon">
-      <ion-icon name="bulb"></ion-icon>
-    </div>
-    <div class="tip-body">
-      <span class="tip-label">Consejo del día</span>
-      <p class="tip-text">{{ dailyTip() }}</p>
-    </div>
-  </div>
 
 </ion-content>
