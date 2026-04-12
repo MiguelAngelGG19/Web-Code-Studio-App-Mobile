@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage-angular';
 import { ToastController } from '@ionic/angular';
 import { RoutineApiService } from '../core/infrastructure/api/routine-api.service';
 import { PhysiotherapistApiService, Physiotherapist } from '../core/infrastructure/api/physiotherapist-api.service';
+import { PatientRepository } from '../../core/domain/repositories/patient.repository';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -13,15 +14,14 @@ import { environment } from '../../environments/environment';
   standalone: false,
 })
 export class ProfilePage implements OnInit {
-  userName     = 'Cargando...';
-  patient: any = null;
-  currentYear  = new Date().getFullYear();
+  userName      = 'Cargando...';
+  patient: any  = null;
+  currentYear   = new Date().getFullYear();
   physio: Physiotherapist | null = null;
-  tratamiento  = '—';
   pacienteDesde = '—';
-  clinicName   = (environment as any).clinicName ?? 'ACTIVA Health Center';
+  clinicName    = (environment as any).clinicName ?? 'ACTIVA Health Center';
 
-  // Stats mostrados en pantalla
+  // Stats
   edad   = '—';
   peso   = '—';
   altura = '—';
@@ -36,71 +36,83 @@ export class ProfilePage implements OnInit {
     private storage: Storage,
     private routineApi: RoutineApiService,
     private physioApi: PhysiotherapistApiService,
+    private patientRepo: PatientRepository,
     private toast: ToastController
   ) {}
 
   async ngOnInit() {
     await this.storage.create();
-    const patient = await this.storage.get('currentPatient');
-    if (patient) {
-      this.patient = patient;
-      this.userName = [patient.firstName, patient.lastNameP, patient.lastNameM]
-        .filter(Boolean).join(' ') || 'Paciente';
 
-      // Edad
-      if (patient.birthdate ?? patient.birthDate) {
-        const bd = new Date(patient.birthdate ?? patient.birthDate);
-        const age = this.currentYear - bd.getFullYear();
-        this.edad = `${age} años`;
-      }
+    // Intentar cargar desde storage primero (objeto crudo del back)
+    const stored = await this.storage.get('currentPatient');
+    const patientId = await this.storage.get('currentPatientId');
+    const id = patientId ?? stored?.id ?? stored?.idpatient ?? 1;
 
-      // Peso
-      if (patient.weight) {
-        this.peso = `${patient.weight} kg`;
-      }
+    // Siempre traer datos frescos del back para tener todos los campos
+    this.patientRepo.getPatientById(id).subscribe({
+      next: (p: any) => {
+        this.patient = p;
+        this.userName = [p.firstName, p.lastNameP, p.lastNameM].filter(Boolean).join(' ') || 'Paciente';
+        this.calcularStats(p);
 
-      // Altura
-      if (patient.height) {
-        this.altura = `${patient.height} m`;
-      }
-
-      // IMC = peso / (altura^2)
-      const p = parseFloat(patient.weight);
-      const h = parseFloat(patient.height);
-      if (!isNaN(p) && !isNaN(h) && h > 0) {
-        this.imc = p / (h * h);
-        if (this.imc < 18.5)      { this.imcLabel = 'Bajo peso';    this.imcColor = 'warning'; }
-        else if (this.imc < 25)   { this.imcLabel = 'Normal';       this.imcColor = 'success'; }
-        else if (this.imc < 30)   { this.imcLabel = 'Sobrepeso';    this.imcColor = 'warning'; }
-        else                      { this.imcLabel = 'Obesidad';     this.imcColor = 'danger';  }
-      }
-
-      // Fisio
-      const physioId = patient.physiotherapistId ?? patient.idphysio;
-      if (physioId) {
-        this.physioApi.getById(physioId).subscribe((p) => (this.physio = p));
-      }
-
-      // Rutina (para fecha "Paciente desde")
-      const patientId = await this.storage.get('currentPatientId') ?? patient.id;
-      this.routineApi.getRoutines(patientId).subscribe((routines) => {
-        if (routines.length > 0) {
-          const r = routines[0];
-          this.tratamiento = r.name;
-          if (r.startDate) {
-            const d = new Date(r.startDate);
-            this.pacienteDesde = d.toLocaleDateString('es-MX', { month: 'short', year: 'numeric' });
-          }
+        const physioId = p.physiotherapistId ?? p.idphysio;
+        if (physioId) {
+          this.physioApi.getById(physioId).subscribe((ph) => (this.physio = ph));
         }
-      });
-    } else {
-      this.userName = 'Paciente';
+      },
+      error: () => {
+        // Fallback al objeto en storage si falla el back
+        if (stored) {
+          this.patient = stored;
+          this.userName = [stored.firstName, stored.lastNameP, stored.lastNameM,
+                           stored.firstname, stored.lastnamepaternal, stored.lastnamematernal]
+            .filter(Boolean).join(' ') || 'Paciente';
+          this.calcularStats(stored);
+        }
+      }
+    });
+
+    // Rutina para "Paciente desde"
+    this.routineApi.getRoutines(id).subscribe((routines) => {
+      if (routines.length > 0 && routines[0].startDate) {
+        const d = new Date(routines[0].startDate);
+        this.pacienteDesde = d.toLocaleDateString('es-MX', { month: 'short', year: 'numeric' });
+      }
+    });
+  }
+
+  private calcularStats(p: any) {
+    // EDAD: soporta birthYear (modelo), birthdate y birth_date (raw back)
+    const by = p.birthYear;
+    const bd = p.birthdate ?? p.birth_date ?? p.birthDate;
+    if (by && !isNaN(Number(by))) {
+      this.edad = `${this.currentYear - Number(by)} años`;
+    } else if (bd) {
+      const year = new Date(bd).getFullYear();
+      this.edad = `${this.currentYear - year} años`;
+    }
+
+    // PESO
+    const w = parseFloat(p.weight);
+    if (!isNaN(w)) this.peso = `${w} kg`;
+
+    // ALTURA
+    const h = parseFloat(p.height);
+    if (!isNaN(h)) this.altura = `${h} m`;
+
+    // IMC
+    if (!isNaN(w) && !isNaN(h) && h > 0) {
+      this.imc = w / (h * h);
+      if      (this.imc < 18.5) { this.imcLabel = 'Bajo peso';  this.imcColor = 'warning'; }
+      else if (this.imc < 25)   { this.imcLabel = 'Normal';     this.imcColor = 'success'; }
+      else if (this.imc < 30)   { this.imcLabel = 'Sobrepeso';  this.imcColor = 'warning'; }
+      else                      { this.imcLabel = 'Obesidad';   this.imcColor = 'danger';  }
     }
   }
 
-  goToHistorial()      { this.router.navigate(['/tabs/historial']); }
-  goToPhysioProfile()  { this.router.navigate(['/tabs/physiotherapist-profile']); }
-  goToNotifications()  { this.router.navigate(['/tabs/notifications']); }
+  goToHistorial()     { this.router.navigate(['/tabs/historial']); }
+  goToPhysioProfile() { this.router.navigate(['/tabs/physiotherapist-profile']); }
+  goToNotifications() { this.router.navigate(['/tabs/notifications']); }
 
   async cerrarSesion() {
     await this.storage.create();
