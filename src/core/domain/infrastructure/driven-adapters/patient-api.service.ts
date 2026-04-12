@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Patient } from '../../../domain/models/patient.model';
 import { PatientRepository } from '../../../domain/repositories/patient.repository';
@@ -11,19 +11,24 @@ import { environment } from '../../../../environments/environment';
 })
 export class PatientApiService implements PatientRepository {
   private readonly baseUrl = `${environment.apiUrl}/patients`;
+  private readonly authUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {}
 
   getPatientByEmail(email: string): Observable<Patient | null> {
-    return this.http.get<{ success: boolean; rows?: any[] }>(this.baseUrl, {
-      params: { email: email.trim(), limit: '1' }
-    }).pipe(
+    return this.http.post<{ success: boolean; patient?: any; token?: string }>(
+      `${this.authUrl}/login-patient`,
+      { email: email.trim() }
+    ).pipe(
       map((res) => {
-        const rows = res?.rows ?? [];
-        return rows.length > 0 ? this.mapPatient(rows[0]) : null;
+        if (!res?.patient) return null;
+        // Guardar token en localStorage para que las demás peticiones funcionen
+        if (res.token) {
+          localStorage.setItem('patient_token', res.token);
+        }
+        return this.mapPatient(res.patient);
       }),
       catchError((err) => {
-        // Propagar error para mostrar "Error de conexión" (no confundir con "No encontrado")
         return throwError(() => err);
       })
     );
