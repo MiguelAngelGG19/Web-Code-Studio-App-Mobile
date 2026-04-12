@@ -6,49 +6,71 @@
 
 <ion-content class="profile-content">
 
-  <!-- Avatar y nombre -->
+  <!-- HERO con avatar de iniciales -->
   <div class="profile-hero">
-    <div class="avatar-wrap">
-      <img [src]="getAvatarUrl()" alt="Avatar" class="avatar-img" />
+    <div class="avatar-circle" [style.background]="avatarColor">
+      <span class="avatar-initials">{{ initials }}</span>
     </div>
-    <h2 class="profile-name">{{ userName }}</h2>
-    <p class="profile-since">Paciente desde {{ pacienteDesde }}</p>
+    <h2 class="profile-name">{{ fullName }}</h2>
+    <p class="profile-since">Paciente desde {{ memberSince }}</p>
   </div>
 
-  <!-- Stats -->
+  <!-- STATS: Edad · Peso · Estatura -->
   <div class="stats-row">
     <div class="stat-item">
-      <span class="stat-value">{{ patient?.birthYear ? (currentYear - patient.birthYear) : '—' }}</span>
-      <span class="stat-label">Edad</span>
+      <span class="stat-value">{{ age }}</span>
+      <span class="stat-label">EDAD</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat-item">
-      <span class="stat-value">{{ patient?.weight ? patient.weight + ' kg' : '—' }}</span>
-      <span class="stat-label">Peso</span>
+      <span class="stat-value">{{ weight }}</span>
+      <span class="stat-label">PESO</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat-item">
-      <span class="stat-value">{{ tratamiento }}</span>
-      <span class="stat-label">Tratamiento</span>
+      <span class="stat-value">{{ height }}</span>
+      <span class="stat-label">ESTATURA</span>
     </div>
   </div>
 
-  <!-- Mi fisio -->
+  <!-- INFO PERSONAL -->
+  <div class="section-block">
+    <p class="section-label">Información personal</p>
+    <div class="info-card">
+      <div class="info-row">
+        <ion-icon name="person-outline" class="info-icon"></ion-icon>
+        <div class="info-text">
+          <span class="info-sublabel">Género</span>
+          <span class="info-value">{{ gender }}</span>
+        </div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <ion-icon name="fitness-outline" class="info-icon"></ion-icon>
+        <div class="info-text">
+          <span class="info-sublabel">Tratamiento activo</span>
+          <span class="info-value">{{ tratamiento }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MI FISIOTERAPEUTA -->
   <div class="section-block">
     <p class="section-label">Mi fisioterapeuta</p>
     <div class="physio-card" (click)="goToPhysioProfile()">
       <div class="physio-avatar">
-        <ion-icon name="person-circle-outline"></ion-icon>
+        <ion-icon name="medical-outline"></ion-icon>
       </div>
       <div class="physio-info">
-        <p class="physio-name">{{ physio?.fullName || 'Sin asignar' }}</p>
+        <p class="physio-name">{{ physioName }}</p>
         <p class="physio-clinic">{{ clinicName }}</p>
       </div>
       <ion-icon name="chevron-forward-outline" class="physio-arrow"></ion-icon>
     </div>
   </div>
 
-  <!-- Acciones -->
+  <!-- ACTIVIDAD -->
   <div class="section-block">
     <p class="section-label">Actividad</p>
     <div class="menu-list">
@@ -65,7 +87,7 @@
     </div>
   </div>
 
-  <!-- Cerrar sesión -->
+  <!-- CERRAR SESIÓN -->
   <div class="logout-wrap">
     <button class="logout-btn" (click)="cerrarSesion()">
       <ion-icon name="log-out-outline"></ion-icon>

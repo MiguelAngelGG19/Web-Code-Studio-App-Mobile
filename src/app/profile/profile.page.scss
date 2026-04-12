@@ -12,84 +12,93 @@
 }
 
 .profile-content {
-  --background: #f8fafa;
+  --background: #f2f4f4;
 }
 
+// HERO
 .profile-hero {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 16px 20px;
+  padding: 28px 16px 24px;
+  background: linear-gradient(175deg, #01696f 0%, #0c4e54 100%);
 
-  .avatar-wrap {
-    width: 84px;
-    height: 84px;
+  .avatar-circle {
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid #01696f;
-    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    margin-bottom: 14px;
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .avatar-initials {
+      font-size: 34px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
   }
 
   .profile-name {
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 700;
-    color: #111827;
-    margin: 0 0 4px;
+    color: #fff;
+    margin: 0 0 5px;
+    text-transform: capitalize;
   }
 
   .profile-since {
     font-size: 13px;
-    color: #9ca3af;
+    color: rgba(255, 255, 255, 0.75);
     margin: 0;
   }
 }
 
+// STATS
 .stats-row {
   display: flex;
   align-items: center;
   background: #fff;
-  border-radius: 14px;
-  margin: 0 16px 16px;
-  padding: 16px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border-radius: 16px;
+  margin: 16px 16px 0;
+  padding: 16px 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
 
   .stat-item {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
 
     .stat-value {
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 700;
       color: #111827;
     }
 
     .stat-label {
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 10px;
+      font-weight: 700;
       color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.07em;
     }
   }
 
   .stat-divider {
     width: 1px;
-    height: 36px;
+    height: 32px;
     background: #e5e7eb;
   }
 }
 
+// SECCIONES
 .section-block {
-  margin: 0 16px 14px;
+  margin: 16px 16px 0;
 
   .section-label {
     font-size: 11px;
@@ -101,19 +110,69 @@
   }
 }
 
+// INFO CARD
+.info-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+
+  .info-icon {
+    font-size: 20px;
+    color: #01696f;
+    flex-shrink: 0;
+  }
+
+  .info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .info-sublabel {
+      font-size: 11px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: #111827;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+  }
+}
+
+.info-divider {
+  height: 1px;
+  background: #f3f4f6;
+  margin: 0 16px;
+}
+
+// FISIOTERAPEUTA
 .physio-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px;
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   cursor: pointer;
+  transition: background 0.15s;
+
+  &:active { background: #f9fafb; }
 
   .physio-avatar {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     background: #e6f2f2;
     border-radius: 50%;
     display: flex;
@@ -135,6 +194,7 @@
       font-weight: 700;
       color: #111827;
       margin: 0 0 2px;
+      text-transform: capitalize;
     }
 
     .physio-clinic {
@@ -150,17 +210,18 @@
   }
 }
 
+// MENÚ
 .menu-list {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   .menu-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 15px 16px;
     cursor: pointer;
     border-bottom: 1px solid #f3f4f6;
     transition: background 0.15s;
@@ -188,14 +249,15 @@
   }
 }
 
+// LOGOUT
 .logout-wrap {
-  padding: 8px 16px 32px;
+  padding: 16px 16px 40px;
 
   .logout-btn {
     width: 100%;
     background: none;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 12px;
+    border: 1.5px solid #fee2e2;
+    border-radius: 14px;
     padding: 14px;
     display: flex;
     align-items: center;
@@ -207,7 +269,7 @@
     cursor: pointer;
     transition: background 0.15s;
 
-    ion-icon { font-size: 18px; }
+    ion-icon { font-size: 19px; }
     &:active { background: #fef2f2; }
   }
 }
