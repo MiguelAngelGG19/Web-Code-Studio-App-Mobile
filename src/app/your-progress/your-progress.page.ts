@@ -17,8 +17,7 @@ import { Storage } from '@ionic/storage-angular';
 export class Tab4Page implements OnInit {
   user = signal({
     fullName: 'Cargando...',
-    routineName: '',
-    avatarUrl: ''
+    routineName: ''
   });
 
   nextAppointment = signal<{ fecha: string; hora: string; tipo: string } | null>(null);
@@ -39,13 +38,12 @@ export class Tab4Page implements OnInit {
     const patientId = await this.storage.get('currentPatientId');
     const id = patientId ?? 1;
 
-    // Nombre + avatar del paciente
+    // Nombre del paciente
     this.patientRepo.getPatientById(id).subscribe({
       next: (patient) => {
         const fullName = [patient.firstName, patient.lastNameP, patient.lastNameM]
           .filter(Boolean).join(' ') || 'Paciente';
-        const avatarUrl = `https://i.pravatar.cc/80?u=patient${id}`;
-        this.user.update(u => ({ ...u, fullName, avatarUrl }));
+        this.user.update(u => ({ ...u, fullName }));
       },
       error: () => this.user.update(u => ({ ...u, fullName: 'Inicia sesión' }))
     });
@@ -57,22 +55,25 @@ export class Tab4Page implements OnInit {
       }
     });
 
-    // Próxima cita real — fix zona horaria con T12:00:00
+    // Próxima cita — el mapper ya normaliza date/starttime del back
     this.appointmentApi.getNext(id).subscribe((apt) => {
       if (apt && apt.appointmentDate) {
         const dateObj = new Date(apt.appointmentDate + 'T12:00:00');
         const fecha = dateObj.toLocaleDateString('es-MX', {
           weekday: 'long', day: 'numeric', month: 'long'
         });
-        const hora = apt.appointmentTime ?? '';
-        const tipo = apt.type || 'Consulta';
-        this.nextAppointment.set({ fecha, hora, tipo });
+        // Capitalizar primera letra
+        const fechaCap = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+        const hora = apt.appointmentTime
+          ? apt.appointmentTime.substring(0, 5)   // HH:MM
+          : '';
+        const tipo = (apt.notes && apt.notes.length < 60) ? apt.notes : 'Sesión de fisioterapia';
+        this.nextAppointment.set({ fecha: fechaCap, hora, tipo });
       } else {
         this.nextAppointment.set(null);
       }
     });
 
-    // Notificaciones no leídas
     this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
   }
 

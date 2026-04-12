@@ -1,13 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="header-toolbar">
     <div class="header-content">
-      <!-- Avatar decorativo -->
+      <!-- Icono de usuario decorativo -->
       <button class="avatar-btn" (click)="goToProfile()" aria-label="Ver perfil">
-        @if (user().avatarUrl) {
-          <img [src]="user().avatarUrl" alt="avatar" class="avatar-img" />
-        } @else {
-          <ion-icon name="person-circle" class="avatar-icon"></ion-icon>
-        }
+        <ion-icon name="person-circle" class="avatar-icon"></ion-icon>
       </button>
 
       <!-- Saludo -->
@@ -40,8 +36,8 @@
             <ion-icon name="calendar"></ion-icon>
           </div>
           <div class="card-body">
-            <p class="card-label">{{ nextAppointment()!.tipo | titlecase }}</p>
-            <p class="card-main">{{ nextAppointment()!.fecha | titlecase }}</p>
+            <p class="card-label">{{ nextAppointment()!.tipo }}</p>
+            <p class="card-main">{{ nextAppointment()!.fecha }}</p>
             @if (nextAppointment()!.hora) {
               <p class="card-sub">
                 <ion-icon name="time-outline"></ion-icon>
