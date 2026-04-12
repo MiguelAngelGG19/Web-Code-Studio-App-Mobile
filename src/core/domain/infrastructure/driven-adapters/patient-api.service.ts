@@ -1,10 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Patient } from '../../../domain/models/patient.model';
 import { PatientRepository } from '../../../domain/repositories/patient.repository';
 import { environment } from '../../../../environments/environment';
+
+// ─── MOCK (Fase 1) ───────────────────────────────────────────
+const MOCK_PATIENT: Patient = {
+  id: 1,
+  firstName: 'Miguel',
+  lastNameP: 'Ángel',
+  lastNameM: 'González',
+  birthYear: 2003,
+  sex: 'M',
+  height: 1.75,
+  weight: 70,
+  createdAt: new Date(),
+  physiotherapistId: 1,
+  email: 'miguel@example.com',
+};
+// ─────────────────────────────────────────────────────────────
 
 @Injectable({
   providedIn: 'root'
@@ -22,25 +38,18 @@ export class PatientApiService implements PatientRepository {
     ).pipe(
       map((res) => {
         if (!res?.patient) return null;
-        // Guardar token en localStorage para que las demás peticiones funcionen
-        if (res.token) {
-          localStorage.setItem('patient_token', res.token);
-        }
-        return this.mapPatient(res.patient);
+        if (res.token) localStorage.setItem('patient_token', res.token);
+        return this._map(res.patient);
       }),
-      catchError((err) => {
-        return throwError(() => err);
-      })
+      // ↓ Login siempre propaga el error real (no mockear login)
+      catchError((err) => throwError(() => err))
     );
   }
 
   getPatients(): Observable<Patient[]> {
     return this.http.get<{ success: boolean; rows?: any[] }>(this.baseUrl).pipe(
-      map((res) => {
-        const rows = res.rows ?? [];
-        return rows.map((p: any) => this.mapPatient(p));
-      }),
-      catchError(err => throwError(() => new Error(err.message ?? 'Error fetching patients')))
+      map((res) => (res.rows ?? []).map((p: any) => this._map(p))),
+      catchError(() => of([MOCK_PATIENT]))
     );
   }
 
@@ -48,14 +57,15 @@ export class PatientApiService implements PatientRepository {
     return this.http.get<{ success: boolean; data?: any }>(`${this.baseUrl}/${id}`).pipe(
       map((res) => {
         const p = res.data;
-        if (!p) throw new Error('Paciente no encontrado');
-        return this.mapPatient(p);
+        if (!p) return MOCK_PATIENT; // backend responde pero sin data
+        return this._map(p);
       }),
-      catchError(err => throwError(() => new Error(err.message ?? 'Error fetching patient')))
+      // ↓ Fase 1: si falla el backend (CORS, red, 404), usa mock
+      catchError(() => of(MOCK_PATIENT))
     );
   }
 
-  private mapPatient(p: any): Patient {
+  private _map(p: any): Patient {
     const birthDate = p.birthDate ?? p.birth_date;
     const birthYear = p.birthYear ?? p.birth_year ?? (birthDate ? new Date(birthDate).getFullYear() : null);
     return {
@@ -69,7 +79,7 @@ export class PatientApiService implements PatientRepository {
       weight: p.weight,
       createdAt: p.createdAt ? new Date(p.createdAt) : (p.created_at ? new Date(p.created_at) : new Date()),
       physiotherapistId: p.physioId ?? p.physiotherapistId ?? p.id_physio ?? p.physiotherapist_id ?? 0,
-      email: p.email
+      email: p.email,
     };
   }
 }
