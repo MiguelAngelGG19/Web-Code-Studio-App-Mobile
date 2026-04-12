@@ -1,20 +1,20 @@
-<ion-header class="ion-no-border">
+<ion-header class="ion-no-border home-header">
   <ion-toolbar class="header-toolbar">
     <div class="header-content">
       <!-- Icono de usuario decorativo -->
-      <button class="avatar-btn" (click)="goToProfile()" aria-label="Ver perfil">
-        <ion-icon name="person-circle" class="avatar-icon"></ion-icon>
+      <button type="button" class="avatar-btn" (click)="goToProfile()" aria-label="Ver perfil">
+        <ion-icon name="person-circle" class="avatar-icon" aria-hidden="true"></ion-icon>
       </button>
 
       <!-- Saludo -->
       <div class="header-text">
-        <p class="greeting">BUENOS DÍAS</p>
-        <h1 class="name">¡Hola, {{ user().fullName }}!</h1>
+        <p class="greeting">{{ greeting() }}</p>
+        <h1 class="name">{{ user().fullName }}</h1>
       </div>
 
       <!-- Notificaciones -->
-      <button class="notif-btn" (click)="goToNotifications()" aria-label="Notificaciones">
-        <ion-icon name="notifications-outline"></ion-icon>
+      <button type="button" class="notif-btn" (click)="goToNotifications()" aria-label="Notificaciones">
+        <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
         @if (unreadCount() > 0) {
           <span class="notif-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
         }
@@ -68,12 +68,12 @@
             <p class="card-main">{{ user().routineName }}</p>
           </div>
         </div>
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <ion-button expand="block" class="start-btn" (click)="startFirstRoutine()" style="flex: 1; margin: 0; box-shadow: 0 4px 12px rgba(0, 168, 107, 0.25);">
+        <div class="routine-actions">
+          <ion-button expand="block" class="start-btn" (click)="startFirstRoutine()">
             <ion-icon name="play" slot="start"></ion-icon>
             Iniciar
           </ion-button>
-          <ion-button expand="block" fill="outline" class="view-btn" routerLink="/tabs/detalle-rutina" style="flex: 1; margin: 0; --color: var(--activa-primary); --border-color: var(--activa-primary); font-weight: 700;">
+          <ion-button expand="block" fill="outline" class="view-btn" routerLink="/tabs/detalle-rutina">
             <ion-icon name="list-outline" slot="start"></ion-icon>
             Detalles
           </ion-button>

@@ -4,6 +4,11 @@
 
 @use "theme/variables";
 
+/* Contenedor raíz: mismo fondo que las pantallas */
+ion-app {
+  background: var(--activa-bg);
+}
+
 /* Texto y placeholder visibles en inputs con fondo claro (evita problemas con dark mode) */
 ion-input.input-dark-text,
 ion-textarea.input-dark-text,

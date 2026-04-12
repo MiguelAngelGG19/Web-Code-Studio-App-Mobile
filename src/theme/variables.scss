@@ -1,26 +1,76 @@
-// ACTIVA - Design System
-// Paleta fresca para fisioterapia: teal/verde con acentos cálidos
+// ACTIVA — sistema de diseño (app paciente)
+// Teal / menta con acentos cálidos; alineado con Ionic
 
 :root {
   --activa-primary: #0d9488;
   --activa-primary-dark: #0f766e;
   --activa-primary-light: #ccfbf1;
   --activa-primary-soft: #f0fdfa;
+  --activa-primary-rgb: 13, 148, 136;
+  --activa-accent-warm: #f59e0b;
   --activa-text: #0f172a;
   --activa-text-muted: #475569;
   --activa-text-soft: #64748b;
   --activa-bg: #f1f5f9;
+  --activa-bg-elevated: #f8fafc;
   --activa-card: #ffffff;
-  --activa-border: #cbd5e1;
+  --activa-border: #e2e8f0;
   --activa-success: #059669;
   --activa-danger: #dc2626;
+  --activa-danger-dark: #b91c1c;
   --activa-warning: #d97706;
-  --activa-shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.1);
-  --activa-shadow: 0 4px 24px rgba(15, 23, 42, 0.12);
-  --activa-shadow-lg: 0 8px 32px rgba(13, 148, 136, 0.25);
+  --activa-shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.06);
+  --activa-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  --activa-shadow-lg: 0 12px 40px rgba(13, 148, 136, 0.15);
   --activa-radius: 16px;
-  --activa-radius-lg: 24px;
+  --activa-radius-lg: 22px;
+  --activa-radius-xl: 28px;
   --activa-font-display: 800;
   --activa-font-bold: 700;
   --activa-font-medium: 600;
+  --activa-safe-top: env(safe-area-inset-top, 0px);
+  --activa-safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /** Ionic — color principal = marca ACTIVA */
+  --ion-color-primary: #0d9488;
+  --ion-color-primary-rgb: 13, 148, 136;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0b8278;
+  --ion-color-primary-tint: #259f94;
+
+  --ion-color-secondary: #14b8a6;
+  --ion-color-secondary-rgb: 20, 184, 166;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #12a292;
+  --ion-color-secondary-tint: #2cbfb0;
+
+  --ion-color-tertiary: #f59e0b;
+  --ion-color-tertiary-rgb: 245, 158, 11;
+  --ion-color-tertiary-contrast: #0f172a;
+  --ion-color-tertiary-contrast-rgb: 15, 23, 42;
+  --ion-color-tertiary-shade: #d88b0a;
+  --ion-color-tertiary-tint: #f6a82a;
+
+  --ion-background-color: #f1f5f9;
+  --ion-text-color: #0f172a;
+  --ion-text-color-rgb: 15, 23, 42;
+  --ion-toolbar-background: #ffffff;
+  --ion-card-background: #ffffff;
+  --ion-item-background: #ffffff;
+  --ion-border-color: #e2e8f0;
+}
+
+.ion-palette-dark {
+  --activa-bg: #0f172a;
+  --activa-card: #1e293b;
+  --activa-text: #f1f5f9;
+  --activa-text-muted: #94a3b8;
+  --ion-background-color: #0f172a;
+  --ion-text-color: #f1f5f9;
+  --ion-toolbar-background: #1e293b;
+  --ion-card-background: #1e293b;
+  --ion-item-background: #1e293b;
+  --ion-border-color: rgba(255, 255, 255, 0.08);
 }

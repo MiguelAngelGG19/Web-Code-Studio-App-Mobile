@@ -125,6 +125,10 @@ export class Tab6Page { // Quitamos el "implements OnInit"
       return;
     }
 
+    const exerciseIdRaw = await this.storage.get('lastTrackingExerciseId');
+    const exerciseId =
+      exerciseIdRaw != null && exerciseIdRaw !== '' ? Number(exerciseIdRaw) : undefined;
+
     const tracking = {
       startTime: new Date().toTimeString().split(' ')[0],
       endTime: new Date().toTimeString().split(' ')[0],
@@ -132,13 +136,15 @@ export class Tab6Page { // Quitamos el "implements OnInit"
       postObservations: formValue.observations || '',
       intraObservations: '',
       alert: Number(formValue.painLevel) >= 7 ? 1 : 0,
-      routineId
+      routineId,
+      exerciseId: exerciseId && !Number.isNaN(exerciseId) ? exerciseId : undefined,
     };
 
     this.registerPainLevelUseCase.execute(tracking).subscribe({
       next: async () => {
         await loading.dismiss();
         this.isLoading = false;
+        await this.storage.remove('lastTrackingExerciseId');
 
         const toast = await this.toastController.create({
           message: '✓ Reporte enviado exitosamente',

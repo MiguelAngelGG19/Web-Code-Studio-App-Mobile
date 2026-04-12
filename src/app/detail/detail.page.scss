@@ -17,6 +17,50 @@
   color: var(--activa-text);
 }
 
+.stepper-row {
+  padding: 12px 16px 4px;
+}
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-pill {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  &.step-current {
+    background: #fff;
+    color: var(--activa-primary-dark);
+    border-color: #fff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  }
+
+  &.step-done {
+    background: #64748b;
+    color: #f8fafc;
+    border-color: #64748b;
+    opacity: 0.95;
+  }
+
+  .step-check {
+    font-size: 18px;
+  }
+}
+
 .full-height-grid {
   min-height: 100%;
   padding-bottom: 32px;

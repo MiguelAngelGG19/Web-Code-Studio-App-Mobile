@@ -7,4 +7,6 @@ export interface Tracking {
   intraObservations: string;
   alert: number;
   routineId: number;
+  /** Ejercicio al que aplica el reporte (coincide con `tracking.id_exercise` en el back) */
+  exerciseId?: number;
 }

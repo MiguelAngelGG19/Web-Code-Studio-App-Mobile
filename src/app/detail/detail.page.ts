@@ -26,6 +26,9 @@ export class DetailPage implements OnInit {
   routineId: number | null = null;
   loading = true;
 
+  /** Índices de ejercicios ya completados en esta sesión */
+  completedIndices = new Set<number>();
+
   constructor(
     private storage: Storage,
     private routineApi: RoutineApiService,
@@ -50,12 +53,20 @@ export class DetailPage implements OnInit {
     });
   }
 
-  goToReport() {
+  async goToReport() {
+    if (this.currentExercise?.id) {
+      await this.storage.set('lastTrackingExerciseId', this.currentExercise.id);
+    }
     this.routeAnimationService.navigateWithAnimation(['/tabs/report'], 'slide');
   }
 
-  onExerciseDone() {
+  async onExerciseDone() {
+    this.completedIndices.add(this.exerciseIndex);
+
     if (this.isLastExercise()) {
+      if (this.currentExercise?.id) {
+        await this.storage.set('lastTrackingExerciseId', this.currentExercise.id);
+      }
       this.goToReport();
     } else {
       this.nextExercise();
@@ -82,6 +93,14 @@ export class DetailPage implements OnInit {
       this.exerciseIndex--;
       this.currentExercise = this.exercises[this.exerciseIndex];
     }
+  }
+
+  isStepDone(i: number): boolean {
+    return this.completedIndices.has(i);
+  }
+
+  isStepCurrent(i: number): boolean {
+    return i === this.exerciseIndex;
   }
 
   getExerciseVideoUrl = getExerciseVideoUrl;

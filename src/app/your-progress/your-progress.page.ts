@@ -21,6 +21,9 @@ export class Tab4Page implements OnInit {
     routineId: null as number | null
   });
 
+  /** Saludo según la hora local */
+  greeting = signal('Hola');
+
   nextAppointment = signal<{ fecha: string; hora: string; tipo: string } | null>(null);
   unreadCount = signal(0);
 
@@ -35,6 +38,7 @@ export class Tab4Page implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.setGreetingByTime();
     await this.storage.create();
     const patientId = await this.storage.get('currentPatientId');
     const id = patientId ?? 1;
@@ -104,5 +108,16 @@ export class Tab4Page implements OnInit {
 
   ionViewWillLeave() {
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  }
+
+  private setGreetingByTime(): void {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 12) {
+      this.greeting.set('Buenos días');
+    } else if (h >= 12 && h < 20) {
+      this.greeting.set('Buenas tardes');
+    } else {
+      this.greeting.set('Buenas noches');
+    }
   }
 }

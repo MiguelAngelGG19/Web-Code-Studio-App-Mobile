@@ -28,7 +28,13 @@ export class MedicalDocumentApiService {
       );
   }
 
-  create(data: { patientId: number; name: string; type?: string; fileUrl: string }): Observable<MedicalDocument | null> {
+  create(data: FormData | { patientId: number; name: string; type?: string; fileUrl: string }): Observable<MedicalDocument | null> {
+    if (data instanceof FormData) {
+      return this.http.post<{ success: boolean; data?: any }>(`${this.baseUrl}`, data).pipe(
+        map((res) => (res.data ? this.mapDoc(res.data) : null)),
+        catchError(() => of(null))
+      );
+    }
     return this.http.post<{ success: boolean; data?: any }>(`${this.baseUrl}`, data).pipe(
       map((res) => (res.data ? this.mapDoc(res.data) : null)),
       catchError(() => of(null))
@@ -46,7 +52,7 @@ export class MedicalDocumentApiService {
 
   private mapDoc(d: any): MedicalDocument {
     return {
-      id: d.id,
+      id: d.id ?? d.id_document,
       patientId: d.patientId ?? d.patient_id,
       name: d.name ?? '',
       type: d.type ?? 'otro',

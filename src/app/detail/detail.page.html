@@ -14,6 +14,23 @@
   </div>
 
   <ion-grid *ngIf="!loading && currentExercise" class="ion-no-padding full-height-grid">
+    <!-- Progreso de ejercicios (hechos en gris) -->
+    <ion-row *ngIf="exercises.length > 1" class="stepper-row">
+      <ion-col size="12">
+        <div class="stepper" role="list" aria-label="Progreso de ejercicios">
+          <span
+            *ngFor="let ex of exercises; let i = index"
+            class="step-pill"
+            [class.step-done]="isStepDone(i)"
+            [class.step-current]="isStepCurrent(i) && !isStepDone(i)"
+            role="listitem">
+            <ion-icon *ngIf="isStepDone(i)" name="checkmark" class="step-check"></ion-icon>
+            <ng-container *ngIf="!isStepDone(i)">{{ i + 1 }}</ng-container>
+          </span>
+        </div>
+      </ion-col>
+    </ion-row>
+
     <!-- Video embebido -->
     <ion-row class="video-row">
       <ion-col size="12" class="ion-no-padding">

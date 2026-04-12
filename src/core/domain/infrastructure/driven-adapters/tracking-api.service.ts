@@ -17,24 +17,30 @@ export class TrackingApiService implements TrackingRepository {
 
   registerPainLevel(tracking: Tracking): Observable<void> {
     console.debug('tracking-api: sending', tracking, 'to', this.baseUrl);
-    return this.http.post<void>(this.baseUrl, {
+    const body: Record<string, unknown> = {
       startTime: tracking.startTime,
       endTime: tracking.endTime,
-      // 🔥 CORRECCIÓN: Forzamos a que sean números reales para que el backend no lo rechace
       painLevel: Number(tracking.painLevel),
       postObservations: tracking.postObservations,
       intraObservations: tracking.intraObservations,
-      // Manejamos 'alert' por si viene vacío/undefined
-      alert: tracking.alert !== undefined && tracking.alert !== null ? Number(tracking.alert) : undefined,
-      routineId: Number(tracking.routineId)
-    }).pipe(
+      routineId: Number(tracking.routineId),
+    };
+    if (tracking.exerciseId != null && tracking.exerciseId > 0) {
+      body['exerciseId'] = Number(tracking.exerciseId);
+    }
+    if (tracking.alert !== undefined && tracking.alert !== null) {
+      body['alert'] = Number(tracking.alert);
+    }
+
+    return this.http.post(this.baseUrl, body).pipe(
+      map(() => undefined),
       catchError(err => {
         console.error('tracking-api error', err);
-        const body = err?.error;
-        const msg = body?.details || body?.message || err?.message || 'Error al registrar';
+        const errBody = err?.error;
+        const msg = errBody?.details || errBody?.message || err?.message || 'Error al registrar';
         const status = err?.status || err?.statusCode;
         const e = new Error(`${msg} (status ${status})`) as any;
-        e.error = body;
+        e.error = errBody;
         return throwError(() => e);
       })
     );
