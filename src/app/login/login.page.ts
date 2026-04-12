@@ -60,7 +60,7 @@ export class LoginPage {
     this.authApi.loginPatient(email.trim()).subscribe({
       next: async (res) => {
         await loading.dismiss();
-        if (res.success && res.token) {
+        if (res.token && res.patient) {
           await this.storage.set('patient_token', res.token);
           await this.storage.set('currentPatientId', res.patient.id);
           await this.storage.set('currentPatient', res.patient);
