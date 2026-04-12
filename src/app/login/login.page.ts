@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController, LoadingController } from '@ionic/angular';
-import { Storage } from '@ionic/storage-angular';
 import { AuthApiService } from '../core/infrastructure/api/auth-api.service';
+import { SessionService } from '../core/services/session.service';
 
 @Component({
   selector: 'app-login',
@@ -20,32 +20,26 @@ export class LoginPage {
     private toastController: ToastController,
     private loadingController: LoadingController,
     private authApi: AuthApiService,
-    private storage: Storage
+    private session: SessionService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
   }
 
-  async ionViewWillEnter() {
-    await this.storage.create();
-  }
-
   ionViewWillLeave() {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   }
 
   async onSubmit() {
     if (this.loginForm.invalid) {
-      const toast = await this.toastController.create({
+      const t = await this.toastController.create({
         message: 'Ingresa un correo válido',
         duration: 2000,
         position: 'bottom',
         color: 'warning',
       });
-      await toast.present();
+      await t.present();
       return;
     }
 
@@ -60,30 +54,30 @@ export class LoginPage {
     this.authApi.loginPatient(email.trim()).subscribe({
       next: async (res) => {
         await loading.dismiss();
-        if (res.token && res.patient) {
-          await this.storage.set('patient_token', res.token);
-          await this.storage.set('currentPatientId', res.patient.id);
-          await this.storage.set('currentPatient', res.patient);
-
-          const toast = await this.toastController.create({
+        if (res?.token && res?.patient) {
+          await this.session.save(res.patient, res.token);
+          const t = await this.toastController.create({
             message: `¡Bienvenido, ${res.patient.firstName}!`,
             duration: 1500,
             position: 'bottom',
             color: 'success',
           });
-          await toast.present();
+          await t.present();
           this.router.navigate(['/tabs/your-progress']);
         }
       },
+      // ─── Fase 2: si el backend falla, entra con el mock ──────────────────
       error: async () => {
         await loading.dismiss();
-        const toast = await this.toastController.create({
-          message: 'No se encontró un paciente con ese correo.',
-          duration: 3000,
+        const mock = this.session.current!;
+        const t = await this.toastController.create({
+          message: `¡Bienvenido, ${mock.firstName}! (modo demo)`,
+          duration: 2000,
           position: 'bottom',
-          color: 'danger',
+          color: 'warning',
         });
-        await toast.present();
+        await t.present();
+        this.router.navigate(['/tabs/your-progress']);
       },
     });
   }

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouteAnimationService } from './core/services/route-animation.service';
+import { Component, OnInit } from '@angular/core';
+import { SessionService } from './core/services/session.service';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +7,11 @@ import { RouteAnimationService } from './core/services/route-animation.service';
   styleUrls: ['app.component.scss'],
   standalone: false,
 })
-export class AppComponent {
-  constructor(private routeAnimationService: RouteAnimationService) {}
+export class AppComponent implements OnInit {
+  constructor(private session: SessionService) {}
+
+  async ngOnInit() {
+    // Inicializa la sesión (carga Storage o pone el mock)
+    await this.session.init();
+  }
 }
