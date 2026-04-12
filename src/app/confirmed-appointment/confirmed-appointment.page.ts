@@ -14,8 +14,8 @@ import { environment } from '../../environments/environment';
 export class ConfirmedAppointmentPage implements OnInit {
   cita: any = {
     doctorName: 'Fisioterapeuta',
+    doctorInitials: 'FT',
     specialty: 'Fisioterapia',
-    doctorPhoto: 'https://i.pravatar.cc/150?img=11',
     clinic: environment.clinicName ?? 'ACTIVA Health Center',
     fecha: '—',
     hora: '—',
@@ -35,11 +35,13 @@ export class ConfirmedAppointmentPage implements OnInit {
   async ngOnInit() {
     await this.storage.create();
     const patient = await this.storage.get('currentPatient');
-    const patientId = await this.storage.get('currentPatientId') ?? patient?.id ?? 1;
+    const patientId = await this.storage.get('currentPatientId') ?? patient?.id;
+
     if (!patientId) {
       this.loading = false;
       return;
     }
+
     this.appointmentApi.getNext(patientId).subscribe((nextCita) => {
       if (nextCita) {
         const dateStr = nextCita.appointmentDate;
@@ -53,7 +55,8 @@ export class ConfirmedAppointmentPage implements OnInit {
         if (nextCita.physiotherapistId) {
           this.physioApi.getById(nextCita.physiotherapistId).subscribe((p) => {
             if (p) {
-              this.cita = { ...this.cita, doctorName: p.fullName, doctorPhoto: `https://i.pravatar.cc/150?u=physio${p.id}` };
+              const initials = p.fullName.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase();
+              this.cita = { ...this.cita, doctorName: p.fullName, doctorInitials: initials };
             }
           });
         }
@@ -78,7 +81,8 @@ export class ConfirmedAppointmentPage implements OnInit {
         if (r.physiotherapistId) {
           this.physioApi.getById(r.physiotherapistId).subscribe((p) => {
             if (p) {
-              this.cita = { ...this.cita, doctorName: p.fullName, doctorPhoto: `https://i.pravatar.cc/150?u=physio${p.id}` };
+              const initials = p.fullName.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase();
+              this.cita = { ...this.cita, doctorName: p.fullName, doctorInitials: initials };
             }
           });
         }

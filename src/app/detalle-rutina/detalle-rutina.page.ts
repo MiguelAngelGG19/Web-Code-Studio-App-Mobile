@@ -18,6 +18,7 @@ export class DetalleRutinaPage implements OnInit {
   loading = true;
   selectedExercise: RoutineExercise | null = null;
   isModalOpen = false;
+
   constructor(
     private router: Router,
     private routeAnimationService: RouteAnimationService,
@@ -27,7 +28,12 @@ export class DetalleRutinaPage implements OnInit {
 
   async ngOnInit() {
     await this.storage.create();
-    const patientId = (await this.storage.get('currentPatientId')) ?? 1;
+    const patientId = await this.storage.get('currentPatientId');
+
+    if (!patientId) {
+      this.loading = false;
+      return;
+    }
 
     this.routineApi.getRoutines(patientId).subscribe(async (routines) => {
       this.routines = routines.map((r) => ({
@@ -82,14 +88,12 @@ export class DetalleRutinaPage implements OnInit {
 
   getExerciseImage(ex: RoutineExercise): string {
     const url = ex?.videoUrl?.trim();
-    // No usar URLs de Cloudinary demo (404) ni videos .mp4 como imagen
     if (url && !url.includes('cloudinary.com/demo') && !url.includes('cloudinary.com/video1') && !url.endsWith('.mp4')) {
       return url;
     }
     return this.getExerciseDemoImage(ex);
   }
 
-  /** Imagen fija del ejercicio para el modal (nunca muestra el logo ACTIVA) */
   getExerciseDemoImage(ex: RoutineExercise): string {
     const img = (ex as any).imageUrl;
     if (img) return img;
