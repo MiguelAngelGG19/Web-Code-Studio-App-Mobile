@@ -17,18 +17,24 @@ export interface Appointment {
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentApiService {
-  private baseUrl = `${environment.apiUrl}/citas`;
+  // ✅ Corregido: la ruta del backend es /appointments, no /citas
+  private baseUrl = `${environment.apiUrl}/appointments`;
 
   constructor(private http: HttpClient) {}
 
   getNext(patientId: number): Observable<Appointment | null> {
     return this.http
-      .get<{ success: boolean; data?: any }>(`${this.baseUrl}/next`, { params: { patientId: String(patientId) } })
+      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
         map((res) => {
-          const d = res.data;
-          if (!d) return null;
-          return this.mapAppointment(d);
+          const rows = res.rows ?? [];
+          if (rows.length === 0) return null;
+          // Ordenar por fecha y devolver la proxima
+          const sorted = rows
+            .map((d) => this.mapAppointment(d))
+            .filter((a) => a.appointmentDate)
+            .sort((a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime());
+          return sorted[0] ?? null;
         }),
         catchError(() => of(null))
       );
@@ -36,9 +42,9 @@ export class AppointmentApiService {
 
   list(patientId: number, limit = 50): Observable<Appointment[]> {
     return this.http
-      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}`, { params: { patientId: String(patientId), limit: String(limit) } })
+      .get<{ success: boolean; rows?: any[] }>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
-        map((res) => (res.rows || []).map((d) => this.mapAppointment(d))),
+        map((res) => (res.rows ?? []).map((d) => this.mapAppointment(d))),
         catchError(() => of([]))
       );
   }
