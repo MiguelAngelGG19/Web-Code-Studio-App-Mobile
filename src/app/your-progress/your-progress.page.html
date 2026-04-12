@@ -2,8 +2,8 @@
   <ion-toolbar class="progress-toolbar">
     <div class="toolbar-inner">
       <div class="toolbar-left">
-        <p class="greeting-text">{{ greeting }}</p>
-        <h1 class="patient-name">{{ patientName }}</h1>
+        <p class="greeting-text">BUENOS DÍAS</p>
+        <h1 class="patient-name">¡Hola, {{ user().fullName }}!</h1>
       </div>
       <ion-button fill="clear" class="notif-btn" (click)="goToNotifications()">
         <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
@@ -17,13 +17,13 @@
 
 <ion-content class="progress-content">
 
-  <!-- Próxima cita -->
-  @if (nextAppointment) {
+  <!-- Banner próxima cita / rutina activa -->
+  @if (user().nextAppointment && user().nextAppointment !== '—') {
     <div class="appointment-banner">
       <div class="appointment-left">
         <p class="appointment-label">Próxima cita</p>
-        <p class="appointment-date">{{ nextAppointment }}</p>
-        <p class="appointment-physio">{{ specialist }}</p>
+        <p class="appointment-date">{{ user().nextAppointment }}</p>
+        <p class="appointment-physio">{{ user().specialist }}</p>
       </div>
       <ion-icon name="calendar-outline" class="appointment-icon"></ion-icon>
     </div>
@@ -33,23 +33,25 @@
   <div class="card-section">
     <div class="card-header">
       <h2 class="card-title">Tu progreso hoy</h2>
-      <span class="progress-percent">{{ progressPercent }}%</span>
+      <span class="progress-percent">{{ (user().progress * 100) | number:'1.0-0' }}%</span>
     </div>
     <div class="progress-track">
-      <div class="progress-fill" [style.width.%]="progressPercent"></div>
+      <div class="progress-fill" [style.width.%]="user().progress * 100"></div>
     </div>
-    <p class="progress-hint">{{ progressHint }}</p>
+    <p class="progress-hint">
+      {{ user().progress === 0 ? '¡Empieza tu rutina de hoy!' : user().progress >= 1 ? '¡Completado, excelente trabajo!' : 'Sigue así, vas muy bien' }}
+    </p>
   </div>
 
   <!-- Rutina del día -->
-  <div class="card-section routine-card" (click)="goToRutina()">
+  <div class="card-section routine-card" (click)="goToNotifications()">
     <div class="routine-header">
       <div class="routine-icon-wrap">
         <ion-icon name="barbell-outline"></ion-icon>
       </div>
       <div class="routine-info">
         <p class="routine-label">Rutina de hoy</p>
-        <h3 class="routine-name">{{ routineName }}</h3>
+        <h3 class="routine-name">{{ user().routineName }}</h3>
       </div>
       <ion-icon name="chevron-forward-outline" class="routine-arrow"></ion-icon>
     </div>
@@ -58,14 +60,14 @@
         <ion-icon name="time-outline"></ion-icon> ~15 min
       </span>
       <span class="meta-chip">
-        <ion-icon name="fitness-outline"></ion-icon> {{ exerciseCount }} ejercicios
+        <ion-icon name="fitness-outline"></ion-icon> Ejercicios del día
       </span>
     </div>
   </div>
 
   <!-- Actividad semanal -->
   <div class="card-section">
-    <h2 class="card-title">Esta semana</h2>
+    <h2 class="card-title" style="margin-bottom: 12px">Esta semana</h2>
     <div class="week-row">
       @for (dia of dias; track $index) {
         <div class="week-day" [class.done]="diasActivos()[$index]">

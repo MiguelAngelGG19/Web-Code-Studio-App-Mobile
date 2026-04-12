@@ -2,8 +2,13 @@
   <ion-toolbar class="notif-toolbar">
     <h1 class="notif-title-text" slot="start">Notificaciones</h1>
     <ion-buttons slot="end">
-      <ion-button fill="clear" size="small" (click)="markAllRead()" *ngIf="hasUnread()">
-        <span class="mark-all-text">Marcar todo</span>
+      <ion-button
+        fill="clear"
+        size="small"
+        (click)="markAsRead(notifications[0])"
+        *ngIf="notifications.length > 0 && !notifications[0].isRead"
+      >
+        <span class="mark-all-text">Marcar leída</span>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -29,7 +34,7 @@
       [class.unread]="!n.isRead"
       (click)="markAsRead(n)"
     >
-      <div class="notif-icon-wrap" [ngClass]="getIconClass(n.type)">
+      <div class="notif-icon-wrap" [ngClass]="'type-' + n.type">
         <ion-icon [name]="getIcon(n.type)"></ion-icon>
       </div>
       <div class="notif-body">
