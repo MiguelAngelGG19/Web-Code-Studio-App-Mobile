@@ -22,57 +22,70 @@
 
 <ion-content class="ion-padding content-area">
 
+  <!-- PRÓXIMA CITA -->
   <section class="appointment-section">
-    <div class="section-header">
-      <h3 class="section-subtitle">Próxima Cita</h3>
-    </div>
-    <ion-card class="appointment-card" mode="ios">
-      <ion-card-content>
-        <div class="appointment-info">
-          <div class="tag">
-            <ion-icon name="medkit-outline"></ion-icon>
-            <span>SESIÓN DE FISIOTERAPIA</span>
+    <h3 class="section-subtitle">Próxima Cita</h3>
+
+    @if (nextAppointment()) {
+      <ion-card class="appointment-card" mode="ios">
+        <ion-card-content>
+          <div class="apt-row">
+            <ion-icon name="calendar-outline" class="apt-icon"></ion-icon>
+            <div class="apt-info">
+              <p class="apt-fecha">{{ nextAppointment()!.fecha }}</p>
+              @if (nextAppointment()!.hora) {
+                <p class="apt-hora">{{ nextAppointment()!.hora }}</p>
+              }
+            </div>
           </div>
-          <h2 class="doctor-name">{{ user().specialist }}</h2>
-          <p class="date">{{ user().nextAppointment }}</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
+        </ion-card-content>
+      </ion-card>
+    } @else {
+      <ion-card class="appointment-card empty-apt" mode="ios">
+        <ion-card-content>
+          <div class="apt-row">
+            <ion-icon name="calendar-outline" class="apt-icon muted"></ion-icon>
+            <p class="apt-empty">Sin citas programadas</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
   </section>
 
+  <!-- MI RUTINA -->
   <section class="routine-section">
-    <ion-card class="routine-card" mode="ios">
-      <ion-card-content>
-        <div class="routine-icon-wrap">
-          <ion-icon name="barbell-outline"></ion-icon>
-        </div>
-        <h2 class="routine-title">Mis rutinas</h2>
-        <p class="routine-desc">{{ user().routineName }}. Continúa con tu recuperación.</p>
-        <ion-button expand="block" class="start-btn" routerLink="/tabs/detalle-rutina">
-          <ion-icon name="play-circle" slot="start"></ion-icon>
-          Empezar rutina
-        </ion-button>
-        <div class="routine-meta">
-          <span><ion-icon name="time-outline"></ion-icon> 15 mins</span>
-          <span><ion-icon name="list-outline"></ion-icon> Ejercicios</span>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </section>
+    <h3 class="section-subtitle">Mi Rutina</h3>
 
-  <section class="weekly-section">
-    <h3 class="section-subtitle">Actividad Semanal</h3>
-    <p class="weekly-hint">Sesiones completadas esta semana</p>
-    <div class="week-days">
-      @for (dia of dias; track $index) {
-        <div class="day-item" [class.active]="diasActivos()[$index]">
-          <ion-badge class="day-badge">{{ dia }}</ion-badge>
-          @if (diasActivos()[$index]) {
-            <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-          }
-        </div>
-      }
-    </div>
+    @if (user().routineName) {
+      <ion-card class="routine-card" mode="ios">
+        <ion-card-content>
+          <div class="routine-header">
+            <div class="routine-icon-wrap">
+              <ion-icon name="barbell-outline"></ion-icon>
+            </div>
+            <div class="routine-info">
+              <h2 class="routine-title">{{ user().routineName }}</h2>
+              @if (user().routineDescription) {
+                <p class="routine-desc">{{ user().routineDescription }}</p>
+              }
+            </div>
+          </div>
+          <ion-button expand="block" class="start-btn" routerLink="/tabs/detalle-rutina">
+            <ion-icon name="play-circle" slot="start"></ion-icon>
+            Empezar rutina
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    } @else {
+      <ion-card class="routine-card empty-routine" mode="ios">
+        <ion-card-content>
+          <div class="apt-row">
+            <ion-icon name="barbell-outline" class="apt-icon muted"></ion-icon>
+            <p class="apt-empty">Sin rutina asignada aún</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
   </section>
 
 </ion-content>
