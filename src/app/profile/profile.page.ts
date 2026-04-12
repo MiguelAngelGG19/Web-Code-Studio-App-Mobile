@@ -17,7 +17,8 @@ export class ProfilePage implements OnInit {
   session: SessionPatient | null = null;
   patient: PatientProfile | null = null;
   physio: Physiotherapist | null = null;
-  tratamiento = '—';
+  /** Nombre de la rutina activa, null = sin rutina */
+  rutinaNombre: string | null = null;
   loading = true;
   clinicName = environment.clinicName ?? 'ACTIVA Health Center';
 
@@ -36,7 +37,7 @@ export class ProfilePage implements OnInit {
     if (!s) { this.loading = false; return; }
     this.session = s;
 
-    // 1. Datos completos del paciente desde el back
+    // 1. Datos completos del paciente
     this.patientApi.getById(s.id).subscribe({
       next: (p) => { this.patient = p; this.loading = false; },
       error: () => { this.loading = false; }
@@ -49,15 +50,16 @@ export class ProfilePage implements OnInit {
       });
     }
 
-    // 3. Rutina activa
+    // 3. Rutina activa (solo guarda nombre si existe)
     this.routineApi.getRoutines(s.id).subscribe({
       next: (routines) => {
-        if (routines.length > 0) this.tratamiento = routines[0].name ?? '—';
-      }
+        this.rutinaNombre = routines.length > 0 ? (routines[0].name || null) : null;
+      },
+      error: () => { this.rutinaNombre = null; }
     });
   }
 
-  // ─ Getters ───────────────────────────────────────────────────────────
+  // ─ Getters ──────────────────────────────────
 
   get fullName(): string {
     if (!this.patient) return this.session?.firstName ?? 'Paciente';
@@ -67,13 +69,6 @@ export class ProfilePage implements OnInit {
       this.patient.lastNameM
     ].filter(Boolean);
     return parts.join(' ') || 'Paciente';
-  }
-
-  /** birthYear viene del back (ej. 1995) */
-  get age(): string {
-    const year = this.patient?.birthYear;
-    if (!year) return '—';
-    return `${new Date().getFullYear() - year}`;
   }
 
   get weight(): string {
@@ -111,22 +106,22 @@ export class ProfilePage implements OnInit {
     return 'imc-danger';
   }
 
-  /** 'M' → 'Masculino', 'F' → 'Femenino', 'Other' → 'Otro' */
+  /** Lee 'sex' o 'gender' — el back puede mandar cualquiera */
   get gender(): string {
     const map: Record<string, string> = { M: 'Masculino', F: 'Femenino', Other: 'Otro' };
-    const s = this.patient?.sex;
-    return s ? (map[s] ?? '—') : '—';
+    const raw = this.patient?.sex ?? this.patient?.gender;
+    return raw ? (map[raw] ?? raw) : '—';
   }
 
   get physioName(): string {
     if (!this.physio) return 'Sin asignar';
-    return [
-      (this.physio as any).firstName,
-      (this.physio as any).lastNamePaternal
-    ].filter(Boolean).join(' ') || (this.physio as any).fullName || 'Sin asignar';
+    const p = this.physio as any;
+    return [p.firstName, p.lastNamePaternal].filter(Boolean).join(' ')
+      || p.fullName
+      || 'Sin asignar';
   }
 
-  // ─ Navegación ──────────────────────────────────────────────────────
+  // ─ Navegación ──────────────────────────────────
 
   goToHistorial()     { this.router.navigate(['/tabs/historial']); }
   goToPhysioProfile() { this.router.navigate(['/tabs/physiotherapist-profile']); }

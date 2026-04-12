@@ -28,19 +28,16 @@
         </div>
       </div>
       <h2 class="profile-name">{{ fullName }}</h2>
-      <div class="profile-badge">
+
+      <!-- Badge de rutina: solo si hay rutina activa -->
+      <div class="profile-badge" *ngIf="rutinaNombre">
         <ion-icon name="medical-outline" class="badge-icon"></ion-icon>
-        <span>{{ tratamiento !== '—' ? tratamiento : 'Sin Tratamiento Activo' }}</span>
+        <span>{{ rutinaNombre }}</span>
       </div>
     </div>
 
-    <!-- STATS: Edad · Peso · Estatura · IMC -->
+    <!-- STATS: Peso · Estatura · IMC -->
     <div class="stats-card">
-      <div class="stat-item">
-        <span class="stat-value">{{ age }}</span>
-        <span class="stat-label">AÑOS</span>
-      </div>
-      <div class="stat-divider"></div>
       <div class="stat-item">
         <span class="stat-value">{{ weight }}</span>
         <span class="stat-label">PESO</span>
@@ -73,7 +70,7 @@
           </div>
         </div>
 
-        <!-- Solo mostrar Condición IMC si tenemos los datos -->
+        <!-- Condición IMC: solo si hay peso y estatura -->
         <ng-container *ngIf="patient?.height && patient?.weight">
           <div class="info-divider"></div>
           <div class="info-row">
@@ -86,18 +83,6 @@
             </div>
           </div>
         </ng-container>
-
-        <div class="info-divider"></div>
-        <!-- Clínica -->
-        <div class="info-row">
-          <div class="info-icon-wrap blue">
-            <ion-icon name="location-outline"></ion-icon>
-          </div>
-          <div class="info-text">
-            <span class="info-sublabel">Clínica</span>
-            <span class="info-value">{{ clinicName }}</span>
-          </div>
-        </div>
 
       </div>
     </div>
