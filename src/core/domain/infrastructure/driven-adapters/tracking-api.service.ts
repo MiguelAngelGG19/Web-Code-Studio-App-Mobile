@@ -26,7 +26,9 @@ export class TrackingApiService implements TrackingRepository {
       intraObservations: tracking.intraObservations,
       // Manejamos 'alert' por si viene vacío/undefined
       alert: tracking.alert !== undefined && tracking.alert !== null ? Number(tracking.alert) : undefined,
-      routineId: Number(tracking.routineId)
+      routineId: Number(tracking.routineId),
+      patientId: Number(tracking.patientId),
+      date: tracking.date
     }).pipe(
       catchError(err => {
         console.error('tracking-api error', err);
@@ -50,7 +52,9 @@ export class TrackingApiService implements TrackingRepository {
         postObservations: apiTracking.post_observations,
         intraObservations: apiTracking.intra_observations,
         alert: apiTracking.alert,
-        routineId: apiTracking.routine_id
+        routineId: apiTracking.routine_id,
+        patientId: apiTracking.id_patient,
+        date: apiTracking.date
       }))),
       catchError(err => throwError(() => new Error(err.message ?? 'Error fetching tracking')))
     );

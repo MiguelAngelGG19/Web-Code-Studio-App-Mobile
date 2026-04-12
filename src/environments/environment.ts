@@ -8,8 +8,8 @@
 export const environment = {
   production: false,
   // Con proxy: usa /api. Sin proxy: http://localhost:3000/api
-  apiUrl: 'http://192.168.1.4:3000/api',
-  backendUrl: 'http://192.168.1.4:3000',
+  apiUrl: 'http://192.168.1.118:3000/api',
+  backendUrl: 'http://192.168.1.118:3000',
   clinicName: 'ACTIVA Health Center',
   clinicAddress: 'Av. Principal 123, Ciudad',
   clinicMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia'

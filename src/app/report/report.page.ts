@@ -111,12 +111,13 @@ export class Tab6Page { // Quitamos el "implements OnInit"
 
     const formValue = this.reportForm.value;
     const routineId = Number(this.currentRoutineId) || 1;
+    const patientId = (await this.storage.get('currentPatientId')) || (await this.storage.get('currentUser'))?.id;
 
-    if (!routineId || routineId < 1) {
+    if (!routineId || routineId < 1 || !patientId) {
       await loading.dismiss();
       this.isLoading = false;
       const toast = await this.toastController.create({
-        message: 'No hay rutina activa. Inicia una rutina desde el detalle.',
+        message: !patientId ? 'Error: No se encontró el paciente.' : 'No hay rutina activa.',
         duration: 3000,
         position: 'bottom',
         color: 'warning'
@@ -125,14 +126,16 @@ export class Tab6Page { // Quitamos el "implements OnInit"
       return;
     }
 
-    const tracking = {
+    const tracking: Tracking = {
       startTime: new Date().toTimeString().split(' ')[0],
       endTime: new Date().toTimeString().split(' ')[0],
       painLevel: Number(formValue.painLevel),
       postObservations: formValue.observations || '',
       intraObservations: '',
       alert: Number(formValue.painLevel) >= 7 ? 1 : 0,
-      routineId
+      routineId,
+      patientId: Number(patientId),
+      date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
     };
 
     this.registerPainLevelUseCase.execute(tracking).subscribe({

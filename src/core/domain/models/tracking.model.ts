@@ -7,4 +7,6 @@ export interface Tracking {
   intraObservations: string;
   alert: number;
   routineId: number;
+  patientId: number;
+  date: string;
 }
