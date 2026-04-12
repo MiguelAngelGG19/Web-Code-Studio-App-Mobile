@@ -14,51 +14,89 @@
   </div>
 
   <ng-container *ngIf="!loading">
+
+    <!-- Lista de rutinas -->
     <div class="rutinas-list" *ngIf="routines.length > 0">
-      <h3 class="list-label">Tus rutinas</h3>
-      <ion-card *ngFor="let rutina of routines" class="rutina-card" (click)="selectRoutine(rutina)" [class.selected]="selectedRoutine?.id === rutina.id">
+      <p class="section-label">Tus rutinas</p>
+      <ion-card
+        *ngFor="let rutina of routines"
+        class="rutina-card"
+        (click)="selectRoutine(rutina)"
+        [class.selected]="selectedRoutine?.id === rutina.id">
         <ion-card-content>
           <div class="rutina-header">
-            <ion-icon name="calendar-outline"></ion-icon>
+            <div class="rutina-icon-wrap">
+              <ion-icon name="barbell-outline"></ion-icon>
+            </div>
             <h2>{{ rutina.name }}</h2>
           </div>
           <div class="rutina-dates">
-            <span><ion-icon name="play-outline"></ion-icon> {{ rutina.startDate }}</span>
-            <span><ion-icon name="stop-outline"></ion-icon> {{ rutina.endDate }}</span>
+            <span class="date-chip">
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{ rutina.startDate }}
+            </span>
+            <span class="date-chip">
+              <ion-icon name="calendar-clear-outline"></ion-icon>
+              {{ rutina.endDate }}
+            </span>
           </div>
         </ion-card-content>
       </ion-card>
     </div>
 
+    <!-- Sin rutinas -->
     <div *ngIf="routines.length === 0" class="empty-state">
       <ion-icon name="barbell-outline"></ion-icon>
       <p>No tienes rutinas asignadas.</p>
     </div>
 
+    <!-- Ejercicios -->
     <div *ngIf="selectedRoutine && exercises.length > 0" class="exercises-section">
-      <h3 class="list-label">Ejercicios</h3>
-      <ion-list lines="none">
-        <ion-item *ngFor="let ex of exercises" class="exercise-item" button (click)="openModal(ex)">
-          <div class="ex-left" slot="start">
-            <ion-thumbnail class="ex-thumb">
-              <img [src]="getExerciseImage(ex)" [alt]="ex.name" (error)="$any($event.target).src='assets/icon/ico-activa.png'" />
-            </ion-thumbnail>
+      <p class="section-label">Ejercicios</p>
+      <div class="exercises-list">
+        <div
+          *ngFor="let ex of exercises; let i = index"
+          class="exercise-card"
+          (click)="openModal(ex)">
+          <div class="ex-image-wrap">
+            <img
+              [src]="getExerciseImage(ex)"
+              [alt]="ex.name"
+              (error)="$any($event.target).src='assets/icon/ico-activa.png'" />
+            <div class="ex-number-badge">{{ i + 1 }}</div>
           </div>
-          <ion-label>
-            <h2>{{ ex.name }}</h2>
-            <p>{{ ex.duration }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
+          <div class="ex-info">
+            <h3>{{ ex.name }}</h3>
+            <p *ngIf="ex.consejo" class="ex-tip">
+              <ion-icon name="bulb-outline"></ion-icon>
+              {{ ex.consejo }}
+            </p>
+            <div class="ex-meta">
+              <span *ngIf="ex.series">
+                <ion-icon name="layers-outline"></ion-icon>
+                {{ ex.series }} series
+              </span>
+              <span *ngIf="ex.reps">
+                <ion-icon name="repeat-outline"></ion-icon>
+                {{ ex.reps }} reps
+              </span>
+            </div>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="ex-arrow"></ion-icon>
+        </div>
+      </div>
     </div>
 
+    <!-- Sin ejercicios -->
     <div *ngIf="selectedRoutine && exercises.length === 0" class="empty-exercises">
       <ion-icon name="fitness-outline"></ion-icon>
       <p>Esta rutina no tiene ejercicios asignados.</p>
     </div>
+
   </ng-container>
 </ion-content>
 
+<!-- Modal ejercicio -->
 <ion-modal [isOpen]="isModalOpen" (ionModalDidDismiss)="closeModal()" class="exercise-modal">
   <ng-template>
     <ion-header>
@@ -82,7 +120,6 @@
           <h4>Descripción</h4>
           <p>{{ selectedExercise.description || 'Sin descripción.' }}</p>
         </div>
-
         <div class="video-section" *ngIf="getExerciseVideoUrl(selectedExercise)">
           <h4>Video del ejercicio</h4>
           <div class="video-container" *ngIf="getExerciseYouTubeEmbedUrl(selectedExercise)">
@@ -106,8 +143,9 @@
   </ng-template>
 </ion-modal>
 
+<!-- Botón flotante -->
 <div class="floating-btn-wrap" *ngIf="selectedRoutine && exercises.length > 0">
   <ion-button class="floating-btn" expand="block" (click)="startRoutine()">
-    Comienzo
+    COMIENZO
   </ion-button>
 </div>
