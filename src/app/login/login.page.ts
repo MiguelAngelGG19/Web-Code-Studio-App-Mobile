@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
-import { PatientRepository } from '../../core/domain/repositories/patient.repository';
+import { ToastController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { AuthApiService } from '../core/infrastructure/api/auth-api.service';
 
 @Component({
   selector: 'app-login',
@@ -18,11 +18,13 @@ export class LoginPage {
     private router: Router,
     private fb: FormBuilder,
     private toastController: ToastController,
-    private patientRepo: PatientRepository,
+    private loadingController: LoadingController,
+    private authApi: AuthApiService,
     private storage: Storage
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(4)]],
     });
   }
 
@@ -30,10 +32,16 @@ export class LoginPage {
     await this.storage.create();
   }
 
+  ionViewWillLeave() {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
+
   async onSubmit() {
     if (this.loginForm.invalid) {
       const toast = await this.toastController.create({
-        message: 'Ingresa un correo electrónico válido',
+        message: 'Ingresa un correo y contraseña válidos',
         duration: 2000,
         position: 'bottom',
         color: 'warning',
@@ -42,39 +50,37 @@ export class LoginPage {
       return;
     }
 
-    const email = this.loginForm.value.email.trim();
-    this.patientRepo.getPatientByEmail(email).subscribe({
-      next: async (patient) => {
-        if (patient) {
-          // Guardar datos del paciente en Storage
-          await this.storage.set('currentPatientId', patient.id);
-          await this.storage.set('currentPatient', patient);
-          // Guardar token JWT para peticiones posteriores
-          const token = localStorage.getItem('patient_token');
-          if (token) {
-            await this.storage.set('patient_token', token);
-          }
+    const loading = await this.loadingController.create({
+      message: 'Iniciando sesión...',
+      spinner: 'crescent',
+    });
+    await loading.present();
+
+    const { email, password } = this.loginForm.value;
+
+    this.authApi.loginPatient(email.trim(), password).subscribe({
+      next: async (res) => {
+        await loading.dismiss();
+        if (res.success && res.token) {
+          // Guardar token y datos del paciente en Storage
+          await this.storage.set('patient_token', res.token);
+          await this.storage.set('currentPatientId', res.patient.id);
+          await this.storage.set('currentPatient', res.patient);
+
           const toast = await this.toastController.create({
-            message: `Bienvenido, ${patient.firstName}`,
+            message: `¡Bienvenido, ${res.patient.firstName}!`,
             duration: 1500,
             position: 'bottom',
             color: 'success',
           });
           await toast.present();
           this.router.navigate(['/tabs/your-progress']);
-        } else {
-          const toast = await this.toastController.create({
-            message: 'No se encontró un paciente con ese correo',
-            duration: 2500,
-            position: 'bottom',
-            color: 'danger',
-          });
-          await toast.present();
         }
       },
       error: async () => {
+        await loading.dismiss();
         const toast = await this.toastController.create({
-          message: 'Correo no registrado o error de conexión.',
+          message: 'Correo o contraseña incorrectos.',
           duration: 3000,
           position: 'bottom',
           color: 'danger',
