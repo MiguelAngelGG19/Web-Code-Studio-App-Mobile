@@ -1,88 +1,88 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="header-toolbar">
-    <ion-buttons slot="start">
-      <ion-button (click)="goToProfile()" class="profile-btn">
-        <ion-icon name="person-circle-outline" slot="icon-only" size="large"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-label class="header-label">
-      <p class="greeting">BUENOS DÍAS</p>
-      <h1 class="name">¡Hola, {{ user().fullName }}!</h1>
-    </ion-label>
-    <ion-buttons slot="end">
-      <ion-button (click)="goToNotifications()" class="notification-btn">
-        <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
-        @if (unreadCount() > 0) {
-          <ion-badge color="danger" class="notification-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</ion-badge>
+    <div class="header-content">
+      <!-- Avatar decorativo -->
+      <button class="avatar-btn" (click)="goToProfile()" aria-label="Ver perfil">
+        @if (user().avatarUrl) {
+          <img [src]="user().avatarUrl" alt="avatar" class="avatar-img" />
+        } @else {
+          <ion-icon name="person-circle" class="avatar-icon"></ion-icon>
         }
-      </ion-button>
-    </ion-buttons>
+      </button>
+
+      <!-- Saludo -->
+      <div class="header-text">
+        <p class="greeting">BUENOS DÍAS</p>
+        <h1 class="name">¡Hola, {{ user().fullName }}!</h1>
+      </div>
+
+      <!-- Notificaciones -->
+      <button class="notif-btn" (click)="goToNotifications()" aria-label="Notificaciones">
+        <ion-icon name="notifications-outline"></ion-icon>
+        @if (unreadCount() > 0) {
+          <span class="notif-badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
+        }
+      </button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding content-area">
+<ion-content class="content-area">
+  <div class="page-padding">
 
-  <!-- PRÓXIMA CITA -->
-  <section class="appointment-section">
-    <h3 class="section-subtitle">Próxima Cita</h3>
+    <!-- PRÓXIMA CITA -->
+    <section class="section">
+      <h3 class="section-title">Próxima Cita</h3>
 
-    @if (nextAppointment()) {
-      <ion-card class="appointment-card" mode="ios">
-        <ion-card-content>
-          <div class="apt-row">
-            <ion-icon name="calendar-outline" class="apt-icon"></ion-icon>
-            <div class="apt-info">
-              <p class="apt-fecha">{{ nextAppointment()!.fecha }}</p>
-              @if (nextAppointment()!.hora) {
-                <p class="apt-hora">{{ nextAppointment()!.hora }}</p>
-              }
-            </div>
+      @if (nextAppointment()) {
+        <div class="card apt-card">
+          <div class="card-icon-wrap apt-color">
+            <ion-icon name="calendar"></ion-icon>
           </div>
-        </ion-card-content>
-      </ion-card>
-    } @else {
-      <ion-card class="appointment-card empty-apt" mode="ios">
-        <ion-card-content>
-          <div class="apt-row">
-            <ion-icon name="calendar-outline" class="apt-icon muted"></ion-icon>
-            <p class="apt-empty">Sin citas programadas</p>
+          <div class="card-body">
+            <p class="card-label">{{ nextAppointment()!.tipo | titlecase }}</p>
+            <p class="card-main">{{ nextAppointment()!.fecha | titlecase }}</p>
+            @if (nextAppointment()!.hora) {
+              <p class="card-sub">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ nextAppointment()!.hora }}
+              </p>
+            }
           </div>
-        </ion-card-content>
-      </ion-card>
-    }
-  </section>
+        </div>
+      } @else {
+        <div class="card empty-card">
+          <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
+          <p class="empty-text">Sin citas programadas</p>
+        </div>
+      }
+    </section>
 
-  <!-- MI RUTINA -->
-  <section class="routine-section">
-    <h3 class="section-subtitle">Mi Rutina</h3>
+    <!-- MI RUTINA -->
+    <section class="section">
+      <h3 class="section-title">Mi Rutina</h3>
 
-    @if (user().routineName) {
-      <ion-card class="routine-card" mode="ios">
-        <ion-card-content>
-          <div class="routine-header">
-            <div class="routine-icon-wrap">
-              <ion-icon name="barbell-outline"></ion-icon>
-            </div>
-            <div class="routine-info">
-              <h2 class="routine-title">{{ user().routineName }}</h2>
-            </div>
+      @if (user().routineName) {
+        <div class="card routine-card">
+          <div class="card-icon-wrap routine-color">
+            <ion-icon name="barbell"></ion-icon>
           </div>
-          <ion-button expand="block" class="start-btn" routerLink="/tabs/detalle-rutina">
-            <ion-icon name="play-circle" slot="start"></ion-icon>
-            Empezar rutina
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    } @else {
-      <ion-card class="routine-card empty-routine" mode="ios">
-        <ion-card-content>
-          <div class="apt-row">
-            <ion-icon name="barbell-outline" class="apt-icon muted"></ion-icon>
-            <p class="apt-empty">Sin rutina asignada aún</p>
+          <div class="card-body">
+            <p class="card-label">Rutina activa</p>
+            <p class="card-main">{{ user().routineName }}</p>
           </div>
-        </ion-card-content>
-      </ion-card>
-    }
-  </section>
+        </div>
+        <ion-button expand="block" class="start-btn" routerLink="/tabs/detalle-rutina">
+          <ion-icon name="play-circle" slot="start"></ion-icon>
+          Empezar rutina
+        </ion-button>
+      } @else {
+        <div class="card empty-card">
+          <ion-icon name="barbell-outline" class="empty-icon"></ion-icon>
+          <p class="empty-text">Sin rutina asignada aún</p>
+        </div>
+      }
+    </section>
 
+  </div>
 </ion-content>
