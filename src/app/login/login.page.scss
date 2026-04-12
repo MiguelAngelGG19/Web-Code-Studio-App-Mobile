@@ -1,12 +1,17 @@
 .login-content {
-  --background: linear-gradient(180deg, var(--activa-primary-soft) 0%, #ffffff 45%);
+  --background: linear-gradient(
+    165deg,
+    var(--activa-primary-soft) 0%,
+    #ffffff 42%,
+    var(--activa-bg) 100%
+  );
 }
 
 .login-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 56px 24px 40px;
+  padding: calc(48px + var(--activa-safe-top)) 24px calc(32px + var(--activa-safe-bottom));
 }
 
 .logo-section {
@@ -51,6 +56,12 @@
 .form-section {
   flex: 1;
   margin-bottom: 28px;
+  padding: 24px 20px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: var(--activa-radius-xl);
+  border: 1px solid rgba(var(--activa-primary-rgb), 0.1);
+  box-shadow: var(--activa-shadow);
+  backdrop-filter: blur(8px);
 }
 
 .input-label {

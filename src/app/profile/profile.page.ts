@@ -119,6 +119,12 @@ export class ProfilePage implements OnInit {
     await this.storage.remove('currentPatientId');
     await this.storage.remove('currentPatient');
     await this.storage.remove('currentRoutineId');
+    await this.storage.remove('patient_token');
+    try {
+      localStorage.removeItem('patient_token');
+    } catch {
+      /* ignore */
+    }
     this.router.navigate(['/login']);
   }
 

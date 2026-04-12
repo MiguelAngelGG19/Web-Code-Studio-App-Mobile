@@ -26,7 +26,7 @@ export class NotificationApiService {
       .get<any>(`${this.baseUrl}/patient/${patientId}`)
       .pipe(
         map((res) => {
-          const rows = Array.isArray(res) ? res : (res?.rows ?? []);
+          const rows = Array.isArray(res) ? res : (res?.rows ?? res?.data ?? []);
           return rows.map((n: any) => ({
             id: n.id ?? n.id_notification,
             patientId: n.patientId ?? n.patient_id ?? n.id_patient,
@@ -37,7 +37,10 @@ export class NotificationApiService {
             createdAt: n.date ?? n.createdAt ?? n.created_at,
           }));
         }),
-        catchError(() => of([]))
+        catchError((err) => {
+          console.warn('[notifications] Error al cargar', err);
+          return of([]);
+        })
       );
   }
 
@@ -60,12 +63,13 @@ export class NotificationApiService {
     );
   }
 
-  markAsRead(id: number, patientId: number): Observable<boolean> {
-    return this.http
-      .patch<{ success: boolean }>(`${this.baseUrl}/${id}/read`, {})
-      .pipe(
-        map((res) => res.success),
-        catchError(() => of(false))
-      );
+  markAsRead(id: number, _patientId: number): Observable<boolean> {
+    return this.http.patch(`${this.baseUrl}/${id}/read`, {}).pipe(
+      map(() => true),
+      catchError((err) => {
+        console.warn('[notifications] markAsRead falló', id, err);
+        return of(false);
+      })
+    );
   }
 }
