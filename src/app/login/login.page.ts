@@ -44,16 +44,18 @@ export class LoginPage {
 
     const email = this.loginForm.value.email.trim();
     this.patientRepo.getPatientByEmail(email).subscribe({
-      next: async (patient) => {
+      next: async (patient: any) => {
         if (patient) {
           // Guardar datos del paciente en Storage
           await this.storage.set('currentPatientId', patient.id);
           await this.storage.set('currentPatient', patient);
-          // Guardar token JWT para peticiones posteriores
-          const token = localStorage.getItem('patient_token');
+
+          // Guardar token JWT si viene en la respuesta del backend
+          const token = patient.token ?? patient.access_token ?? patient.jwt ?? null;
           if (token) {
             await this.storage.set('patient_token', token);
           }
+
           const toast = await this.toastController.create({
             message: `Bienvenido, ${patient.firstName}`,
             duration: 1500,
