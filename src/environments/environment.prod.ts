@@ -1,12 +1,11 @@
 /**
  * Configuración de producción.
- * 📱 Teléfono físico (misma Wi‑Fi que el PC): IP de tu PC
- * 🌐 Servidor real (Play Store): https://api.activa.com/api
+ * 🌐 Servidor Railway: https://impartial-art-production.up.railway.app
  */
 export const environment = {
   production: true,
-  apiUrl: 'http://192.168.1.4:3000/api',
-  backendUrl: 'http://192.168.1.4:3000',
+  apiUrl: 'https://impartial-art-production.up.railway.app/api',
+  backendUrl: 'https://impartial-art-production.up.railway.app',
   clinicName: 'ACTIVA Health Center',
   clinicAddress: 'Av. Principal 123, Ciudad',
   clinicMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia'
