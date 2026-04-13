@@ -6,7 +6,22 @@
     </ion-tab-button>
 
     <ion-tab-button tab="notifications" href="/tabs/notifications">
-      <ion-icon aria-hidden="true" name="notifications-outline"></ion-icon>
+      <div style="position: relative; display: inline-flex;">
+        <ion-icon aria-hidden="true" name="notifications-outline"></ion-icon>
+        <span
+          *ngIf="hasUnreadNotifications"
+          style="
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            width: 9px;
+            height: 9px;
+            background: var(--ion-color-danger, #eb445a);
+            border-radius: 50%;
+            border: 1.5px solid var(--ion-tab-bar-background, #fff);
+          "
+        ></span>
+      </div>
       <ion-label>Notificaciones</ion-label>
     </ion-tab-button>
 
