@@ -7,9 +7,8 @@
 
 export const environment = {
   production: false,
-  // Con proxy: usa /api. Sin proxy: http://localhost:3000/api
-  apiUrl: 'http://192.168.1.4:3000/api',
-  backendUrl: 'http://192.168.1.4:3000',
+  apiUrl: 'https://impartial-art-production.up.railway.app/api',
+  backendUrl: 'https://impartial-art-production.up.railway.app',
   clinicName: 'ACTIVA Health Center',
   clinicAddress: 'Av. Principal 123, Ciudad',
   clinicMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia'
@@ -17,8 +16,7 @@ export const environment = {
 
 /*
  * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
+ * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.\n *
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
