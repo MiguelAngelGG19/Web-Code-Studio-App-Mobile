@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../services/api-base.service';
 
 export interface Appointment {
   id: number;
@@ -13,13 +13,20 @@ export interface Appointment {
   type: string;
   notes?: string;
   createdAt?: string;
+  /** pending | confirmed | cancelled | completed (misma semántica que el back y el front web) */
+  status?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentApiService {
-  private baseUrl = `${environment.apiUrl}/appointments`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/appointments`;
+  }
 
   getNext(patientId: number): Observable<Appointment | null> {
     return this.http
@@ -30,15 +37,20 @@ export class AppointmentApiService {
           if (rows.length === 0) return null;
           const today = new Date();
           today.setHours(0, 0, 0, 0);
-          // Mapear, filtrar solo citas de hoy en adelante, ordenar por fecha
+          // Igual que appointment-list en web: no mostrar como "próxima" canceladas ni completadas
           const sorted = rows
             .map((d: any) => this.mapAppointment(d))
-            .filter((a: any) => {
+            .filter((a: Appointment) => this.isOpenPatientAppointment(a))
+            .filter((a: Appointment) => {
               if (!a.appointmentDate) return false;
               const dt = new Date(a.appointmentDate + 'T12:00:00');
               return dt >= today;
             })
-            .sort((a: any, b: any) => new Date(a.appointmentDate + 'T12:00:00').getTime() - new Date(b.appointmentDate + 'T12:00:00').getTime());
+            .sort(
+              (a: Appointment, b: Appointment) =>
+                new Date(a.appointmentDate + 'T12:00:00').getTime() -
+                new Date(b.appointmentDate + 'T12:00:00').getTime()
+            );
           return sorted[0] ?? null;
         }),
         catchError(() => of(null))
@@ -76,6 +88,13 @@ export class AppointmentApiService {
       type:               d.type ?? d.notes ?? 'Consulta',
       notes:              d.notes,
       createdAt:          d.createdAt ?? d.created_at ?? d.createdat ?? '',
+      status:             d.status != null ? String(d.status) : 'pending',
     };
+  }
+
+  /** Alineado con Web-Fronted appointment-list: completadas/canceladas no cuentan como próximas. */
+  private isOpenPatientAppointment(a: Appointment): boolean {
+    const raw = (a.status ?? 'pending').toString().trim().toLowerCase();
+    return raw !== 'cancelled' && raw !== 'completed';
   }
 }

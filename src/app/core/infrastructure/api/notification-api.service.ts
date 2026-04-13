@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../services/api-base.service';
 
 export interface Notification {
   id: number;
@@ -16,9 +16,14 @@ export interface Notification {
 
 @Injectable({ providedIn: 'root' })
 export class NotificationApiService {
-  private baseUrl = `${environment.apiUrl}/notifications`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/notifications`;
+  }
 
   // ✅ Corregido: usar /notifications/patient/:patientId
   getByPatientId(patientId: number, limit = 50): Observable<Notification[]> {

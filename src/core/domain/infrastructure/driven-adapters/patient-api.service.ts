@@ -4,16 +4,24 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Patient } from '../../../domain/models/patient.model';
 import { PatientRepository } from '../../../domain/repositories/patient.repository';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../../../app/core/services/api-base.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PatientApiService implements PatientRepository {
-  private readonly baseUrl = `${environment.apiUrl}/patients`;
-  private readonly authUrl = `${environment.apiUrl}/auth`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get patientsUrl(): string {
+    return `${this.apiBase.apiRoot}/patients`;
+  }
+
+  private get authUrl(): string {
+    return `${this.apiBase.apiRoot}/auth`;
+  }
 
   getPatientByEmail(email: string): Observable<Patient | null> {
     return this.http.post<{ success: boolean; patient?: any; token?: string }>(
@@ -34,7 +42,7 @@ export class PatientApiService implements PatientRepository {
   }
 
   getPatients(): Observable<Patient[]> {
-    return this.http.get<{ success: boolean; rows?: any[] }>(this.baseUrl).pipe(
+    return this.http.get<{ success: boolean; rows?: any[] }>(this.patientsUrl).pipe(
       map((res) => {
         const rows = res.rows ?? [];
         return rows.map((p: any) => this.mapPatient(p));
@@ -44,7 +52,7 @@ export class PatientApiService implements PatientRepository {
   }
 
   getPatientById(id: number): Observable<Patient> {
-    return this.http.get<{ success: boolean; data?: any }>(`${this.baseUrl}/${id}`).pipe(
+    return this.http.get<{ success: boolean; data?: any }>(`${this.patientsUrl}/${id}`).pipe(
       map((res) => {
         const p = res.data;
         if (!p) throw new Error('Paciente no encontrado');
@@ -56,24 +64,28 @@ export class PatientApiService implements PatientRepository {
 
   private mapPatient(p: any): Patient {
     const birthDate = p.birthDate ?? p.birth_date;
-    const birthYear = p.birthYear ?? p.birth_year ?? (birthDate ? new Date(birthDate).getFullYear() : null);
+    const birthYear =
+      p.birthYear ??
+      p.birth_year ??
+      (birthDate ? new Date(birthDate).getFullYear() : null);
 
-    // El back puede devolver el id con cualquiera de estos nombres:
-    // id, idpatient, id_patient, idPaciente, id_paciente
     const id = p.id ?? p.idpatient ?? p.id_patient ?? p.idPaciente ?? p.id_paciente ?? 0;
+
+    const h = p.height != null && p.height !== '' ? Number(p.height) : NaN;
+    const w = p.weight != null && p.weight !== '' ? Number(p.weight) : NaN;
 
     return {
       id,
       firstName: p.firstName ?? p.first_name,
       lastNameP: p.lastNameP ?? p.last_name_paternal ?? p.last_name_p,
       lastNameM: p.lastNameM ?? p.last_name_maternal ?? p.last_name_m,
-      birthYear,
-      sex: p.sex ?? p.gender,
-      height: p.height,
-      weight: p.weight,
-      createdAt: p.createdAt ? new Date(p.createdAt) : (p.created_at ? new Date(p.created_at) : new Date()),
+      birthYear: birthYear != null && !isNaN(Number(birthYear)) ? Number(birthYear) : 0,
+      sex: p.sex ?? p.gender ?? '',
+      height: !isNaN(h) ? h : 0,
+      weight: !isNaN(w) ? w : 0,
+      createdAt: p.createdAt ? new Date(p.createdAt) : p.created_at ? new Date(p.created_at) : new Date(),
       physiotherapistId: p.physioId ?? p.physiotherapistId ?? p.id_physio ?? p.physiotherapist_id ?? 0,
-      email: p.email
+      email: p.email ?? p.User?.email ?? p.user?.email ?? '',
     };
   }
 }

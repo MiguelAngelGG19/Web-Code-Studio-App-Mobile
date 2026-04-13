@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../services/api-base.service';
 
 export interface Tracking {
   id: number;
@@ -15,9 +15,14 @@ export interface Tracking {
 
 @Injectable({ providedIn: 'root' })
 export class TrackingApiService {
-  private baseUrl = `${environment.apiUrl}/tracking`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/tracking`;
+  }
 
   // ✅ El backend solo tiene POST /tracking — get devuelve vacío de forma segura
   getByPatientId(patientId: number, limit = 50): Observable<Tracking[]> {

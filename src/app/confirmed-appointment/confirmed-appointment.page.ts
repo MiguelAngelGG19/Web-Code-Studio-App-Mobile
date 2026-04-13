@@ -12,17 +12,7 @@ import { environment } from '../../environments/environment';
   standalone: false,
 })
 export class ConfirmedAppointmentPage implements OnInit {
-  cita: any = {
-    doctorName: 'Fisioterapeuta',
-    specialty: 'Fisioterapia',
-    doctorPhoto: 'https://i.pravatar.cc/150?img=11',
-    clinic: environment.clinicName ?? 'ACTIVA Health Center',
-    fecha: '—',
-    hora: '—',
-    tipoTerapia: 'Rutina de ejercicios',
-    direccion: environment.clinicAddress ?? 'Av. Principal 123, Ciudad',
-    mapsUrl: environment.clinicMapsUrl ?? 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia',
-  };
+  cita: any = this.buildDefaultCita();
   loading = true;
 
   constructor(
@@ -32,28 +22,59 @@ export class ConfirmedAppointmentPage implements OnInit {
     private appointmentApi: AppointmentApiService
   ) {}
 
+  private buildDefaultCita() {
+    return {
+      doctorName: 'Fisioterapeuta',
+      specialty: 'Fisioterapia',
+      doctorPhoto: 'https://i.pravatar.cc/150?img=11',
+      clinic: environment.clinicName ?? 'ACTIVA Health Center',
+      fecha: '—',
+      hora: '—',
+      tipoTerapia: 'Rutina de ejercicios',
+      direccion: environment.clinicAddress ?? 'Av. Principal 123, Ciudad',
+      mapsUrl: environment.clinicMapsUrl ?? 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia',
+    };
+  }
+
   async ngOnInit() {
     await this.storage.create();
+  }
+
+  async ionViewWillEnter() {
+    await this.loadCita();
+  }
+
+  private async loadCita(): Promise<void> {
+    await this.storage.create();
+    this.loading = true;
+    this.cita = { ...this.buildDefaultCita() };
+
     const patient = await this.storage.get('currentPatient');
-    const patientId = await this.storage.get('currentPatientId') ?? patient?.id ?? 1;
+    const patientId = (await this.storage.get('currentPatientId')) ?? patient?.id ?? 1;
     if (!patientId) {
       this.loading = false;
       return;
     }
+
     this.appointmentApi.getNext(patientId).subscribe((nextCita) => {
       if (nextCita) {
         const dateStr = nextCita.appointmentDate;
         const dateObj = dateStr ? new Date(dateStr + 'T12:00:00') : null;
+        const horaRaw = nextCita.appointmentTime || '';
         this.cita = {
           ...this.cita,
           fecha: dateObj ? dateObj.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }) : '—',
-          hora: nextCita.appointmentTime || '—',
+          hora: horaRaw ? horaRaw.substring(0, 5) : '—',
           tipoTerapia: nextCita.type || 'Consulta',
         };
         if (nextCita.physiotherapistId) {
           this.physioApi.getById(nextCita.physiotherapistId).subscribe((p) => {
             if (p) {
-              this.cita = { ...this.cita, doctorName: p.fullName, doctorPhoto: `https://i.pravatar.cc/150?u=physio${p.id}` };
+              this.cita = {
+                ...this.cita,
+                doctorName: p.fullName,
+                doctorPhoto: `https://i.pravatar.cc/150?u=physio${p.id}`,
+              };
             }
           });
         }
@@ -78,7 +99,11 @@ export class ConfirmedAppointmentPage implements OnInit {
         if (r.physiotherapistId) {
           this.physioApi.getById(r.physiotherapistId).subscribe((p) => {
             if (p) {
-              this.cita = { ...this.cita, doctorName: p.fullName, doctorPhoto: `https://i.pravatar.cc/150?u=physio${p.id}` };
+              this.cita = {
+                ...this.cita,
+                doctorName: p.fullName,
+                doctorPhoto: `https://i.pravatar.cc/150?u=physio${p.id}`,
+              };
             }
           });
         }
@@ -88,7 +113,10 @@ export class ConfirmedAppointmentPage implements OnInit {
   }
 
   openMaps() {
-    const url = this.cita.mapsUrl || environment.clinicMapsUrl || 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia';
+    const url =
+      this.cita.mapsUrl ||
+      environment.clinicMapsUrl ||
+      'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia';
     window.open(url, '_blank', 'noopener');
   }
 

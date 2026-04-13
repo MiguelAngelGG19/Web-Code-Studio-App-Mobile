@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../services/api-base.service';
 
 export interface Routine {
   id: number;
@@ -71,9 +71,14 @@ function mapRoutineWithExercises(r: any): RoutineWithExercises {
 
 @Injectable({ providedIn: 'root' })
 export class RoutineApiService {
-  private baseUrl = `${environment.apiUrl}/routines`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/routines`;
+  }
 
   /** GET /routines/:id  →  detalle completo con ejercicios */
   getRoutineById(id: number): Observable<RoutineWithExercises | null> {

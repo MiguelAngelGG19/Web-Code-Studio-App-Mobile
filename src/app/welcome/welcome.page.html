@@ -12,6 +12,27 @@
         <ion-icon name="arrow-forward" slot="end"></ion-icon>
         Continuar
       </ion-button>
+      <ion-button fill="clear" size="small" class="btn-link" (click)="toggleConnectionHelp()">
+        {{ showConnectionHelp ? 'Ocultar' : '¿No conecta con el servidor?' }}
+      </ion-button>
+    </div>
+
+    <div class="connection-panel" *ngIf="showConnectionHelp">
+      <p class="connection-hint">
+        Emulador Android: el API debe estar en tu PC en el puerto <strong>3000</strong>. En teléfono físico
+        (misma Wi‑Fi), pon la IP de tu PC (comando <code>ipconfig</code> en Windows).
+      </p>
+      <ion-item lines="none" class="connection-input-wrap">
+        <ion-input
+          [(ngModel)]="serverUrl"
+          type="url"
+          placeholder="http://192.168.0.10:3000"
+          label="Dirección del servidor"
+          labelPlacement="stacked"
+        ></ion-input>
+      </ion-item>
+      <ion-button expand="block" fill="outline" size="small" (click)="saveServerUrl()">Guardar dirección</ion-button>
+      <ion-button expand="block" fill="clear" size="small" (click)="clearServerUrl()">Quitar dirección manual</ion-button>
     </div>
   </div>
   <div class="bg-gradient"></div>

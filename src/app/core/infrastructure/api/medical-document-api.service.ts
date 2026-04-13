@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../services/api-base.service';
 
 export interface MedicalDocument {
   id: number;
@@ -15,9 +15,14 @@ export interface MedicalDocument {
 
 @Injectable({ providedIn: 'root' })
 export class MedicalDocumentApiService {
-  private baseUrl = `${environment.apiUrl}/documents`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/documents`;
+  }
 
   list(patientId: number, limit = 100): Observable<MedicalDocument[]> {
     return this.http

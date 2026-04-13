@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { PatientRepository } from '../../core/domain/repositories/patient.repository';
 import { Storage } from '@ionic/storage-angular';
+import { ACTIVA_PATIENT_CACHE_KEY } from '../core/constants/patient-cache';
 
 @Component({
   selector: 'app-login',
@@ -49,6 +50,11 @@ export class LoginPage {
           // Guardar datos del paciente en Storage
           await this.storage.set('currentPatientId', patient.id);
           await this.storage.set('currentPatient', patient);
+          try {
+            localStorage.setItem(ACTIVA_PATIENT_CACHE_KEY, JSON.stringify(patient));
+          } catch {
+            /* cuota / privado */
+          }
           // Guardar token JWT para peticiones posteriores
           const token = localStorage.getItem('patient_token');
           if (token) {

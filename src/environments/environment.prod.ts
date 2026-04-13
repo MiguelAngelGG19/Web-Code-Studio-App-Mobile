@@ -1,12 +1,11 @@
 /**
- * Configuración de producción.
- * - Para probar en tu teléfono (misma Wi‑Fi que el PC): pon aquí la IP de tu PC, ej. http://192.168.1.100:3000/api
- * - Para Play Store: pon la URL real del servidor, ej. https://api.activa.com/api
+ * Producción: pon la URL HTTPS real del API.
+ * Pruebas locales: igual que dev (10.0.2.2 emulador) o IP del PC; en teléfono usa Bienvenida → servidor.
  */
 export const environment = {
   production: true,
-  apiUrl: 'http://192.168.1.118:3000/api',
-  backendUrl: 'http://192.168.1.118:3000',
+  apiUrl: 'http://10.0.2.2:3000/api',
+  backendUrl: 'http://10.0.2.2:3000',
   clinicName: 'ACTIVA Health Center',
   clinicAddress: 'Av. Principal 123, Ciudad',
   clinicMapsUrl: 'https://www.google.com/maps/search/?api=1&query=Clínica+Fisioterapia'

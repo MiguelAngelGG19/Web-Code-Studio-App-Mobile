@@ -1,26 +1,30 @@
 ion-tab-bar {
-  --background: #fff;
+  --background: var(--activa-card);
   --border: 1px solid var(--activa-border);
-  padding: 10px 0 16px;
-  height: 72px;
-  box-shadow: 0 -2px 16px rgba(15, 23, 42, 0.06);
+  padding: 8px 0 max(12px, env(safe-area-inset-bottom));
+  min-height: 64px;
+  box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.06);
 }
 
 ion-tab-button {
   --color: var(--activa-text-muted);
   --color-selected: var(--activa-primary);
   font-size: 11px;
-  font-weight: 700;
-  transition: color 0.2s ease;
+  font-weight: var(--activa-font-bold);
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease, transform 0.15s ease;
 
   ion-icon {
     font-size: 26px;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 }
 
-/* Pestaña activa: más visible */
 ion-tab-button.tab-selected {
   --color: var(--activa-primary);
-  font-weight: 800;
+  font-weight: var(--activa-font-display);
+
+  ion-icon {
+    transform: scale(1.04);
+  }
 }

@@ -4,16 +4,20 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Tracking } from '../../../domain/models/tracking.model';
 import { TrackingRepository } from '../../../domain/repositories/tracking.repository';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../../../app/core/services/api-base.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrackingApiService implements TrackingRepository {
-  // 🔥 CORRECCIÓN: Se quitó el /api extra porque ya viene en environment.apiUrl
-  private readonly baseUrl = `${environment.apiUrl}/tracking`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/tracking`;
+  }
 
   registerPainLevel(tracking: Tracking): Observable<void> {
     console.debug('tracking-api: sending', tracking, 'to', this.baseUrl);

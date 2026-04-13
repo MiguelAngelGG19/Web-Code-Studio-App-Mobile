@@ -56,31 +56,34 @@ export class Tab4Page implements OnInit {
       }
     });
 
-    // Próxima cita — el mapper ya normaliza date/starttime del back
-    this.appointmentApi.getNext(id).subscribe((apt) => {
-      if (apt && apt.appointmentDate) {
-        const dateObj = new Date(apt.appointmentDate + 'T12:00:00');
-        const fecha = dateObj.toLocaleDateString('es-MX', {
-          weekday: 'long', day: 'numeric', month: 'long'
-        });
-        // Capitalizar primera letra
-        const fechaCap = fecha.charAt(0).toUpperCase() + fecha.slice(1);
-        const hora = apt.appointmentTime
-          ? apt.appointmentTime.substring(0, 5)   // HH:MM
-          : '';
-        const tipo = (apt.notes && apt.notes.length < 60) ? apt.notes : 'Sesión de fisioterapia';
-        this.nextAppointment.set({ fecha: fechaCap, hora, tipo });
-      } else {
-        this.nextAppointment.set(null);
-      }
-    });
+    this.loadNextAppointment(id);
 
     this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
   }
 
   ionViewWillEnter() {
-    this.storage.get('currentPatientId').then((id) => {
-      if (id) this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
+    this.storage.get('currentPatientId').then((pid) => {
+      const id = pid ?? 1;
+      this.notificationApi.getUnreadCount(id).subscribe((c) => this.unreadCount.set(c));
+      this.loadNextAppointment(id);
+    });
+  }
+
+  /** Misma regla que la web: al volver al inicio se vuelve a pedir la próxima cita (p. ej. tras completar en consultorio). */
+  private loadNextAppointment(patientId: number) {
+    this.appointmentApi.getNext(patientId).subscribe((apt) => {
+      if (apt && apt.appointmentDate) {
+        const dateObj = new Date(apt.appointmentDate + 'T12:00:00');
+        const fecha = dateObj.toLocaleDateString('es-MX', {
+          weekday: 'long', day: 'numeric', month: 'long'
+        });
+        const fechaCap = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+        const hora = apt.appointmentTime ? apt.appointmentTime.substring(0, 5) : '';
+        const tipo = apt.notes && apt.notes.length < 60 ? apt.notes : 'Sesión de fisioterapia';
+        this.nextAppointment.set({ fecha: fechaCap, hora, tipo });
+      } else {
+        this.nextAppointment.set(null);
+      }
     });
   }
 

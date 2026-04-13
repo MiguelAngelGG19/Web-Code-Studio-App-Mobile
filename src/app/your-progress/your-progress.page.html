@@ -68,12 +68,12 @@
             <p class="card-main">{{ user().routineName }}</p>
           </div>
         </div>
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <ion-button expand="block" class="start-btn" (click)="startFirstRoutine()" style="flex: 1; margin: 0; box-shadow: 0 4px 12px rgba(0, 168, 107, 0.25);">
+        <div class="routine-actions">
+          <ion-button expand="block" class="start-btn" (click)="startFirstRoutine()">
             <ion-icon name="play" slot="start"></ion-icon>
             Iniciar
           </ion-button>
-          <ion-button expand="block" fill="outline" class="view-btn" routerLink="/tabs/detalle-rutina" style="flex: 1; margin: 0; --color: var(--activa-primary); --border-color: var(--activa-primary); font-weight: 700;">
+          <ion-button expand="block" fill="outline" class="view-btn" routerLink="/tabs/detalle-rutina">
             <ion-icon name="list-outline" slot="start"></ion-icon>
             Detalles
           </ion-button>

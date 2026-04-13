@@ -1,6 +1,7 @@
 import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { WelcomePage } from './welcome.page';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
@@ -10,6 +11,7 @@ import { welcomePageRoutingModule } from './welcome-routing.module';
   imports: [
     IonicModule,
     CommonModule,
+    FormsModule,
     RouterModule,
     ExploreContainerComponentModule,
     welcomePageRoutingModule

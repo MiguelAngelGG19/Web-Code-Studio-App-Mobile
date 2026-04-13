@@ -9,16 +9,25 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private storage: Storage) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Storage ya fue inicializado en AppComponent.ngOnInit().
-    // Aquí solo leemos el token, sin llamar storage.create() que podría
-    // devolver null temporalmente y causar peticiones sin Authorization.
+    // localStorage es síncrono: evita esperar a Ionic Storage en la primera petición tras abrir la app.
+    let syncToken: string | null = null;
+    try {
+      syncToken = localStorage.getItem('patient_token');
+    } catch {
+      /* entorno sin window */
+    }
+    if (syncToken) {
+      return next.handle(
+        req.clone({ setHeaders: { Authorization: `Bearer ${syncToken}` } })
+      );
+    }
+
     return from(this.storage.get('patient_token')).pipe(
       switchMap((token: string | null) => {
         if (token) {
-          const cloned = req.clone({
-            setHeaders: { Authorization: `Bearer ${token}` }
-          });
-          return next.handle(cloned);
+          return next.handle(
+            req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+          );
         }
         return next.handle(req);
       })

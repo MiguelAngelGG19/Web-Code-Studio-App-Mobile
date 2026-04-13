@@ -1,54 +1,49 @@
-// Variables del tema
-$teal:       #01696f;
-$teal-light: #e6f4f4;
-$text-dark:  #1a1a1a;
-$text-muted: #888888;
-$bg:         #f4f6f8;
-$white:      #ffffff;
-$red:        #d32f2f;
-
 .profile-content {
-  --background: #{$bg};
+  --background: var(--activa-bg);
 }
 
-// ── HEADER ────────────────────────────────────────
 .profile-header {
-  background: $white;
+  background: var(--activa-card);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 36px 16px 20px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
+  padding: 36px 16px 22px;
+  border-bottom-left-radius: var(--activa-radius-lg);
+  border-bottom-right-radius: var(--activa-radius-lg);
   margin-bottom: 16px;
+  box-shadow: var(--activa-shadow-sm);
 
   .avatar-circle {
-    width: 80px;
-    height: 80px;
+    width: 84px;
+    height: 84px;
     border-radius: 50%;
-    background: $teal-light;
+    background: var(--activa-primary-light);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
-    .avatar-icon { font-size: 44px; color: $teal; }
+    box-shadow: inset 0 0 0 2px rgba(var(--activa-primary-rgb), 0.08);
+
+    .avatar-icon {
+      font-size: 46px;
+      color: var(--activa-primary);
+    }
   }
 
   .user-name {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: $text-dark;
+    font-size: 1.22rem;
+    font-weight: var(--activa-font-bold);
+    color: var(--activa-text);
     margin: 0 0 4px;
   }
 
   .user-subtitle {
-    font-size: 0.82rem;
-    color: $text-muted;
+    font-size: 0.84rem;
+    color: var(--activa-text-muted);
     margin: 0;
   }
 }
 
-// ── STATS ROW ──────────────────────────────────────
 .stats-row {
   display: flex;
   gap: 10px;
@@ -57,24 +52,25 @@ $red:        #d32f2f;
 
   .stat-card {
     flex: 1;
-    background: $white;
-    border-radius: 12px;
+    background: var(--activa-card);
+    border-radius: var(--activa-radius);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 14px 4px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    box-shadow: var(--activa-shadow-sm);
+    border: 1px solid rgba(var(--activa-primary-rgb), 0.05);
 
     .stat-value {
       font-size: 0.95rem;
-      font-weight: 700;
-      color: $text-dark;
+      font-weight: var(--activa-font-bold);
+      color: var(--activa-text);
       white-space: nowrap;
     }
 
     .stat-label {
       font-size: 0.62rem;
-      color: $text-muted;
+      color: var(--activa-text-muted);
       letter-spacing: 0.05em;
       margin-top: 3px;
       text-transform: uppercase;
@@ -82,15 +78,15 @@ $red:        #d32f2f;
   }
 }
 
-// ── IMC CARD ───────────────────────────────────────
 .imc-card {
-  background: $white;
-  border-radius: 12px;
+  background: var(--activa-card);
+  border-radius: var(--activa-radius);
   padding: 14px 16px;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  box-shadow: var(--activa-shadow-sm);
+  border: 1px solid rgba(var(--activa-primary-rgb), 0.05);
   margin: 0 16px 16px;
 
   .imc-left {
@@ -98,75 +94,128 @@ $red:        #d32f2f;
     flex-direction: column;
     align-items: center;
     min-width: 56px;
-    .imc-value { font-size: 1.7rem; font-weight: 800; color: $teal; }
-    .imc-title { font-size: 0.68rem; color: $text-muted; letter-spacing: 0.06em; }
+
+    .imc-value {
+      font-size: 1.7rem;
+      font-weight: var(--activa-font-display);
+      color: var(--activa-primary);
+    }
+
+    .imc-title {
+      font-size: 0.68rem;
+      color: var(--activa-text-muted);
+      letter-spacing: 0.06em;
+    }
   }
 
   .imc-right {
     flex: 1;
+
     .imc-badge {
       display: inline-block;
       font-size: 0.72rem;
-      font-weight: 700;
+      font-weight: var(--activa-font-bold);
       border-radius: 20px;
       padding: 2px 10px;
       margin-bottom: 4px;
-      &.badge-success { background: #e6f4e6; color: #2e7d32; }
-      &.badge-warning { background: #fff8e1; color: #f57f17; }
-      &.badge-danger  { background: #fce4ec; color: #c62828; }
-      &.badge-medium  { background: #f5f5f5; color: #555;    }
+
+      &.badge-success {
+        background: #ecfdf5;
+        color: var(--activa-success);
+      }
+
+      &.badge-warning {
+        background: #fffbeb;
+        color: var(--activa-warning);
+      }
+
+      &.badge-danger {
+        background: #fef2f2;
+        color: var(--activa-danger);
+      }
+
+      &.badge-medium {
+        background: var(--activa-bg);
+        color: var(--activa-text-muted);
+      }
     }
-    .imc-desc { font-size: 0.76rem; color: $text-muted; margin: 0; }
+
+    .imc-desc {
+      font-size: 0.76rem;
+      color: var(--activa-text-muted);
+      margin: 0;
+    }
   }
 }
 
-// ── SECTION TITLE ──────────────────────────────────
 .section-title {
   font-size: 0.72rem;
-  font-weight: 700;
-  color: $text-muted;
+  font-weight: var(--activa-font-bold);
+  color: var(--activa-text-soft);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   padding: 0 16px;
   margin: 0 0 8px;
 }
 
-// ── PLAN CARD ──────────────────────────────────────
 .plan-card {
-  background: $white;
-  border-radius: 12px;
+  background: var(--activa-card);
+  border-radius: var(--activa-radius);
   margin: 0 16px 16px;
   padding: 14px 12px;
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  box-shadow: var(--activa-shadow-sm);
+  border: 1px solid rgba(var(--activa-primary-rgb), 0.05);
   cursor: pointer;
 
   .plan-icon-wrap {
     width: 40px;
     height: 40px;
-    background: $teal-light;
-    border-radius: 10px;
+    background: var(--activa-primary-light);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    ion-icon { font-size: 1.3rem; color: $teal; }
+
+    ion-icon {
+      font-size: 1.3rem;
+      color: var(--activa-primary);
+    }
   }
 
   .plan-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    .plan-name { font-size: 0.95rem; font-weight: 700; color: $text-dark; }
-    .plan-sub  { font-size: 0.8rem;  color: $text-muted; margin-top: 2px; }
-    .plan-link { font-size: 0.78rem; color: $teal; margin-top: 2px; }
+
+    .plan-name {
+      font-size: 0.95rem;
+      font-weight: var(--activa-font-bold);
+      color: var(--activa-text);
+    }
+
+    .plan-sub {
+      font-size: 0.8rem;
+      color: var(--activa-text-muted);
+      margin-top: 2px;
+    }
+
+    .plan-link {
+      font-size: 0.78rem;
+      color: var(--activa-primary);
+      margin-top: 2px;
+      font-weight: 600;
+    }
   }
 
-  .plan-chevron { font-size: 1rem; color: $text-muted; }
+  .plan-chevron {
+    font-size: 1rem;
+    color: var(--activa-text-soft);
+  }
 }
 
-// ── MENU LIST ──────────────────────────────────────
 .menu-list {
   padding: 0 16px;
   margin-bottom: 16px;
@@ -175,44 +224,64 @@ $red:        #d32f2f;
   gap: 8px;
 
   .menu-item {
-    background: $white;
-    border-radius: 12px;
+    background: var(--activa-card);
+    border-radius: var(--activa-radius);
     padding: 14px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    box-shadow: var(--activa-shadow-sm);
+    border: 1px solid rgba(var(--activa-primary-rgb), 0.05);
     cursor: pointer;
-    color: $text-dark;
+    color: var(--activa-text);
 
-    span { flex: 1; font-size: 0.93rem; font-weight: 500; }
-    .menu-icon    { font-size: 1.2rem; color: $teal; }
-    .menu-chevron { font-size: 0.95rem; color: $text-muted; }
+    span {
+      flex: 1;
+      font-size: 0.93rem;
+      font-weight: 500;
+    }
 
-    &:active { background: mix(black, $white, 3%); }
+    .menu-icon {
+      font-size: 1.2rem;
+      color: var(--activa-primary);
+    }
+
+    .menu-chevron {
+      font-size: 0.95rem;
+      color: var(--activa-text-soft);
+    }
+
+    &:active {
+      background: rgba(15, 23, 42, 0.03);
+    }
   }
 }
 
-// ── LOGOUT ─────────────────────────────────────────
 .logout-wrap {
   padding: 0 16px 32px;
 
   .logout-btn {
     width: 100%;
-    background: $red;
-    color: $white;
+    background: var(--activa-danger);
+    color: #fff;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--activa-radius);
     padding: 15px;
     font-size: 0.9rem;
-    font-weight: 700;
+    font-weight: var(--activa-font-bold);
     letter-spacing: 0.05em;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     cursor: pointer;
-    ion-icon { font-size: 1.1rem; }
-    &:active { background: mix(black, $red, 8%); }
+
+    ion-icon {
+      font-size: 1.1rem;
+    }
+
+    &:active {
+      filter: brightness(0.92);
+    }
   }
 }

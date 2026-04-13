@@ -4,15 +4,20 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Routine } from '../../../domain/models/routine.model';
 import { RoutineRepository } from '../../../domain/repositories/routine.repository';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../../../app/core/services/api-base.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoutineApiService implements RoutineRepository {
-  private readonly baseUrl = `${environment.apiUrl}/routines`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/routines`;
+  }
 
   getRoutines(): Observable<Routine[]> {
     return this.http.get<any[]>(this.baseUrl).pipe(

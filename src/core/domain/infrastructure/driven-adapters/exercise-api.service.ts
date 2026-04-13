@@ -4,15 +4,20 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Exercise } from '../../../domain/models/exercise.model';
 import { ExerciseRepository } from '../../../domain/repositories/exercise.repository';
-import { environment } from '../../../../environments/environment';
+import { ApiBaseService } from '../../../../app/core/services/api-base.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExerciseApiService implements ExerciseRepository {
-  private readonly baseUrl = `${environment.apiUrl}/exercises`;
+  constructor(
+    private http: HttpClient,
+    private apiBase: ApiBaseService
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private get baseUrl(): string {
+    return `${this.apiBase.apiRoot}/exercises`;
+  }
 
   getExercises(): Observable<Exercise[]> {
     return this.http.get<{ success: boolean; rows?: any[] }>(this.baseUrl).pipe(
