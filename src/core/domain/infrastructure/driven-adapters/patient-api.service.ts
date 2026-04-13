@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { from } from 'rxjs';
 import { Patient } from '../../../domain/models/patient.model';
 import { PatientRepository } from '../../../domain/repositories/patient.repository';
 import { environment } from '../../../../environments/environment';
+import { Storage } from '@ionic/storage-angular';
 
 @Injectable({
   providedIn: 'root'
@@ -13,20 +15,23 @@ export class PatientApiService implements PatientRepository {
   private readonly baseUrl = `${environment.apiUrl}/patients`;
   private readonly authUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private storage: Storage) {}
 
   getPatientByEmail(email: string): Observable<Patient | null> {
     return this.http.post<{ success: boolean; patient?: any; token?: string }>(
       `${this.authUrl}/login-patient`,
       { email: email.trim() }
     ).pipe(
-      map((res) => {
-        if (!res?.patient) return null;
-        // Guardar token en localStorage para que las demás peticiones funcionen
+      switchMap((res) => {
+        if (!res?.patient) return from(Promise.resolve(null as Patient | null));
+        const patient = this.mapPatient(res.patient);
         if (res.token) {
-          localStorage.setItem('patient_token', res.token);
+          // Guardar en Ionic Storage (funciona en Android nativo, no depende de localStorage)
+          return from(
+            this.storage.create().then(() => this.storage.set('patient_token', res.token))
+          ).pipe(map(() => patient));
         }
-        return this.mapPatient(res.patient);
+        return from(Promise.resolve(patient));
       }),
       catchError((err) => {
         return throwError(() => err);

@@ -47,13 +47,9 @@ export class LoginPage {
       next: async (patient) => {
         if (patient) {
           // Guardar datos del paciente en Storage
+          // El token ya fue guardado en Ionic Storage por patient-api.service.ts
           await this.storage.set('currentPatientId', patient.id);
           await this.storage.set('currentPatient', patient);
-          // Guardar token JWT para peticiones posteriores
-          const token = localStorage.getItem('patient_token');
-          if (token) {
-            await this.storage.set('patient_token', token);
-          }
           const toast = await this.toastController.create({
             message: `Bienvenido, ${patient.firstName}`,
             duration: 1500,
