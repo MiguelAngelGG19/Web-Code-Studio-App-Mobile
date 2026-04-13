@@ -78,10 +78,14 @@ export class LoginPage {
           await toast.present();
         }
       },
-      error: async () => {
+      error: async (err: any) => {
+        const msg =
+          err?.error?.message ||
+          err?.message ||
+          'Correo no registrado o error de conexión.';
         const toast = await this.toastController.create({
-          message: 'Correo no registrado o error de conexión.',
-          duration: 3000,
+          message: msg,
+          duration: 4000,
           position: 'bottom',
           color: 'danger',
         });
